@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const resultSection = document.getElementById("result-section");
   const loadingSpinner = document.getElementById("loading-spinner");
   const reportContent = document.getElementById("report-content");
-  const errorMessage = document.getElementById("error-message");
+  const statusMessageEl = document.getElementById("status-message");
   const mbtiTypeEl = document.getElementById("mbti-type");
   const mbtiTypeNameEl = document.getElementById("mbti-type-name");
   const mbtiTaglineEl = document.getElementById("mbti-tagline");
@@ -16,7 +16,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const params = new URLSearchParams(window.location.search);
   const initialSurveyId = params.get("id");
-  const initialSurveyToken = params.get("token"); // 获取 URL 中的 token
+  const initialSurveyToken = params.get("token");
 
   const uiManager = (() => {
     let currentTypingTimeout = null;
@@ -45,7 +45,7 @@ document.addEventListener("DOMContentLoaded", () => {
         resultSection.style.display = "block";
         loadingSpinner.style.display = "block";
         reportContent.style.display = "none";
-        errorMessage.style.display = "none";
+        statusMessageEl.style.display = "none";
         analyzeByIdBtn.disabled = true;
         uploadBtn.disabled = true;
         surveyIdInput.disabled = true;
@@ -66,8 +66,8 @@ document.addEventListener("DOMContentLoaded", () => {
       mbtiTypeNameEl.textContent = result.type_name || "";
       mbtiTaglineEl.textContent = result.tagline || "一份独特的分析报告。";
       reportContent.style.display = "block";
-      errorMessage.style.display = "none";
-      mbtiReportEl.textContent = ""; // 清空，确保XSS安全
+      statusMessageEl.style.display = "none";
+      mbtiReportEl.textContent = "";
       if (result.analysis_report && Array.isArray(result.analysis_report)) {
         for (const paragraphText of result.analysis_report) {
           const p = document.createElement("p");
@@ -77,17 +77,27 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     };
 
-    const displayError = (message) => {
+    const displayMessage = (message, type = 'info') => {
       if (currentTypingTimeout) clearTimeout(currentTypingTimeout);
-      if (!errorMessage || !resultSection) return;
+      if (!statusMessageEl || !resultSection) return;
+
       resultSection.style.display = "block";
       loadingSpinner.style.display = "none";
       reportContent.style.display = "none";
-      errorMessage.textContent = message;
-      errorMessage.style.display = "block";
+
+      statusMessageEl.textContent = message;
+      statusMessageEl.className = 'message-text';
+      if (type === 'error') {
+        statusMessageEl.classList.add('message-error');
+      } else if (type === 'success') {
+        statusMessageEl.classList.add('message-success');
+      } else {
+        statusMessageEl.classList.add('message-info');
+      }
+      statusMessageEl.style.display = "block";
     };
 
-    return { setLoading, displayReport, displayError, typeText };
+    return { setLoading, displayReport, displayMessage, typeText };
   })();
 
   const fileProcessor = (() => {
@@ -134,6 +144,13 @@ document.addEventListener("DOMContentLoaded", () => {
             });
           }
         });
+      } else if (typeof data === 'object' && data !== null) {
+          const finalData = data.data ? JSON.parse(data.data) : data;
+          for (const key in finalData) {
+              if (key.startsWith('q')) {
+                  answers[key] = finalData[key];
+              }
+          }
       }
       return answers;
     };
@@ -164,13 +181,13 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     const formatAnswers = (answers, questionMap) => {
-      const allAnswers = { ...questionMap };
-      for (const qId in allAnswers) {
-        allAnswers[qId] = answers[qId] || "未回答";
+      const formatted = {};
+      for (const qId in questionMap) {
+          formatted[qId] = answers[qId] || "未回答";
       }
-
+      
       return Object.entries(questionMap)
-        .map(([qId, qText]) => `- ${qText}: ${allAnswers[qId]}`)
+        .map(([qId, qText]) => `- ${qText}: ${formatted[qId]}`)
         .join("\n");
     };
 
@@ -232,9 +249,9 @@ document.addEventListener("DOMContentLoaded", () => {
         await uiManager.typeText(loadingTextEl, "报告已生成！正在展示...");
         await new Promise((r) => setTimeout(r, 1000));
 
-        await uiManager.displayReport(result);
+        uiManager.displayReport(result);
       } catch (error) {
-        uiManager.displayError(error.message);
+        uiManager.displayMessage(error.message, 'error');
       } finally {
         clearInterval(currentLoadingInterval);
         uiManager.setLoading(false);
@@ -258,7 +275,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         await analyze({ answersText });
       } catch (error) {
-        uiManager.displayError(error.message);
+        uiManager.displayMessage(error.message, 'error');
         uiManager.setLoading(false);
       }
     };
@@ -266,11 +283,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const handleIdInput = () => {
       const surveyId = surveyIdInput.value.trim();
       if (!surveyId) {
-        uiManager.displayError("请输入你的问卷ID。");
+        uiManager.displayMessage("请输入你的问卷ID。", 'error');
         return;
       }
-      // 将从 URL 获取的 token 传递给 analyze 函数
-      analyze({ surveyId, token: initialSurveyToken }); 
+      analyze({ surveyId, token: initialSurveyToken });
     };
 
     const setupEventListeners = () => {
@@ -306,14 +322,20 @@ document.addEventListener("DOMContentLoaded", () => {
           .forEach((q) => (window.questionMap[q.id] = q.text));
 
         setupEventListeners();
-        if (initialSurveyId) {
+
+        if (initialSurveyId && initialSurveyToken) {
           surveyIdInput.value = initialSurveyId;
-          uiManager.displayError(
-            `问卷ID "${initialSurveyId}" 已自动填充，请点击按钮开始分析。`
+          uiManager.displayMessage("检测到问卷ID和密钥，正在自动分析...", 'info');
+          await new Promise(r => setTimeout(r, 1500));
+          analyze({ surveyId: initialSurveyId, token: initialSurveyToken });
+        } else if (initialSurveyId) {
+          surveyIdInput.value = initialSurveyId;
+          uiManager.displayMessage(
+            `问卷ID "${initialSurveyId}" 已自动填充，请点击按钮或输入密钥开始分析。`, 'info'
           );
         }
       } catch (e) {
-        uiManager.displayError("无法加载问卷配置，功能受限。");
+        uiManager.displayMessage("无法加载问卷配置，功能受限。", 'error');
       }
     };
     return { init };

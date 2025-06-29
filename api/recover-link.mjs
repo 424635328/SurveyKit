@@ -10,7 +10,7 @@ const YOUR_APP_DOMAIN = process.env.VERCEL_URL || "https://survey-kit.vercel.app
 
 const emailRatelimit = new Ratelimit({
   redis: kv,
-  limiter: Ratelimit.slidingWindow(1, "5 m"),
+  limiter: Ratelimit.slidingWindow(1, "1 m"),
   prefix: "ratelimit:email_recovery",
 });
 

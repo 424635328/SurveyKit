@@ -210,63 +210,9 @@ body {
     text-align: center;
 }
 
-/* ID/Token 容器的通用样式 */
-.my-id-container {
-    background-color: #eef1f5; /* 浅灰色背景 */
-    border-radius: 10px;
-    padding: 15px 20px; /* 调整内边距 */
-    display: flex;
-    align-items: center;
-    gap: 15px; /* 增加间距 */
-    margin-bottom: 20px;
-    box-shadow: inset 0 1px 3px rgba(0,0,0,0.05); /* 内部阴影 */
-}
-
-/* 用于 my-token-container 的上边距 */
-.my-id-container.mt-4 {
-    margin-top: 1rem; /* 对应 HTML 中的 mt-4 (tailwind 1rem = 16px) */
-}
-
-.my-id-container span {
-    color: #616161; /* 柔和的灰色 */
-    font-weight: 500;
-    font-size: 0.95em;
-    flex-shrink: 0; /* 防止文本被压缩 */
-}
-.my-id-container code {
-    font-family: 'Courier New', monospace;
-    font-size: 1.1em; /* 更大 */
-    color: #e57373; /* 主题色 */
-    font-weight: bold;
-    flex-grow: 1; /* 占据更多空间 */
-    text-align: center; /* ID/Token文本居中 */
-    word-break: break-all; /* 防止长ID/Token溢出 */
-}
-
-/* 复制按钮的通用样式 */
-.copy-btn {
-    background-color: #4CAF50; /* 绿色复制按钮 */
-    color: white;
-    border: none;
-    padding: 8px 15px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 0.9em;
-    transition: background-color 0.2s ease, transform 0.1s ease;
-    flex-shrink: 0; /* 防止按钮被压缩 */
-    white-space: nowrap; /* 防止文本换行 */
-}
-.copy-btn:hover {
-    background-color: #388e3c;
-    transform: translateY(-1px);
-}
-.copy-btn:active {
-    transform: translateY(1px); /* 点击时的下沉效果 */
-}
-
 /* 专属问卷链接区域 */
 .my-link-section {
-    margin-top: 2rem; /* mt-8 */
+    margin-top: 1rem; /* 对应HTML中的mt-4 (1rem = 16px) */
     padding: 1rem; /* p-4 */
     background-color: #e0f2f7; /* bg-blue-50 类似色 */
     border: 1px solid #b3e5fc; /* border-blue-200 类似色 */
@@ -274,6 +220,7 @@ body {
     color: #0d47a1; /* text-blue-800 类似色 */
     font-size: 0.9em; /* text-sm 类似大小 */
     text-align: left; /* 覆盖父级居中 */
+    margin-bottom: 25px; /* 添加底部间距，与按钮上方p标签的mb-25px一致 */
 }
 
 .my-link-section .font-bold {

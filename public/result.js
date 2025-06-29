@@ -10,15 +10,13 @@ document.addEventListener("DOMContentLoaded", () => {
   const eggText = document.getElementById("egg-text");
   const rerollEggBtn = document.getElementById("reroll-egg-btn");
   const actionsContainer = document.getElementById("actions-container");
-  const mySurveyIdEl = document.getElementById("my-survey-id");
-  const copyIdBtn = document.getElementById("copyIdBtn");
-  const myAccessTokenEl = document.getElementById("my-access-token");
-  const copyTokenBtn = document.getElementById("copyTokenBtn");
+  
   const viewMySubmissionBtn = document.getElementById("viewMySubmissionBtn");
-  const compareIdInput = document.getElementById("compareIdInput");
+  const compareLinkInput = document.getElementById("compareLinkInput"); // ID更新
   const startCompareBtn = document.getElementById("startCompareBtn");
   const generateCompareLinkBtn = document.getElementById("generateCompareLinkBtn");
   const goToMbtiAnalysisBtn = document.getElementById("goToMbtiAnalysisBtn");
+
   const exclusiveSurveyLinkEl = document.getElementById("exclusive-survey-link");
   const copyExclusiveLinkBtn = document.getElementById("copy-exclusive-link-btn");
 
@@ -31,25 +29,51 @@ document.addEventListener("DOMContentLoaded", () => {
   let currentAvailableEggs = [];
   let lastDisplayedEggIndex = -1;
 
+  // 工具函数：复制文本到剪贴板
   function copyToClipboard(textToCopy, buttonElement, isIconButton = false) {
     navigator.clipboard.writeText(textToCopy).then(() => {
       if (isIconButton) {
-        const originalInnerHtml = buttonElement.innerHTML;
+        const originalIcon = buttonElement.innerHTML;
         buttonElement.innerHTML = '<i class="fa fa-check"></i>';
-        setTimeout(() => {
-          buttonElement.innerHTML = originalInnerHtml;
-        }, 2000);
+        setTimeout(() => { buttonElement.innerHTML = originalIcon; }, 2000);
       } else {
         const originalTextContent = buttonElement.textContent;
         buttonElement.textContent = 'Copied!';
-        setTimeout(() => {
-          buttonElement.textContent = originalTextContent;
-        }, 2000);
+        setTimeout(() => { buttonElement.textContent = originalTextContent; }, 2000);
       }
     }).catch(() => {
       alert('复制失败，请手动复制。');
     });
   }
+
+  // 新增工具函数：从问卷链接中提取ID和Token (与compare.js中的保持一致)
+  const parseSurveyLink = (input) => {
+    if (input.startsWith('http://') || input.startsWith('https://')) {
+        try {
+            const url = new URL(input);
+            const currentHost = window.location.hostname;
+            const linkHost = url.hostname;
+
+            if (linkHost !== currentHost && !linkHost.endsWith('.vercel.app') && linkHost !== 'localhost') {
+                 return { error: '请输入本平台的问卷专属链接，不支持外部链接。' };
+            }
+            
+            const id = url.searchParams.get('id');
+            const token = url.searchParams.get('token');
+            if (!id) {
+                return { error: '链接中未找到问卷ID。请确保链接格式正确，例如包含 "?id=..."。' };
+            }
+            return { id, token };
+        } catch (e) {
+            return { error: '无效的链接格式。请确保输入完整的问卷专属链接。' };
+        }
+    } 
+    // 兼容纯ID输入
+    else if (input.startsWith('survey_')) {
+        return { id: input, token: null };
+    }
+    return { error: '无法识别的输入格式。请粘贴完整的问卷专属链接或纯问卷ID。' };
+  };
 
   const personalityAnalyzer = (() => {
     const SCORING_RULES = {
@@ -327,21 +351,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     if (copyExclusiveLinkBtn) {
         copyExclusiveLinkBtn.addEventListener("click", () => {
-            copyToClipboard(exclusiveLink, copyExclusiveLinkBtn, true);
-        });
-    }
-
-    if (mySurveyIdEl) mySurveyIdEl.textContent = surveyId;
-    if (copyIdBtn) {
-        copyIdBtn.addEventListener("click", () => {
-            copyToClipboard(surveyId, copyIdBtn);
-        });
-    }
-
-    if (myAccessTokenEl) myAccessTokenEl.textContent = surveyToken;
-    if (copyTokenBtn) {
-        copyTokenBtn.addEventListener("click", () => {
-            copyToClipboard(surveyToken, copyTokenBtn);
+            copyToClipboard(exclusiveLink, copyExclusiveLinkBtn, true); 
         });
     }
 
@@ -349,23 +359,36 @@ document.addEventListener("DOMContentLoaded", () => {
       viewMySubmissionBtn.addEventListener("click", () =>
         window.open(`/viewer.html?id=${surveyId}${surveyToken ? `&token=${surveyToken}` : ''}`, "_blank")
       );
-    if (startCompareBtn)
+    
+    // 修改默契度挑战的启动逻辑
+    if (startCompareBtn) {
       startCompareBtn.addEventListener("click", () => {
-        const otherId = compareIdInput.value.trim();
-        if (!otherId) {
-          alert("请输入需要对比的问卷ID。");
-          compareIdInput.focus();
+        const otherInput = compareLinkInput.value.trim(); // 获取用户输入
+        if (!otherInput) {
+          alert("请输入对方的问卷专属链接或ID。"); // 更新提示文本
+          compareLinkInput.focus();
           return;
         }
-        window.open(`/compare.html?id1=${surveyId}&token1=${surveyToken || ''}&id2=${otherId}`, "_blank");
+
+        const parsedOther = parseSurveyLink(otherInput); // 解析对方输入
+        if (parsedOther.error) {
+            alert(`对方链接解析失败：${parsedOther.error}`); // 弹出解析错误
+            compareLinkInput.focus();
+            return;
+        }
+
+        // 构建跳转URL，确保携带双方的id和token
+        window.open(`/compare.html?id1=${surveyId}&token1=${surveyToken || ''}&id2=${parsedOther.id}${parsedOther.token ? `&token2=${parsedOther.token}` : ''}`, "_blank");
       });
+    }
+
     if (generateCompareLinkBtn)
       generateCompareLinkBtn.addEventListener("click", () => {
         const compareUrl = `${window.location.origin}/compare.html?id1=${surveyId}${surveyToken ? `&token1=${surveyToken}` : ''}`;
         navigator.clipboard.writeText(compareUrl).then(
           () =>
             alert(
-              "你的专属对比链接已复制！\n\n快把它发给你的朋友，等TA填写完自己的问卷后，打开这个链接并输入TA的ID，就可以开始对比啦！"
+              "你的专属对比链接已复制！\n\n快把它发给你的朋友，等TA填写完自己的问卷后，打开这个链接并输入TA的问卷专属链接，就可以开始对比啦！" // 更新提示文本
             ),
           () => alert("复制失败，请手动复制。")
         );
