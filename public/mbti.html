@@ -40,7 +40,7 @@
         <p class="supported-formats">支持: JSON, Excel, CSV, TXT</p>
         <input type="file" id="file-upload-input" accept=".json, .xlsx, .xls, .csv, .txt" style="display: none;">
       </div>
-      
+
       <!-- 分隔符 -->
       <div class="separator">或</div>
 
@@ -66,8 +66,9 @@
         <p id="loading-text">AI分析中，请稍候...</p>
       </div>
 
-      <!-- 错误信息 -->
-      <div id="error-message" class="error-message" style="display: none;"></div>
+      <!-- 状态/错误信息 -->
+      <div id="status-message" class="status-message" style="display: none;"></div>
+
 
       <!-- 报告内容 -->
       <div id="report-content" class="report-content" style="display: none;">
@@ -86,5 +87,9 @@
 
   </div>
   <script src="mbti.js" type="module"></script>
+  <!-- Placeholder for questionMap, fetched by JS -->
+  <script>
+      window.questionMap = {}; // Will be populated by mbti.js init function
+  </script>
 </body>
 </html>
