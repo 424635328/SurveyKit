@@ -15,7 +15,7 @@ const API_URL = "https://ark.cn-beijing.volces.com/api/v3/chat/completions";
 // =======================================================
 const ratelimit = new Ratelimit({
   redis: kv,
-  limiter: Ratelimit.slidingWindow(10, "1 m"),
+  limiter: Ratelimit.slidingWindow(5, "1 m"),
   prefix: "ratelimit:mbti_analysis",
 });
 

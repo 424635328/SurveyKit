@@ -11,7 +11,7 @@ import { z } from "zod";
 // 这个限制比写入API宽松，因为读取操作通常更频繁且成本较低。
 const ratelimit = new Ratelimit({
   redis: kv,
-  limiter: Ratelimit.slidingWindow(10, "1 m"),
+  limiter: Ratelimit.slidingWindow(20, "1 m"),
   analytics: true,
   prefix: "ratelimit:get_survey",
 });
