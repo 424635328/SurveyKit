@@ -1,7 +1,4 @@
-// mbti.js - 全新升级版，支持多文件格式导入
-
 document.addEventListener("DOMContentLoaded", () => {
-  // --- 元素获取 ---
   const dropZone = document.getElementById("drop-zone");
   const uploadBtn = document.getElementById("uploadBtn");
   const fileUploadInput = document.getElementById("file-upload-input");
@@ -17,9 +14,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const mbtiReportEl = document.getElementById("mbti-analysis-report");
   const loadingTextEl = document.getElementById("loading-text");
 
-  // =======================================================
-  // 模块 1: UI状态管理 & 打字机效果 (基本保持不变)
-  // =======================================================
+  const params = new URLSearchParams(window.location.search);
+  const initialSurveyId = params.get("id");
+  const initialSurveyToken = params.get("token"); // 获取 URL 中的 token
+
   const uiManager = (() => {
     let currentTypingTimeout = null;
     const typeText = (element, text, speed = 30) => {
@@ -69,7 +67,7 @@ document.addEventListener("DOMContentLoaded", () => {
       mbtiTaglineEl.textContent = result.tagline || "一份独特的分析报告。";
       reportContent.style.display = "block";
       errorMessage.style.display = "none";
-      mbtiReportEl.innerHTML = "";
+      mbtiReportEl.textContent = ""; // 清空，确保XSS安全
       if (result.analysis_report && Array.isArray(result.analysis_report)) {
         for (const paragraphText of result.analysis_report) {
           const p = document.createElement("p");
@@ -92,47 +90,30 @@ document.addEventListener("DOMContentLoaded", () => {
     return { setLoading, displayReport, displayError, typeText };
   })();
 
-  // =======================================================
-  // 模块 2: 文件处理与答案提取 (全新重构 & 修正版)
-  // =======================================================
   const fileProcessor = (() => {
-    /**
-     * 解析 TXT 文件。
-     * 识别问题行，并寻找紧随其后的以 "->" 开头的答案行。
-     * @param {string} text - TXT文件内容。
-     * @param {object} questionMap - {q_id: "question_text"} 的映射。
-     * @returns {object} - {q_id: "answer"} 格式的答案对象。
-     */
     const parseTxt = (text, questionMap) => {
       const lines = text.split("\n");
       const parsedAnswers = {};
       let currentQuestionId = null;
-
-      // 创建一个从问题文本前缀到ID的快速查找映射
       const prefixToIdMap = new Map();
       for (const id in questionMap) {
-        // 使用问题文本的前20个字符作为键，足够区分
         const prefix = questionMap[id].substring(0, 20);
         prefixToIdMap.set(prefix, id);
       }
 
       for (let i = 0; i < lines.length; i++) {
         const trimmedLine = lines[i].trim();
-
-        // 尝试匹配是否为问题行
         const linePrefix = trimmedLine.substring(0, 20);
         if (prefixToIdMap.has(linePrefix)) {
           currentQuestionId = prefixToIdMap.get(linePrefix);
-          // 查看下一行是否为答案行
           if (i + 1 < lines.length) {
             const nextLine = lines[i + 1].trim();
             if (nextLine.startsWith("->")) {
-              // 找到了答案行，提取内容
-              const answer = nextLine.substring(2).trim(); // 移除 '-> '
+              const answer = nextLine.substring(2).trim();
               if (currentQuestionId) {
                 parsedAnswers[currentQuestionId] = answer;
               }
-              currentQuestionId = null; // 重置
+              currentQuestionId = null;
             }
           }
         }
@@ -140,16 +121,9 @@ document.addEventListener("DOMContentLoaded", () => {
       return parsedAnswers;
     };
 
-    /**
-     * 解析 JSON 文件。
-     * 遍历包含问题和答案的数组结构，提取答案。
-     * @param {string} text - JSON文件内容。
-     * @returns {object} - {q_id: "answer"} 格式的答案对象。
-     */
     const parseJson = (text) => {
       const data = JSON.parse(text);
       const answers = {};
-      // 假设数据结构是 [{ legend, questions: [{ id, text, ..., answer }] }]
       if (Array.isArray(data)) {
         data.forEach((section) => {
           if (section.questions && Array.isArray(section.questions)) {
@@ -164,19 +138,12 @@ document.addEventListener("DOMContentLoaded", () => {
       return answers;
     };
 
-    /**
-     * 解析 Excel/CSV 文件。
-     * 直接使用 'ID' 列和 'Answer' 列进行匹配。
-     * @param {ArrayBuffer} data - 文件内容的ArrayBuffer。
-     * @returns {object} - {q_id: "answer"} 格式的答案对象。
-     */
     const parseSheet = (data) => {
       const workbook = XLSX.read(data, { type: "array" });
       const sheetName = workbook.SheetNames[0];
       const worksheet = workbook.Sheets[sheetName];
-      // 将工作表转换为JSON对象数组，第一行作为键
       const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-      const headers = jsonData[0].map((h) => h.trim()); // 获取并清理表头
+      const headers = jsonData[0].map((h) => h.trim());
       const idIndex = headers.indexOf("ID");
       const answerIndex = headers.indexOf("Answer");
 
@@ -185,7 +152,6 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       const answers = {};
-      // 从第二行开始遍历数据
       for (let i = 1; i < jsonData.length; i++) {
         const row = jsonData[i];
         const id = row[idIndex];
@@ -197,9 +163,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return answers;
     };
 
-    // 将解析出的答案对象格式化为文本
     const formatAnswers = (answers, questionMap) => {
-      // 确保 questionMap 中的所有问题都有一个值，即使是“未回答”
       const allAnswers = { ...questionMap };
       for (const qId in allAnswers) {
         allAnswers[qId] = answers[qId] || "未回答";
@@ -210,7 +174,6 @@ document.addEventListener("DOMContentLoaded", () => {
         .join("\n");
     };
 
-    // 主处理函数
     const processFile = async (file, questionMap) => {
       const extension = file.name.split(".").pop().toLowerCase();
       let answers;
@@ -227,16 +190,12 @@ document.addEventListener("DOMContentLoaded", () => {
       } else {
         throw new Error(`不支持的文件类型: .${extension}`);
       }
-
       return formatAnswers(answers, questionMap);
     };
 
     return { processFile };
   })();
 
-  // =======================================================
-  // 模块 3: 主应用逻辑 (适配新的文件处理器)
-  // =======================================================
   const app = (() => {
     let currentLoadingInterval = null;
 
@@ -310,7 +269,8 @@ document.addEventListener("DOMContentLoaded", () => {
         uiManager.displayError("请输入你的问卷ID。");
         return;
       }
-      analyze({ surveyId });
+      // 将从 URL 获取的 token 传递给 analyze 函数
+      analyze({ surveyId, token: initialSurveyToken }); 
     };
 
     const setupEventListeners = () => {
@@ -340,18 +300,16 @@ document.addEventListener("DOMContentLoaded", () => {
       try {
         const res = await fetch("/questions.json");
         const sections = await res.json();
-        window.questionMap = {}; // 将 questionMap 挂载到 window，方便 fileProcessor 访问
+        window.questionMap = {};
         sections
           .flatMap((s) => s.questions)
           .forEach((q) => (window.questionMap[q.id] = q.text));
 
         setupEventListeners();
-        const params = new URLSearchParams(window.location.search);
-        const autoFillId = params.get("id");
-        if (autoFillId) {
-          surveyIdInput.value = autoFillId;
+        if (initialSurveyId) {
+          surveyIdInput.value = initialSurveyId;
           uiManager.displayError(
-            `问卷ID "${autoFillId}" 已自动填充，请点击按钮开始分析。`
+            `问卷ID "${initialSurveyId}" 已自动填充，请点击按钮开始分析。`
           );
         }
       } catch (e) {

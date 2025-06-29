@@ -1,5 +1,3 @@
-// public/survey.js - Secure Version
-
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("surveyForm");
   const progressBarElement = document.getElementById("scrollProgress");
@@ -11,7 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const historyIdInput = document.getElementById("historyIdInput");
   const lookupBtn = document.getElementById("lookupBtn");
   const loadingMessage = form.querySelector(".loading-message");
-  const modalMessage = document.getElementById("modalMessage"); // 确保获取这个元素
+  const modalMessage = document.getElementById("modalMessage");
 
   const jumpGridContainer = document.querySelector(".jump-grid-container");
   const jumpGridElement = document.getElementById("jumpGrid");
@@ -69,25 +67,14 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   };
 
-  // ========================================================================
-  // =======================  XSS 漏洞修复核心区域  =========================
-  // ========================================================================
-  /**
-   * (安全重构版) 渲染问卷结构到页面
-   * @param {Array} sections - 问卷的分区数据
-   */
   const renderSurvey = (sections) => {
-    // 先清空表单内容
     form.textContent = "";
     let questionCount = 0;
 
     sections.forEach((section) => {
-      // 1. 创建 <fieldset>
       const fieldset = document.createElement("fieldset");
-
-      // 2. 创建并安全地设置 <legend>
       const legend = document.createElement("legend");
-      legend.textContent = section.legend || ""; // 使用 textContent
+      legend.textContent = section.legend || "";
       fieldset.appendChild(legend);
 
       section.questions.forEach((q) => {
@@ -95,15 +82,12 @@ document.addEventListener("DOMContentLoaded", () => {
         const cleanText = q.text
           ? q.text.replace(/^\s*\d+\.\s*/, "").trim()
           : "";
-
-        // 3. 创建问题容器 <div>
         const questionBlock = document.createElement("div");
         questionBlock.className = "question-block";
         questionBlock.dataset.questionNumber = questionCount;
 
-        // 4. 创建 <label> 和题号
         const label = document.createElement("label");
-        label.htmlFor = q.id; // .htmlFor 等同于 setAttribute('for', ...)，是安全的
+        label.htmlFor = q.id;
 
         const questionNumberSpan = document.createElement("span");
         questionNumberSpan.className = "question-number";
@@ -112,78 +96,66 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const questionTextSpan = document.createElement("span");
         questionTextSpan.className = "question-text";
-        questionTextSpan.dataset.originalText = cleanText; // 存储原始文本用于动画
+        questionTextSpan.dataset.originalText = cleanText;
         label.appendChild(questionTextSpan);
-
         questionBlock.appendChild(label);
 
-        // 5. 根据问题类型创建输入控件 (Switch 语句)
         let inputContainer;
         switch (q.type) {
           case "radio":
             inputContainer = document.createElement("div");
-            inputContainer.className = `radio-group ${
-              q.className || ""
-            }`.trim();
+            inputContainer.className = `radio-group ${q.className || ""}`.trim();
             q.options.forEach((opt) => {
               const value = typeof opt === "object" ? opt.value : opt;
               const labelText = typeof opt === "object" ? opt.label : opt;
               const id = `${q.id}_${String(value).replace(/\s+/g, "-")}`;
-
               const radioInput = document.createElement("input");
               radioInput.type = "radio";
               radioInput.id = id;
               radioInput.name = q.id;
               radioInput.value = value;
               inputContainer.appendChild(radioInput);
-
               const radioLabel = document.createElement("label");
               radioLabel.className = "radio-label";
               radioLabel.htmlFor = id;
-              radioLabel.textContent = labelText; // 安全设置
+              radioLabel.textContent = labelText;
               inputContainer.appendChild(radioLabel);
             });
             if (q.hasOther) {
               const otherDiv = document.createElement("div");
               otherDiv.className = "other-option";
               const otherId = `${q.id}_other`;
-
               const otherRadio = document.createElement("input");
               otherRadio.type = "radio";
               otherRadio.id = otherId;
               otherRadio.name = q.id;
               otherRadio.value = "other";
               otherDiv.appendChild(otherRadio);
-
               const otherLabel = document.createElement("label");
               otherLabel.className = "radio-label";
               otherLabel.htmlFor = otherId;
               otherLabel.textContent = "其他...";
               otherDiv.appendChild(otherLabel);
-
               const otherTextInput = document.createElement("input");
               otherTextInput.type = "text";
               otherTextInput.name = `${q.id}_other`;
               otherTextInput.className = "other-text-input";
               otherTextInput.placeholder = "请填写你的答案";
               otherDiv.appendChild(otherTextInput);
-
               inputContainer.appendChild(otherDiv);
             }
             break;
           case "select":
-            inputContainer = document.createElement("div"); // 用于包裹 select 和 other input
+            inputContainer = document.createElement("div");
             const select = document.createElement("select");
             select.id = q.id;
             select.name = q.id;
-
             const placeholderOption = document.createElement("option");
             placeholderOption.value = "";
             placeholderOption.disabled = true;
             placeholderOption.selected = true;
             placeholderOption.textContent = q.placeholder || "请选择";
             select.appendChild(placeholderOption);
-
             q.options.forEach((opt) => {
               const option = document.createElement("option");
               option.value = typeof opt === "object" ? opt.value : opt;
@@ -197,7 +169,6 @@ document.addEventListener("DOMContentLoaded", () => {
               select.appendChild(otherOption);
             }
             inputContainer.appendChild(select);
-
             if (q.hasOther) {
               const otherTextInput = document.createElement("input");
               otherTextInput.type = "text";
@@ -224,11 +195,9 @@ document.addEventListener("DOMContentLoaded", () => {
             inputContainer = document.createElement("div");
             const rangeGroup = document.createElement("div");
             rangeGroup.className = "range-group";
-
             const leftSpan = document.createElement("span");
             leftSpan.textContent = q.rangeLeft || "安静独处";
             rangeGroup.appendChild(leftSpan);
-
             const rangeInput = document.createElement("input");
             rangeInput.type = "range";
             rangeInput.id = q.id;
@@ -237,18 +206,14 @@ document.addEventListener("DOMContentLoaded", () => {
             rangeInput.max = q.max || 100;
             rangeInput.value = q.defaultValue || 50;
             rangeGroup.appendChild(rangeInput);
-
             const rightSpan = document.createElement("span");
             rightSpan.textContent = q.rangeRight || "随时派对";
             rangeGroup.appendChild(rightSpan);
             inputContainer.appendChild(rangeGroup);
-
             const rangeValueDisplay = document.createElement("div");
             rangeValueDisplay.id = `rangeValue_${q.id}`;
             rangeValueDisplay.className = "range-value-display";
-            rangeValueDisplay.textContent = `当前状态: ${
-              q.defaultValue || 50
-            }%`;
+            rangeValueDisplay.textContent = `当前状态: ${q.defaultValue || 50}%`;
             inputContainer.appendChild(rangeValueDisplay);
             break;
           case "textarea":
@@ -257,7 +222,7 @@ document.addEventListener("DOMContentLoaded", () => {
             inputContainer.name = q.id;
             inputContainer.rows = q.rows || 2;
             break;
-          default: // text
+          default:
             inputContainer = document.createElement("input");
             inputContainer.type = "text";
             inputContainer.id = q.id;
@@ -479,9 +444,10 @@ document.addEventListener("DOMContentLoaded", () => {
         body: JSON.stringify(cleanedData),
       });
       const result = await response.json();
-      if (response.ok && result.id) {
+      if (response.ok && result.id && result.token) { // 检查是否包含 token
         localStorage.removeItem(formId);
-        window.location.href = `/result.html?status=success&id=${result.id}`;
+        // 跳转到包含 id 和 token 的新 URL
+        window.location.href = `/result.html?status=success&id=${result.id}&token=${result.token}`;
       } else {
         throw new Error(result.message || "提交失败，服务器返回错误。");
       }
@@ -703,7 +669,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const response = await fetch("/questions.json");
       if (!response.ok) throw new Error("问卷配置文件(questions.json)加载失败");
       const sections = await response.json();
-      renderSurvey(sections); // 使用安全的新版渲染函数
+      renderSurvey(sections);
       initJumpGrid();
       form.addEventListener("input", (event) => {
         saveProgress();

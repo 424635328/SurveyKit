@@ -1,18 +1,15 @@
-// compare.js - 支持0个、1个、2个SurveyID场景
-
 document.addEventListener('DOMContentLoaded', () => {
 
     const compareModule = (() => {
-        // --- 元素获取 ---
         const resultsContainer = document.getElementById('compare-results-container');
         const scoreContainer = document.getElementById('match-score-container');
-        const singleIdPrompt = document.getElementById('single-id-prompt'); // 单ID输入界面
-        const doubleIdPrompt = document.getElementById('double-id-prompt'); // 双ID输入界面 (新增)
+        const singleIdPrompt = document.getElementById('single-id-prompt');
+        const doubleIdPrompt = document.getElementById('double-id-prompt');
         const finalizeCompareBtn = document.getElementById('finalizeCompareBtn');
-        const compareTwoIdsBtn = document.getElementById('compareTwoIdsBtn'); // 双ID对比按钮 (新增)
+        const compareTwoIdsBtn = document.getElementById('compareTwoIdsBtn');
         const receiverIdInput = document.getElementById('receiverIdInput');
-        const firstIdInput = document.getElementById('firstIdInput'); // 第一个ID输入框 (新增)
-        const secondIdInput = document.getElementById('secondIdInput'); // 第二个ID输入框 (新增)
+        const firstIdInput = document.getElementById('firstIdInput');
+        const secondIdInput = document.getElementById('secondIdInput');
         const scoreEl = document.getElementById('match-score');
         const summaryEl = document.getElementById('match-summary');
         const loadingSpinner = document.getElementById('loading-compare-spinner');
@@ -20,15 +17,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const errorMessageEl = document.getElementById('error-message');
         const resultsList = document.getElementById('results-list');
 
-        // --- 动态加载 questionMap ---
         let questionMap = {};
         let currentLoadingInterval = null;
 
-
-        /**
-         * 显示加载动画和文本。
-         * @param {string} message - 加载文本。
-         */
         const showLoading = (message = "正在加载，请稍候...") => {
             if (loadingSpinner && loadingTextEl) {
                 loadingSpinner.style.display = 'flex';
@@ -47,9 +38,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         };
 
-        /**
-         * 隐藏加载动画。
-         */
         const hideLoading = () => {
             if (currentLoadingInterval) {
                 clearInterval(currentLoadingInterval);
@@ -60,10 +48,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         };
 
-        /**
-         * 显示错误信息。
-         * @param {string} message - 错误信息文本。
-         */
         const displayError = (message) => {
             hideLoading();
             if (errorMessageEl) {
@@ -76,14 +60,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (doubleIdPrompt) doubleIdPrompt.style.display = 'none';
         };
 
-
-        /**
-         * 动画计数器效果。
-         * @param {HTMLElement} element - 显示数字的元素。
-         * @param {number} start - 起始数字。
-         * @param {number} end - 结束数字。
-         * @param {number} duration - 动画持续时间（毫秒）。
-         */
         const countUp = (element, start, end, duration) => {
             let startTime = null;
             const animate = (currentTime) => {
@@ -97,9 +73,6 @@ document.addEventListener('DOMContentLoaded', () => {
             requestAnimationFrame(animate);
         };
 
-        // ========================================================================
-        // =======================  XSS 漏洞修复区域  ===========================
-        // ========================================================================
         const renderResults = (data1, data2, finalScore) => {
             hideLoading();
 
@@ -108,7 +81,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 displayError("页面元素缺失，无法显示对比结果。");
                 return;
             }
-            // 使用 textContent 清空，更安全且高效
             resultsList.textContent = '';
 
             let matchCount = 0;
@@ -132,58 +104,46 @@ document.addEventListener('DOMContentLoaded', () => {
                                  
                 if (isMatch) matchCount++;
 
-                // --- 开始安全地创建 DOM 元素 ---
-                
-                // 1. 创建主容器 div.result-item
                 const item = document.createElement('div');
                 item.className = 'result-item';
                 if (isMatch) {
                     item.classList.add('is-match');
                 }
                 
-                // 2. 创建问题列
                 const questionCol = document.createElement('div');
                 questionCol.className = 'question-column';
                 const questionP = document.createElement('p');
                 questionP.className = 'question';
-                // 使用 textContent 安全地设置问题文本
                 questionP.textContent = questionText;
                 questionCol.appendChild(questionP);
 
-                // 3. 创建第一个答案列
                 const answerCol1 = document.createElement('div');
                 answerCol1.className = 'answer-column';
                 const answerP1 = document.createElement('p');
                 answerP1.className = 'answer';
-                // 使用 textContent 安全地设置答案1
                 answerP1.textContent = answer1;
                 if (answer1 === '未回答') {
                     answerP1.classList.add('no-answer');
                 }
                 answerCol1.appendChild(answerP1);
 
-                // 4. 创建第二个答案列
                 const answerCol2 = document.createElement('div');
                 answerCol2.className = 'answer-column';
                 const answerP2 = document.createElement('p');
                 answerP2.className = 'answer';
-                // 使用 textContent 安全地设置答案2
                 answerP2.textContent = answer2;
                 if (answer2 === '未回答') {
                     answerP2.classList.add('no-answer');
                 }
                 answerCol2.appendChild(answerP2);
 
-                // 5. 将所有创建的列组装到主容器中
                 item.appendChild(questionCol);
                 item.appendChild(answerCol1);
                 item.appendChild(answerCol2);
                 
-                // 6. 将完全构建好的、安全的 item 添加到列表中
                 resultsList.appendChild(item);
             }
             
-            // 显示得分仪表盘和总结
             if(scoreContainer) scoreContainer.style.display = 'block';
             if(resultsContainer) resultsContainer.style.display = 'block';
 
@@ -192,50 +152,45 @@ document.addEventListener('DOMContentLoaded', () => {
                 countUp(scoreEl, 0, finalScore, 1500);
             }
             if(summaryEl) {
-                // 这里的 summaryEl 也使用了 textContent，是安全的
                 summaryEl.textContent = `在你们共同回答的 ${totalQuestions} 个问题中，有 ${matchCount} 个答案完全一致！`;
             }
         };
-        // ========================================================================
-        // =========================  修复区域结束  =============================
-        // ========================================================================
 
-
-        // --- 核心执行函数 ---
-        const performComparison = async (id1, id2) => {
+        const performComparison = async (id1, token1, id2, token2) => { // 接收两个 ID 和对应的 Token
             showLoading("正在获取问卷数据...");
 
             try {
-                // 并行获取三份数据：问卷结构、答案1、答案2
                 const [questionsRes, survey1Res, survey2Res] = await Promise.all([
                     fetch('/questions.json'),
-                    fetch(`/api/get-survey?id=${id1}`),
-                    fetch(`/api/get-survey?id=${id2}`)
+                    fetch(`/api/get-survey?id=${id1}${token1 ? `&token=${token1}` : ''}`), // 拼接 token1
+                    fetch(`/api/get-survey?id=${id2}${token2 ? `&token=${token2}` : ''}`)  // 拼接 token2
                 ]);
 
                 if (!questionsRes.ok) throw new Error('无法加载问卷结构文件 (questions.json)。');
                 
-                // 检查问卷数据响应状态
                 let errorMessages = [];
-                if (!survey1Res.ok) errorMessages.push(`无法获取ID为 ${id1} 的问卷数据 (${survey1Res.status})。`);
-                if (!survey2Res.ok) errorMessages.push(`无法获取ID为 ${id2} 的问卷数据 (${survey2Res.status})。`);
+                if (!survey1Res.ok) {
+                    const errorData = await survey1Res.json();
+                    errorMessages.push(`无法获取ID为 ${id1} 的问卷数据: ${errorData.message || survey1Res.statusText} (${survey1Res.status})。`);
+                }
+                if (!survey2Res.ok) {
+                    const errorData = await survey2Res.json();
+                    errorMessages.push(`无法获取ID为 ${id2} 的问卷数据: ${errorData.message || survey2Res.statusText} (${survey2Res.status})。`);
+                }
                 
                 if (errorMessages.length > 0) {
-                    displayError(errorMessages.join('\n') + '\n请检查ID是否正确或问卷是否存在。');
+                    displayError(errorMessages.join('\n') + '\n请检查ID或令牌是否正确，或问卷是否存在。');
                     return;
                 }
                 
-                // 1. 生成 questionMap
                 const sections = await questionsRes.json();
                 sections.flatMap(s => s.questions).forEach(q => {
                     questionMap[q.id] = q.text;
                 });
                 
-                // 2. 获取答案
                 const data1 = await survey1Res.json();
                 const data2 = await survey2Res.json();
 
-                // 3. 计算得分
                 let comparableAnswersCount = 0;
                 let actualMatches = 0;
 
@@ -260,7 +215,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 const finalScore = comparableAnswersCount > 0 ? Math.round((actualMatches / comparableAnswersCount) * 100) : 0;
 
-                // 4. 渲染结果
                 renderResults(data1, data2, finalScore);
 
             } catch (error) {
@@ -280,7 +234,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const params = new URLSearchParams(window.location.search);
             const id1 = params.get('id1');
+            const token1 = params.get('token1'); // 获取 token1
             const id2 = params.get('id2');
+            const token2 = params.get('token2'); // 获取 token2
 
             if (id1 && id2) {
                 scoreContainer.style.display = 'none';
@@ -289,7 +245,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 doubleIdPrompt.style.display = 'none';
                 errorMessageEl.style.display = 'none';
 
-                await performComparison(id1, id2);
+                await performComparison(id1, token1, id2, token2); // 传递两个 ID 和对应的 Token
 
             } else if (id1 && !id2) {
                 scoreContainer.style.display = 'none';
@@ -307,7 +263,8 @@ document.addEventListener('DOMContentLoaded', () => {
                             receiverIdInput.focus();
                             return;
                         }
-                        window.location.href = `/compare.html?id1=${id1}&id2=${id2_receiver}`;
+                        // 如果存在 token1，则在跳转时也带上
+                        window.location.href = `/compare.html?id1=${id1}${token1 ? `&token1=${token1}` : ''}&id2=${id2_receiver}`;
                     });
                 }
                 
@@ -328,7 +285,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 if(compareTwoIdsBtn) {
                     compareTwoIdsBtn.addEventListener('click', () => {
                         const firstId = firstIdInput.value.trim();
+                        const firstToken = params.get('token1') || null; // 确保获取或为null
                         const secondId = secondIdInput.value.trim();
+                        const secondToken = params.get('token2') || null; // 确保获取或为null
                         
                         if (!firstId || !secondId) {
                             alert('请输入两个问卷ID！');
@@ -337,7 +296,8 @@ document.addEventListener('DOMContentLoaded', () => {
                             return;
                         }
                         
-                        window.location.href = `/compare.html?id1=${firstId}&id2=${secondId}`;
+                        // 跳转时带上两个 ID 和对应的 Token
+                        window.location.href = `/compare.html?id1=${firstId}${firstToken ? `&token1=${firstToken}` : ''}&id2=${secondId}${secondToken ? `&token2=${secondToken}` : ''}`;
                     });
                 }
                 
