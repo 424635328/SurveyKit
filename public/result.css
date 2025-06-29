@@ -1,226 +1,252 @@
-/* result.css - 最终优化版 */
+/* result.css - 优化版 (包含渐变悬浮、光标隐藏及动画修正) */
 
-/* --- 全局样式和基础布局 --- */
+/* 全局重置与基础设置 */
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 body {
     font-family: 'Noto Sans SC', sans-serif;
-    margin: 0;
-    /* 更柔和的背景色 */
-    background-color: #f5f7fa; 
-    color: #343a40; /* 主要文本颜色 */
-    padding: 30px 15px; /* 页面内边距 */
+    background-color: #f8fafc; /* 统一浅色背景 */
+    color: #333;
     line-height: 1.6;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start; /* 从顶部开始排列内容 */
-    min-height: 100vh; /* 确保页面至少占满视口高度 */
-    box-sizing: border-box; /* 边框和内边距包含在元素的总宽度和高度内 */
+    min-height: 100vh;
+    display: flex; /* 让 body 成为 flex 容器，方便主内容区域居中 */
+    flex-direction: column;
+    overflow-x: hidden; /* 防止水平滚动条 */
 }
 
-/* 容器居中与最大宽度 */
-.result-container {
-    max-width: 800px; /* 优化后的最大宽度 */
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* ==========================================================================
+   导航栏 (Navbar)
+   ========================================================================== */
+.navbar {
+    position: sticky; /* 粘性定位，或 fixed 也可以 */
+    top: 0;
+    left: 0;
     width: 100%;
-    margin: 0 auto; /* 左右居中 */
-    box-sizing: border-box;
-    text-align: center; /* 默认文本居中，卡片内部再调整 */
+    background-color: #ffffff;
+    padding: 1rem 2rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    z-index: 1000; /* 确保在其他内容之上 */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #e2e8f0;
 }
 
-/* --- 通用卡片样式 --- */
+.navbar-brand {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #4f46e5; /* 品牌色 */
+}
+
+.navbar-brand a {
+    color: #4f46e5;
+    text-decoration: none;
+}
+
+/* 提交状态显示 */
+.status-display {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #64748b;
+}
+
+.status-display .loading i {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.status-display .icon {
+    font-size: 1.2rem;
+    line-height: 1; /* 确保图标垂直居中 */
+}
+
+.status-display .success {
+    color: #10b981; /* 绿色 */
+}
+
+.status-display .error {
+    color: #ef4444; /* 红色 */
+}
+
+/* ==========================================================================
+   主内容区域 (Main Content)
+   ========================================================================== */
+.main-content {
+    flex-grow: 1; /* 占据剩余垂直空间 */
+    display: flex;
+    justify-content: center; /* 水平居中内容 */
+    padding: 2rem 1rem; /* 顶部和左右边距 */
+    padding-top: calc(2rem + 60px); /* 额外的顶部填充，以避开固定导航栏的高度 */
+}
+
+.result-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem; /* 卡片之间的间距 */
+    max-width: 900px; /* 限制内容最大宽度 */
+    width: 100%; /* 允许宽度自适应 */
+    align-items: center; /* 确保内部卡片居中 */
+}
+
+/* ==========================================================================
+   卡片样式 (Section Cards) - 融合 home.css 的 feature-card 风格
+   ========================================================================== */
 .section-card {
     background-color: #fff;
-    border-radius: 16px; /* 更大的圆角 */
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08); /* 更明显的阴影 */
-    padding: 30px; /* 统一内边距 */
-    margin-bottom: 25px; /* 卡片之间的间距 */
-    text-align: left; /* 内部文本左对齐 */
-    position: relative; /* 用于卡片头部的图标定位 */
-    overflow: hidden; /* 防止内容溢出圆角 */
+    padding: 2rem;
+    border-radius: 1rem;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    width: 100%; /* 默认占满父容器宽度 */
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* 悬浮动画 */
+    position: relative; /* 为内部元素提供定位上下文 */
 }
 
-/* 卡片头部通用样式 */
-.section-card .card-header {
+.section-card:hover {
+    transform: translateY(-5px); /* 稍微上浮 */
+    /* 模拟渐变发光效果的 box-shadow */
+    box-shadow: 
+        0 8px 20px rgba(0, 0, 0, 0.08), /* 基础阴影 */
+        0 0 0 3px rgba(99, 102, 241, 0.5), /* 蓝色内发光 (主品牌色) */
+        0 0 0 6px rgba(139, 92, 246, 0.25), /* 紫色外发光 (次品牌色，透明度高一点) */
+        0 0 30px 0 rgba(99, 102, 241, 0.15); /* 更宽更柔和的蓝色光晕，增加渐变感 */
+}
+
+.card-header {
     display: flex;
     align-items: center;
-    margin-bottom: 15px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid #e0e0e0; /* 更细的分隔线 */
-}
-.section-card .card-header h3 {
-    margin: 0;
-    font-size: 1.5em; /* 标题稍大 */
-    color: #343a40;
-    flex-grow: 1; /* 标题占据剩余空间 */
-    font-weight: 600; /* 标题加粗 */
-}
-.section-card .card-icon {
-    font-size: 2em; /* 图标更大 */
-    margin-right: 12px;
-    color: #e57373; /* 主题色 */
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
 }
 
-/* --- 1. 结果状态 (顶部状态显示) --- */
-.status-container {
-    text-align: center;
-    padding: 40px 20px;
-    box-shadow: none; /* 状态容器通常不需要阴影 */
-    background-color: transparent; /* 透明背景 */
-}
-.status-container .icon {
-    width: 90px; /* 图标更大 */
-    height: 90px;
-    border-radius: 50%;
-    margin: 0 auto 25px; /* 调整间距 */
-    display: flex;
+.card-icon {
+    display: inline-flex;
+    width: 2.5rem; /* 略小一点的图标 */
+    height: 2.5rem;
+    border-radius: 0.5rem;
+    align-items: center;
     justify-content: center;
-    align-items: center;
-    font-size: 4em;
-    color: #fff;
-    animation: pop-in 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards; /* pop-in 动画 */
+    background-color: #eef2ff; /* 浅蓝色背景 */
+    color: #6366f1; /* 蓝色图标色 */
+    font-size: 1.25rem;
 }
-.status-container .success {
-    background-color: #28a745; /* 绿色 */
-    box-shadow: 0 8px 25px rgba(40, 167, 69, 0.4); /* 更深的阴影 */
-}
-.status-container .error {
-    background-color: #dc3545; /* 红色 */
-    box-shadow: 0 8px 25px rgba(220, 53, 69, 0.4);
-}
-.status-container h2 {
-    font-size: 2.2em; /* 标题更大 */
-    color: #343a40;
-    margin-bottom: 12px;
+
+.section-card h3 {
+    font-size: 1.5rem;
     font-weight: 700;
-}
-.status-container p {
-    color: #6c757d;
-    font-size: 1.15em; /* 文本更大 */
-    line-height: 1.6;
+    color: #1e293b;
 }
 
-/* --- 2. 人格画像卡片 --- */
-.personality-card {
-    background: linear-gradient(135deg, #667eea, #764ba2); /* 示例中的渐变色 */
-    color: #fff;
-    padding: 35px 40px; /* 调整内边距 */
-    box-shadow: 0 12px 35px rgba(102, 126, 234, 0.5); /* 更深的阴影 */
-    text-align: center; /* 文本居中 */
-    animation: slide-in-bottom 0.7s ease-out forwards; /* slide-in 动画 */
-}
-.personality-card .card-header {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2); /* 浅色分隔线 */
-    margin-bottom: 20px;
-    padding-bottom: 15px;
-}
-.personality-card .card-header h3 {
-    color: rgba(255, 255, 255, 0.9);
-}
-.personality-card .card-icon {
-    color: rgba(255, 255, 255, 0.9);
-}
+/* 人格画像卡片特有样式 */
 .personality-tag {
-    font-size: 2.8em; /* 强调人格标签，更大 */
-    font-weight: 800; /* 更粗 */
-    color: #fff; /* 白色 */
-    margin-bottom: 15px;
-    line-height: 1.2;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #4f46e5; /* 强调色 */
+    margin-bottom: 0.5rem;
+    cursor: default; /* 隐藏光标 */
 }
+
 .personality-desc {
-    font-size: 1.1em;
-    line-height: 1.8; /* 增加行高，提升可读性 */
-    color: rgba(255, 255, 255, 0.9);
-    margin-bottom: 20px;
+    font-size: 1rem;
+    color: #475569;
+    margin-bottom: 1rem;
+    cursor: default; /* 隐藏光标 */
 }
+
 .secondary-personality {
-    margin-top: 20px;
-    padding-top: 20px;
-    border-top: 1px dashed rgba(255, 255, 255, 0.3);
-    font-size: 0.9em;
-    color: rgba(255, 255, 255, 0.7);
-    font-style: italic;
+    font-size: 0.9rem;
+    color: #64748b;
+    margin-top: 0.5rem;
+    cursor: default; /* 隐藏光标 */
 }
 
-/* --- 3. 答案彩蛋 --- */
-.egg-container {
-    background-color: #fff8e1; /* 柔和的黄色背景 */
-    border: 1px solid #ffe082; /* 搭配边框 */
-    padding: 25px 35px; /* 调整内边距 */
-    padding-right: 60px; /* 为按钮留出更多空间 */
-    text-align: center;
-    animation: slide-in-bottom 0.7s 0.1s ease-out forwards; /* 动画延迟 */
-}
-.egg-container .card-header {
-    justify-content: center; /* 头部居中 */
-    border-bottom: none; /* 移除分隔线 */
-    margin-bottom: 10px;
-}
-.egg-container .card-icon {
-    color: #fbc02d; /* 黄色图标 */
-}
+/* 彩蛋卡片特有样式 */
 .egg-text {
-    color: #795548; /* 深棕色文本 */
-    font-size: 1.1em;
-    line-height: 1.7;
-    margin: 15px 0 20px 0;
-    font-style: italic;
-}
-.reroll-btn {
-    position: absolute;
-    top: 50%;
-    right: 20px; /* 右侧间距 */
-    transform: translateY(-50%);
-    background: none;
-    border: none;
-    font-size: 1.6em; /* 按钮图标更大 */
-    cursor: pointer;
-    color: #9e9e9e; /* 柔和的灰色 */
-    opacity: 0.7;
-    transition: opacity 0.2s, transform 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55); /* 更复杂的动画 */
-}
-.reroll-btn:hover {
-    opacity: 1;
-    color: #616161; /* 悬停颜色 */
-    transform: translateY(-50%) rotate(360deg) scale(1.1); /* 旋转并放大 */
+    font-size: 1.1rem;
+    color: #475569;
+    margin-bottom: 1rem;
+    min-height: 2rem; /* 保持高度一致，防止重排 */
+    cursor: default; /* 隐藏光标 */
 }
 
-/* --- 4. 功能操作区 --- */
+.reroll-btn {
+    background-color: #6c757d; /* 灰色 */
+    color: #fff;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.reroll-btn:hover {
+    background-color: #5a6268;
+    transform: translateY(-2px);
+}
+
+/* 操作卡片组 */
 .actions-container {
-    display: flex;
-    flex-direction: column; /* 默认垂直堆叠 */
-    gap: 25px; /* 卡片之间的间距 */
-    margin-bottom: 25px;
-    animation: slide-in-bottom 0.7s 0.2s ease-out forwards; /* 动画延迟 */
+    display: grid; /* 使用 Grid 布局 */
+    grid-template-columns: 1fr; /* 默认单列 */
+    gap: 1.5rem; /* 卡片间距 */
+    width: 100%;
+}
+
+@media (min-width: 768px) {
+    .actions-container {
+        grid-template-columns: repeat(2, 1fr); /* 大屏幕双列 */
+    }
 }
 
 .action-card {
-    padding: 30px; /* 统一内边距 */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* 内容左对齐 */
+    text-align: left;
+    height: 100%; /* 确保卡片等高 */
 }
+
 .action-card h3 {
-    margin-top: 0;
-    font-size: 1.4em;
-    color: #343a40;
-    margin-bottom: 15px;
-    text-align: center;
-    font-weight: 600;
+    margin-bottom: 0.5rem;
 }
+
 .action-card p {
-    color: #6c757d;
-    font-size: 1em;
-    line-height: 1.6;
-    margin-bottom: 25px; /* 增加与按钮的间距 */
-    text-align: center;
+    font-size: 0.95rem;
+    color: #64748b;
+    margin-bottom: 1rem;
 }
 
 /* 专属问卷链接区域 */
 .my-link-section {
-    margin-top: 1rem; /* 对应HTML中的mt-4 (1rem = 16px) */
-    padding: 1rem; /* p-4 */
-    background-color: #e0f2f7; /* bg-blue-50 类似色 */
-    border: 1px solid #b3e5fc; /* border-blue-200 类似色 */
-    border-radius: 0.75rem; /* rounded-lg */
-    color: #0d47a1; /* text-blue-800 类似色 */
-    font-size: 0.9em; /* text-sm 类似大小 */
-    text-align: left; /* 覆盖父级居中 */
-    margin-bottom: 25px; /* 添加底部间距，与按钮上方p标签的mb-25px一致 */
+    margin-top: 1rem;
+    padding: 1rem;
+    background-color: #eef2ff; /* 浅蓝色背景 */
+    border: 1px solid #c7d2fe; /* 蓝色边框 */
+    border-radius: 0.5rem;
+    color: #3b82f6; /* 蓝色文本 */
+    font-size: 0.9rem;
+    text-align: left;
+    width: 100%;
 }
 
 .my-link-section .font-bold {
@@ -238,32 +264,35 @@ body {
 .my-link-section .flex {
     display: flex;
     align-items: center;
-    gap: 0.5rem; /* space-x-2 */
 }
 
-#exclusive-survey-link {
-    background-color: #e3f2fd; /* bg-blue-100 类似色 */
-    color: #1565c0; /* text-blue-900 类似色 */
-    padding: 0.5rem; /* p-2 */
-    border-radius: 0.375rem; /* rounded-md */
-    word-break: break-all; /* break-all */
-    flex-grow: 1; /* flex-grow */
-    font-size: 0.8em; /* text-xs */
+.my-link-section .space-x-2 > *:not(:first-child) {
+    margin-left: 0.5rem;
 }
 
-#copy-exclusive-link-btn {
-    background-color: #2196f3; /* bg-blue-600 类似色 */
-    color: white; /* text-white */
-    padding: 0.6rem 0.8rem; /* 调整内边距以适应图标 */
-    border-radius: 0.5rem; /* rounded-md 稍大 */
-    transition: background-color 0.2s ease; /* transition-colors */
+.my-link-section #exclusive-survey-link {
+    background-color: #e0e7ff; /* 更浅的蓝色背景 */
+    color: #4338ca; /* 深蓝色文本 */
+    padding: 0.5rem;
+    border-radius: 0.375rem;
+    word-break: break-all; /* 长链接自动换行 */
+    flex-grow: 1;
+    font-size: 0.85rem;
+    cursor: text; /* 链接可复制，所以显示文本光标 */
+}
+
+.my-link-section .btn-icon {
+    background-color: #4f46e5; /* 蓝色按钮 */
+    color: #fff;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.375rem;
     border: none;
     cursor: pointer;
-    font-size: 1.2em; /* 调整图标大小 */
-    flex-shrink: 0; /* 防止按钮被压缩 */
+    transition: background-color 0.3s ease;
 }
-#copy-exclusive-link-btn:hover {
-    background-color: #1976d2; /* hover:bg-blue-700 类似色 */
+
+.my-link-section .btn-icon:hover {
+    background-color: #4338ca;
 }
 
 .my-link-section .mt-3 {
@@ -275,176 +304,187 @@ body {
 }
 
 .my-link-section .text-gray-600 {
-    color: #616161; /* text-gray-600 类似色 */
+    color: #4b5563;
 }
 
-
-/* 主要操作按钮 */
-.primary-action-btn {
-    background-color: #e57373; /* 主题色 */
-    color: white;
-    border: none;
-    padding: 15px 25px; /* 按钮更大 */
-    border-radius: 10px; /* 更圆润 */
-    font-weight: 600; /* 更粗 */
-    cursor: pointer;
-    transition: all 0.2s ease;
-    width: 100%;
-    margin-bottom: 12px; /* 按钮之间间距 */
-    font-size: 1.05em;
-    box-shadow: 0 4px 10px rgba(229, 115, 115, 0.3); /* 按钮阴影 */
-}
-.primary-action-btn:hover {
-    background-color: #d85c5c;
-    transform: translateY(-3px); /* 悬停浮动更多 */
-    box-shadow: 0 6px 15px rgba(229, 115, 115, 0.4);
-}
-.primary-action-btn:disabled {
-    background-color: #cccccc;
-    color: #a0a0a0;
-    cursor: not-allowed;
-    box-shadow: none;
-    transform: none;
-}
-
-/* MBTI 分析按钮特定样式 (更突出) */
-.mbti-btn {
-    background-color: #7b1fa2; /* 紫色强调色 */
-    box-shadow: 0 4px 10px rgba(123, 31, 162, 0.3);
-}
-.mbti-btn:hover {
-    background-color: #6a1a79;
-    box-shadow: 0 6px 15px rgba(123, 31, 162, 0.4);
-}
-
-
-/* 次要操作按钮 */
-.secondary-action-btn {
-    background-color: #a7c5eb; /* 浅蓝色 */
-    color: #333;
-    border: none;
-    padding: 12px 20px; /* 按钮更大 */
-    border-radius: 10px;
+/* 按钮样式 - 沿用 home.css 风格 */
+.primary-action-btn, .secondary-action-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 1.75rem;
     font-weight: 500;
+    border-radius: 9999px; /* 圆角胶囊按钮 */
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border: 1px solid transparent;
     cursor: pointer;
-    transition: all 0.2s ease;
-    width: 100%;
-    margin-top: 10px; /* 与上方元素的间距 */
-    font-size: 1em;
-    box-shadow: 0 2px 8px rgba(167, 197, 235, 0.3);
+    width: 100%; /* 默认宽度占满 */
+    margin-top: 1rem; /* 按钮间距 */
 }
-.secondary-action-btn:hover {
-    background-color: #92b6e0;
+
+.primary-action-btn {
+    background-image: linear-gradient(to right, #6366f1 0%, #8b5cf6 51%, #6366f1 100%);
+    background-size: 200% auto;
+    color: #fff;
+    box-shadow: 0 4px 15px 0 rgba(139, 92, 246, 0.3);
+}
+
+.primary-action-btn:hover {
+    background-position: right center;
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(167, 197, 235, 0.4);
-}
-.secondary-action-btn:disabled {
-    background-color: #cccccc;
-    color: #a0a0a0;
-    cursor: not-allowed;
-    box-shadow: none;
-    transform: none;
+    box-shadow: 0 6px 20px 0 rgba(139, 92, 246, 0.4);
 }
 
+.secondary-action-btn {
+    background-color: #fff;
+    color: #4f46e5;
+    border-color: #e0e7ff;
+}
 
-/* 对比表单 */
+.secondary-action-btn:hover {
+    background-color: #eef2ff;
+    transform: translateY(-2px);
+}
+
+/* 对比链接输入框和按钮 */
 .compare-form {
     display: flex;
-    flex-direction: column;
-    gap: 12px; /* 增加间距 */
-    margin-bottom: 20px; /* 增加与下方按钮的间距 */
+    flex-direction: column; /* 默认垂直堆叠 */
+    gap: 0.75rem;
     width: 100%;
-}
-.compare-form input {
-    padding: 12px 15px; /* 调整输入框内边距 */
-    border: 1px solid #ced4da;
-    border-radius: 8px;
-    font-size: 1em;
-    box-sizing: border-box;
-}
-.compare-form button {
-    margin-top: 0; /* 取消外边距，由gap控制 */
+    margin-bottom: 0.5rem; /* 和下方生成按钮的间距 */
 }
 
-/* --- 5. 返回操作 --- */
+.compare-form input {
+    padding: 0.75rem 1rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.5rem;
+    font-size: 0.95rem;
+    width: 100%;
+}
+
+.compare-form input:focus {
+    outline: none;
+    border-color: #4f46e5;
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+/* 返回首页链接 */
 .back-action {
+    margin-top: 1rem;
     text-align: center;
-    margin-top: 40px; /* 增加与上方内容的间距 */
+    width: 100%;
 }
+
 .secondary-action-link {
-    color: #6c757d;
-    text-decoration: none;
+    color: #64748b;
+    font-size: 1rem;
     font-weight: 500;
-    font-size: 1.05em;
-    transition: color 0.2s, text-decoration 0.2s;
+    transition: color 0.2s ease;
 }
+
 .secondary-action-link:hover {
-    color: #495057;
+    color: #4f46e5;
     text-decoration: underline;
 }
 
-/* --- 动画 --- */
-@keyframes pop-in {
-  from {
-    transform: scale(0.6);
+/* ==========================================================================
+   动画系统 (Animation System)
+   ========================================================================== */
+.fade-in-element {
     opacity: 0;
-  }
-  to {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-@keyframes slide-in-bottom {
-  from {
-    transform: translateY(40px); /* 从下方滑入 */
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
+    transform: translateY(20px); /* 初始位置略低 */
+    /* 移除 transition-delay，由 JS 统一控制顺序和延迟 */
+    transition: opacity 0.6s cubic-bezier(0.2, 0.8, 0.2, 1),
+                transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-/* --- 响应式布局 --- */
-@media (min-width: 768px) {
-    .actions-container {
-        flex-direction: row; /* 在大屏幕上横向并排 */
-        justify-content: space-between; /* 按钮间距拉伸 */
-        align-items: stretch; /* 确保卡片高度一致 */
-        gap: 30px; /* 卡片间距 */
+.fade-in-element.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* ==========================================================================
+   响应式设计 (Responsive Design)
+   ========================================================================== */
+@media (max-width: 768px) {
+    .navbar {
+        padding: 0.75rem 1rem;
+        flex-direction: column; /* 小屏幕导航栏内容垂直堆叠 */
+        gap: 0.5rem;
     }
-    .action-card {
-        flex: 1; /* 等分空间 */
-        max-width: calc(50% - 15px); /* 考虑gap */
-        display: flex; /* 让内部内容也居中排列 */
-        flex-direction: column;
-        justify-content: space-between; /* 顶部和底部内容分散对齐 */
+
+    .navbar-brand {
+        font-size: 1.2rem;
     }
-    /* 确保内部按钮在 flex 容器中垂直居中，或者靠底 */
-    .action-card .primary-action-btn,
-    .action-card .secondary-action-btn {
-        margin-top: auto; /* 推到底部 */
-        margin-bottom: 0; /* 取消底部间距 */
+
+    .status-display {
+        font-size: 0.9rem;
     }
+
+    .main-content {
+        padding: 1.5rem 0.75rem;
+        padding-top: calc(1.5rem + 80px); /* 调整小屏幕导航栏高度 */
+    }
+
+    .section-card {
+        padding: 1.5rem;
+    }
+
+    .section-card h3 {
+        font-size: 1.25rem;
+    }
+
     .personality-tag {
-        font-size: 2.8em; /* 在大屏幕上更大 */
+        font-size: 1.1rem;
     }
-    .personality-desc {
-        font-size: 1.1em;
+
+    .personality-desc, .egg-text {
+        font-size: 0.95rem;
     }
+
+    .primary-action-btn, .secondary-action-btn {
+        padding: 0.6rem 1.2rem;
+        font-size: 0.9rem;
+    }
+    
+    .my-link-section #exclusive-survey-link {
+        font-size: 0.75rem; /* 更小字体适应小屏幕长链接 */
+    }
+
     .compare-form {
-        flex-direction: row; /* 恢复横向布局 */
-        align-items: center;
+        flex-direction: column; /* 确保在小屏幕上输入框和按钮垂直排列 */
+        gap: 0.5rem;
     }
-    .compare-form input {
-        width: auto; /* 自动宽度 */
-        flex-grow: 1;
+}
+
+@media (max-width: 480px) {
+    .section-card {
+        border-radius: 0.75rem;
     }
-    .compare-form button {
-        width: auto; /* 自动宽度 */
+
+    .card-header {
+        flex-direction: column; /* 图标和标题垂直堆叠 */
+        align-items: flex-start;
+        text-align: left;
+        gap: 0.5rem;
     }
-    /* 专属链接在sm屏幕上字体更大 */
-    #exclusive-survey-link {
-        font-size: 0.9em; /* sm:text-sm */
+
+    .card-icon {
+        margin-bottom: 0.5rem;
+    }
+
+    .my-link-section .flex {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.5rem;
+    }
+    .my-link-section .space-x-2 > *:not(:first-child) {
+        margin-left: 0;
+        margin-top: 0.5rem;
+    }
+    .my-link-section .btn-icon {
+        width: 100%; /* 复制按钮占满宽度 */
     }
 }

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oops! 页面走丢了 - 404 错误</title>
+    <link rel="stylesheet" href="error.css">
+    <!-- 引入 Google Fonts 字体 (可选，提升美观度) -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- 引入 Font Awesome 图标 (可选，如果需要图标) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="error-container">
+        <div class="error-code" data-text="404">404</div>
+        <h1>页面走丢了...</h1>
+        <p>我们很抱歉，您访问的页面好像不存在。</p>
+        <p>可能是您输入了错误的网址，或者页面已被删除或移动。</p>
+        <div class="button-group">
+            <a href="/" class="btn primary">
+                <i class="fas fa-home"></i> 返回首页
+            </a>
+            <button class="btn secondary" onclick="history.back()">
+                <i class="fas fa-arrow-left"></i> 返回上一页
+            </button>
+            <button class="btn secondary" id="reportBugBtn">
+                <i class="fas fa-bug"></i> 报告问题
+            </button>
+        </div>
+        <div class="search-box">
+            <input type="text" placeholder="或者您可以尝试搜索..." id="searchInput">
+            <button id="searchBtn"><i class="fas fa-search"></i> 搜索</button>
+        </div>
+        <p class="contact-info">如果您需要帮助，请 <a href="mailto:support@yourdomain.com">联系我们</a>。</p>
+    </div>
+
+    <script src="error.js"></script>
+</body>
+</html>

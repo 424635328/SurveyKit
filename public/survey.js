@@ -104,7 +104,9 @@ document.addEventListener("DOMContentLoaded", () => {
         switch (q.type) {
           case "radio":
             inputContainer = document.createElement("div");
-            inputContainer.className = `radio-group ${q.className || ""}`.trim();
+            inputContainer.className = `radio-group ${
+              q.className || ""
+            }`.trim();
             q.options.forEach((opt) => {
               const value = typeof opt === "object" ? opt.value : opt;
               const labelText = typeof opt === "object" ? opt.label : opt;
@@ -213,7 +215,9 @@ document.addEventListener("DOMContentLoaded", () => {
             const rangeValueDisplay = document.createElement("div");
             rangeValueDisplay.id = `rangeValue_${q.id}`;
             rangeValueDisplay.className = "range-value-display";
-            rangeValueDisplay.textContent = `当前状态: ${q.defaultValue || 50}%`;
+            rangeValueDisplay.textContent = `当前状态: ${
+              q.defaultValue || 50
+            }%`;
             inputContainer.appendChild(rangeValueDisplay);
             break;
           case "textarea":
@@ -645,19 +649,22 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!historyIdInput) return;
     const inputVal = historyIdInput.value.trim();
     if (inputVal) {
-        // 检查输入是否是一个完整的URL
-        try {
-            const url = new URL(inputVal);
-            if (url.origin === window.location.origin && url.pathname.includes('/viewer.html')) {
-                window.open(url.href, "_blank"); // 如果是本站的viewer链接，直接打开
-            } else {
-                // 如果是纯ID，或者不是本站的链接，或者不含viewer.html，就尝试拼接
-                window.open(`/viewer.html?id=${inputVal}`, "_blank");
-            }
-        } catch (e) {
-            // 如果不是一个有效的URL，就假设是ID
-            window.open(`/viewer.html?id=${inputVal}`, "_blank");
+      // 检查输入是否是一个完整的URL
+      try {
+        const url = new URL(inputVal);
+        if (
+          url.origin === window.location.origin &&
+          url.pathname.includes("/viewer.html")
+        ) {
+          window.open(url.href, "_blank"); // 如果是本站的viewer链接，直接打开
+        } else {
+          // 如果是纯ID，或者不是本站的链接，或者不含viewer.html，就尝试拼接
+          window.open(`/viewer.html?id=${inputVal}`, "_blank");
         }
+      } catch (e) {
+        // 如果不是一个有效的URL，就假设是ID
+        window.open(`/viewer.html?id=${inputVal}`, "_blank");
+      }
     } else {
       alert("请输入有效的问卷ID或完整链接。");
       historyIdInput.focus();

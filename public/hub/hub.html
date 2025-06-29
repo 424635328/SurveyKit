@@ -79,7 +79,7 @@
     <!-- 主内容区 -->
     <main class="flex-grow container mx-auto px-4 py-12 md:py-20">
       <!-- 页面标题 -->
-      <div class="text-center mb-16 max-w-3xl mx-auto">
+      <div class="text-center mb-16 max-w-3xl mx-auto" data-animate="fade-in">
         <h2
           class="text-[clamp(1.8rem,4vw,2.8rem)] font-bold mb-4 leading-tight text-shadow">
           SurveyKit <span
@@ -94,7 +94,8 @@
 
         <!-- 1. Visual Questionnaire Editor -->
         <div
-          class="lg:col-span-1 rounded-2xl shadow-lg overflow-hidden card-hover group h-full flex flex-col bg-white card--creator card--primary">
+          class="lg:col-span-1 rounded-2xl shadow-lg overflow-hidden card-hover group h-full flex flex-col bg-white card--creator"
+          data-animate="fade-in">
           <div class="card__banner h-48">
             <i class="fa fa-edit text-white text-6xl card__icon"></i>
           </div>
@@ -111,7 +112,8 @@
 
         <!-- 2. Questionnaire Answer Viewer -->
         <div
-          class="rounded-2xl shadow-md overflow-hidden card-hover group flex flex-col bg-white card--viewer">
+          class="rounded-2xl shadow-md overflow-hidden card-hover group flex flex-col bg-white card--viewer"
+          data-animate="fade-in">
           <div class="card__banner h-36">
             <i class="fa fa-search text-white text-5xl card__icon"></i>
           </div>
@@ -127,7 +129,8 @@
 
         <!-- 3. JSON Validator -->
         <div
-          class="rounded-2xl shadow-md overflow-hidden card-hover group flex flex-col bg-white card--validator">
+          class="rounded-2xl shadow-md overflow-hidden card-hover group flex flex-col bg-white card--validator"
+          data-animate="fade-in">
           <div class="card__banner h-36">
             <i class="fa fa-check-circle text-white text-5xl card__icon"></i>
           </div>
@@ -143,7 +146,8 @@
 
         <!-- 4. AI Idea Generator -->
         <div
-          class="rounded-2xl shadow-md overflow-hidden card-hover group flex flex-col bg-white card--creative">
+          class="rounded-2xl shadow-md overflow-hidden card-hover group flex flex-col bg-white card--creative"
+          data-animate="fade-in">
           <div class="card__banner h-36">
             <i class="fa fa-magic text-white text-5xl card__icon"></i>
           </div>
@@ -159,7 +163,8 @@
 
         <!-- 5. Data Format Converter -->
         <div
-          class="rounded-2xl shadow-md overflow-hidden card-hover group flex flex-col bg-white card--utility">
+          class="rounded-2xl shadow-md overflow-hidden card-hover group flex flex-col bg-white card--utility"
+          data-animate="fade-in">
           <div class="card__banner h-36">
             <i class="fa fa-exchange text-white text-5xl card__icon"></i>
           </div>
@@ -175,7 +180,8 @@
 
         <!-- 6. Word Cloud Generator -->
         <div
-          class="rounded-2xl shadow-md overflow-hidden card-hover group flex flex-col bg-white card--creative">
+          class="rounded-2xl shadow-md overflow-hidden card-hover group flex flex-col bg-white card--creative"
+          data-animate="fade-in">
           <div class="card__banner h-36">
             <i class="fa fa-cloud text-white text-5xl card__icon"></i>
           </div>
@@ -193,13 +199,15 @@
       <!-- 快速访问 (REPLACE THIS SECTION IN YOUR hub.html) -->
       <div
         class="bg-white rounded-2xl shadow-md p-8 md:p-10 mb-12 quick-access-section">
-        <h3 class="text-2xl font-bold mb-8 flex items-center text-gray-700">
+        <h3 class="text-2xl font-bold mb-8 flex items-center text-gray-700"
+          data-animate="fade-in">
           <i class="fa fa-paper-plane-o text-indigo-500 mr-3"></i> 快速直达
         </h3>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
 
           <!-- 问卷填写页 -->
-          <a href="../survey.html" class="quick-access-item group item--survey">
+          <a href="../survey.html" class="quick-access-item group item--survey"
+            data-animate="fade-in">
             <div class="quick-access-item__icon-wrapper">
               <i class="fa fa-list-alt quick-access-item__icon"></i>
             </div>
@@ -210,7 +218,8 @@
           </a>
 
           <!-- AI分析页 -->
-          <a href="../mbti.html" class="quick-access-item group item--ai">
+          <a href="../mbti.html" class="quick-access-item group item--ai"
+            data-animate="fade-in">
             <div class="quick-access-item__icon-wrapper">
               <i class="fa fa-robot quick-access-item__icon"></i>
             </div>
@@ -222,7 +231,8 @@
 
           <!-- 默契度对比 -->
           <a href="../compare.html"
-            class="quick-access-item group item--compare">
+            class="quick-access-item group item--compare"
+            data-animate="fade-in">
             <div class="quick-access-item__icon-wrapper">
               <i class="fa fa-users quick-access-item__icon"></i>
             </div>
@@ -234,7 +244,8 @@
 
           <!-- 项目仓库 -->
           <a href="https://github.com/424635328/SurveyKit" target="_blank"
-            rel="noopener" class="quick-access-item group item--github">
+            rel="noopener" class="quick-access-item group item--github"
+            data-animate="fade-in">
             <div class="quick-access-item__icon-wrapper">
               <i class="fa fa-github quick-access-item__icon"></i>
             </div>
@@ -277,5 +288,11 @@
 
     <!-- 本地脚本 -->
     <script src="hub.js"></script>
+    <!-- 新增：滚动到顶部按钮 -->
+    <button id="scrollToTopBtn"
+      class="fixed bottom-6 right-6 bg-indigo-600 text-white p-3 rounded-full shadow-lg opacity-0 pointer-events-none transition-all duration-300 transform translate-y-4 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 z-50"
+      aria-label="Scroll to top">
+      <i class="fa fa-arrow-up text-lg"></i>
+    </button>
   </body>
 </html>

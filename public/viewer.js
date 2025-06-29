@@ -17,6 +17,9 @@ document.addEventListener("DOMContentLoaded", () => {
       notification: document.getElementById("notification"),
       notificationIcon: document.getElementById("notification-icon"),
       notificationText: document.getElementById("notification-text"),
+      // 新增：滚动按钮的引用
+      scrollToTopBtn: document.getElementById("scrollToTopBtn"),
+      scrollToBottomBtn: document.getElementById("scrollToBottomBtn"),
     };
 
     let sections = [];
@@ -88,6 +91,8 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       initAnimationObserver();
+      // 切换视图时，也更新滚动按钮状态
+      updateScrollButtonsVisibility(); // 新增
     };
 
     const prepareStructuredExportData = () => {
@@ -156,7 +161,6 @@ document.addEventListener("DOMContentLoaded", () => {
         const worksheet = XLSX.utils.json_to_sheet(flatData);
         const workbook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(workbook, worksheet, "问卷结果");
-        // [BUG修复] 修正了拼写错误，从 XPSX 改为 XLSX
         XLSX.writeFile(workbook, `问卷结果-${currentSurveyId}.${format}`);
         showNotification(`${format.toUpperCase()} 文件已导出`);
       } catch (error) {
@@ -171,7 +175,7 @@ document.addEventListener("DOMContentLoaded", () => {
       
       sections.forEach((section) => {
         const sectionDiv = document.createElement("div");
-        sectionDiv.className = "result-section animated-line";
+        sectionDiv.className = "result-section animated-line"; // 添加 animated-line 类
         
         const titleH2 = document.createElement('h2');
         titleH2.className = 'section-title';
@@ -182,7 +186,7 @@ document.addEventListener("DOMContentLoaded", () => {
           const answerText = data[q.id];
 
           const item = document.createElement("div");
-          item.className = "result-item animated-line";
+          item.className = "result-item animated-line"; // 添加 animated-line 类
 
           const questionP = document.createElement('p');
           questionP.className = 'question';
@@ -202,7 +206,8 @@ document.addEventListener("DOMContentLoaded", () => {
         
         allElements.resultsContainer.appendChild(sectionDiv);
       });
-      initAnimationObserver();
+      initAnimationObserver(); // 重新初始化动画观察器以包含新渲染的元素
+      updateScrollButtonsVisibility(); // 渲染结果后更新按钮可见性
     };
 
     const fetchAndRenderSurvey = async (surveyId, surveyToken) => {
@@ -234,7 +239,6 @@ document.addEventListener("DOMContentLoaded", () => {
         sections = await questionsRes.json();
         
         if (!surveyRes.ok) {
-          // [体验优化] 增强错误处理，针对需要Token的情况给出明确提示
           let specificMessage;
           if (surveyRes.status === 401 || surveyRes.status === 403) {
             specificMessage = "访问被拒绝。该问卷可能需要专属链接才能访问，请尝试粘贴完整的链接地址。";
@@ -265,8 +269,51 @@ document.addEventListener("DOMContentLoaded", () => {
           allElements.submitIdBtn.disabled = false;
           allElements.submitIdBtn.innerHTML = '<i class="fa fa-search"></i> 查看结果';
         }
+        updateScrollButtonsVisibility(); // 确保加载完成后更新按钮状态
       }
     };
+
+    // 新增函数：更新滚动按钮的可见性
+    const updateScrollButtonsVisibility = () => {
+      const { scrollToTopBtn, scrollToBottomBtn } = allElements;
+      if (!scrollToTopBtn || !scrollToBottomBtn) return;
+
+      const scrollY = window.scrollY;
+      const viewportHeight = window.innerHeight;
+      const documentHeight = document.documentElement.scrollHeight;
+
+      const SCROLL_THRESHOLD = 200; // 滚动超过此距离显示/隐藏按钮
+
+      // 判断页面是否可滚动（内容高度大于视口高度）
+      const isScrollable = documentHeight > viewportHeight + 50; // 额外50px容错
+
+      if (!isScrollable) {
+        // 如果页面不可滚动，隐藏两个按钮
+        scrollToTopBtn.classList.add('opacity-0', 'pointer-events-none', 'translate-y-4');
+        scrollToBottomBtn.classList.add('opacity-0', 'pointer-events-none', 'translate-y-4');
+        return;
+      }
+
+      // 控制滚动到顶部按钮的可见性
+      if (scrollY > SCROLL_THRESHOLD) {
+        scrollToTopBtn.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-4');
+        scrollToTopBtn.classList.add('opacity-100', 'pointer-events-auto', 'translate-y-0');
+      } else {
+        scrollToTopBtn.classList.remove('opacity-100', 'pointer-events-auto', 'translate-y-0');
+        scrollToTopBtn.classList.add('opacity-0', 'pointer-events-none', 'translate-y-4');
+      }
+
+      // 控制滚动到底部按钮的可见性
+      // 当当前滚动位置 + 视口高度 < 文档总高度 - 阈值时，说明未到底部
+      if ((scrollY + viewportHeight) < (documentHeight - SCROLL_THRESHOLD)) {
+        scrollToBottomBtn.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-4');
+        scrollToBottomBtn.classList.add('opacity-100', 'pointer-events-auto', 'translate-y-0');
+      } else {
+        scrollToBottomBtn.classList.remove('opacity-100', 'pointer-events-auto', 'translate-y-0');
+        scrollToBottomBtn.classList.add('opacity-0', 'pointer-events-none', 'translate-y-4');
+      }
+    };
+
 
     const init = () => {
       if (allElements.exportBtn) {
@@ -335,6 +382,27 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       }
 
+      // 新增：滚动按钮的事件监听
+      if (allElements.scrollToTopBtn) {
+        allElements.scrollToTopBtn.addEventListener('click', () => {
+          window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+          });
+        });
+      }
+      if (allElements.scrollToBottomBtn) {
+        allElements.scrollToBottomBtn.addEventListener('click', () => {
+          window.scrollTo({
+            top: document.documentElement.scrollHeight, // 滚动到文档底部
+            behavior: 'smooth'
+          });
+        });
+      }
+      // 监听页面滚动，更新按钮可见性
+      window.addEventListener('scroll', updateScrollButtonsVisibility, { passive: true });
+
+
       const params = new URLSearchParams(window.location.search);
       const initialSurveyId = params.get("id");
       const initialSurveyToken = params.get("token");
@@ -343,6 +411,8 @@ document.addEventListener("DOMContentLoaded", () => {
       } else {
         switchView("input");
       }
+      // 首次加载和初始化时，检查并设置按钮状态
+      updateScrollButtonsVisibility(); // 确保加载完成后更新按钮状态
     };
 
     return { init };

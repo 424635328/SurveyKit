@@ -1,0 +1,294 @@
+/* 全局样式和重置 */
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif; /* 使用 Google Font */
+    background-color: #f0f2f5; /* 浅灰色背景 */
+    color: #333;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh; /* 确保页面占满整个视口高度 */
+    text-align: center;
+    overflow: hidden; /* 防止JS动画导致的滚动条 */
+    position: relative; /* 为背景动画定位 */
+}
+
+/* 错误容器 */
+.error-container {
+    background-color: #ffffff;
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    width: 90%;
+    position: relative;
+    z-index: 10; /* 确保内容在背景之上 */
+    transform: translateY(0); /* 用于JS动画初始状态 */
+    transition: transform 0.5s ease-out; /* 平滑过渡 */
+}
+
+/* 错误码 */
+.error-code {
+    font-size: 120px;
+    font-weight: 700;
+    color: #ff6b6b; /* 鲜艳的红色 */
+    margin-bottom: 20px;
+    position: relative;
+    display: inline-block; /* 确保伪元素定位正确 */
+}
+
+/* 错误码的视觉效果 - 伪元素 */
+.error-code::before {
+    content: attr(data-text); /* 使用 data-text 属性作为内容 */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: rgba(255, 107, 107, 0.1); /* 更淡的颜色 */
+    font-size: 1.2em; /* 稍微大一点 */
+    z-index: -1;
+    filter: blur(5px); /* 模糊效果 */
+    pointer-events: none; /* 不阻止鼠标事件 */
+}
+
+
+/* 标题 */
+h1 {
+    font-size: 3em;
+    color: #444;
+    margin-bottom: 15px;
+}
+
+/* 段落 */
+p {
+    font-size: 1.1em;
+    line-height: 1.6;
+    margin-bottom: 10px;
+    color: #666;
+}
+
+/* 按钮组 */
+.button-group {
+    margin-top: 30px;
+    display: flex;
+    flex-wrap: wrap; /* 允许按钮换行 */
+    justify-content: center;
+    gap: 15px; /* 按钮之间的间距 */
+}
+
+/* 按钮基础样式 */
+.btn {
+    display: inline-flex; /* 允许图标和文字对齐 */
+    align-items: center;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: 600;
+    text-decoration: none; /* 移除链接下划线 */
+    transition: all 0.3s ease;
+    min-width: 150px; /* 最小宽度 */
+    justify-content: center; /* 居中内容 */
+}
+
+.btn i {
+    margin-right: 8px; /* 图标与文字的间距 */
+}
+
+/* 主要按钮样式 */
+.btn.primary {
+    background-color: #007bff; /* 蓝色 */
+    color: #fff;
+    box-shadow: 0 4px 15px rgba(0, 123, 255, 0.2);
+}
+
+.btn.primary:hover {
+    background-color: #0056b3;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0, 123, 255, 0.3);
+}
+
+/* 次要按钮样式 */
+.btn.secondary {
+    background-color: #6c757d; /* 灰色 */
+    color: #fff;
+    box-shadow: 0 4px 15px rgba(108, 117, 125, 0.2);
+}
+
+.btn.secondary:hover {
+    background-color: #5a6268;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(108, 117, 125, 0.3);
+}
+
+/* 搜索框 */
+.search-box {
+    margin-top: 30px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.search-box input {
+    padding: 12px 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1em;
+    flex-grow: 1; /* 占据可用空间 */
+    max-width: 300px;
+}
+
+.search-box input:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+}
+
+.search-box button {
+    background-color: #28a745; /* 绿色 */
+    color: #fff;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: 600;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.search-box button:hover {
+    background-color: #218838;
+    transform: translateY(-2px);
+}
+
+/* 联系信息 */
+.contact-info {
+    margin-top: 25px;
+    font-size: 0.95em;
+    color: #777;
+}
+
+.contact-info a {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.contact-info a:hover {
+    text-decoration: underline;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .error-code {
+        font-size: 90px;
+    }
+
+    h1 {
+        font-size: 2.2em;
+    }
+
+    p {
+        font-size: 1em;
+    }
+
+    .error-container {
+        padding: 30px;
+    }
+
+    .button-group {
+        flex-direction: column; /* 按钮在小屏幕上垂直堆叠 */
+        align-items: stretch; /* 按钮宽度填充 */
+    }
+
+    .btn {
+        min-width: unset; /* 取消最小宽度限制 */
+        width: 100%; /* 填充宽度 */
+    }
+
+    .search-box {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .search-box input,
+    .search-box button {
+        max-width: 100%; /* 填充宽度 */
+    }
+}
+
+@media (max-width: 480px) {
+    .error-code {
+        font-size: 70px;
+    }
+
+    h1 {
+        font-size: 1.8em;
+    }
+
+    .error-container {
+        padding: 20px;
+    }
+}
+
+/* 背景动画元素 (JS控制) */
+.bg-shape {
+    position: absolute;
+    background-color: rgba(0, 123, 255, 0.1); /* 蓝色透明 */
+    border-radius: 50%;
+    filter: blur(50px);
+    opacity: 0.7;
+    animation: float 15s ease-in-out infinite alternate;
+    z-index: 1; /* 确保在内容下方 */
+}
+
+.bg-shape:nth-child(1) {
+    width: 200px;
+    height: 200px;
+    top: 10%;
+    left: 10%;
+    animation-duration: 18s;
+    background-color: rgba(255, 107, 107, 0.1); /* 红色透明 */
+}
+
+.bg-shape:nth-child(2) {
+    width: 150px;
+    height: 150px;
+    bottom: 15%;
+    right: 15%;
+    animation-duration: 20s;
+    animation-delay: 2s;
+}
+
+.bg-shape:nth-child(3) {
+    width: 250px;
+    height: 250px;
+    top: 60%;
+    left: 5%;
+    animation-duration: 16s;
+    animation-delay: 1s;
+    background-color: rgba(40, 167, 69, 0.1); /* 绿色透明 */
+}
+
+@keyframes float {
+    0% {
+        transform: translate(0, 0);
+    }
+    100% {
+        transform: translate(20px, 30px);
+    }
+}
+
+/* 容器加载动画 */
+.error-container.loaded {
+    transform: translateY(0);
+    opacity: 1;
+}

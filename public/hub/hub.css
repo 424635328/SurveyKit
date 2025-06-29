@@ -38,6 +38,9 @@
   --theme-color-validator: #f97316;
   --theme-color-creative: #a855f7;
   --theme-color-utility: #64748b;
+
+  /* 新增：头部滚动时的边框颜色 */
+  --header-border-color: rgba(229, 231, 235, 0.7); /* gray-200 with transparency */
 }
 
 /* 基础样式与滚动条
@@ -83,13 +86,19 @@ body {
 .card-hover {
   transition: transform var(--transition-duration)
       var(--transition-timing-function),
-    box-shadow var(--transition-duration) var(--transition-timing-function);
+    box-shadow var(--transition-duration) var(--transition-timing-function),
+    outline-color var(--transition-duration) var(--transition-timing-function); /* 新增 outline-color 过渡 */
+  outline: 2px solid transparent; /* 初始透明边框 */
+  outline-offset: 2px; /* 边框外扩 */
 }
-.card-hover:hover {
+.card-hover:hover,
+.card-hover:focus-within { /* 增加 :focus-within 用于键盘导航可访问性 */
   transform: translateY(-8px);
   box-shadow: var(--shadow-card-hover);
+  outline-color: var(--theme-color); /* 悬停/聚焦时显示主题色边框 */
 }
-.card-hover:hover .card__icon {
+.card-hover:hover .card__icon,
+.card-hover:focus-within .card__icon {
   transform: scale(1.1);
 }
 .card__icon {
@@ -153,14 +162,16 @@ body {
   color: var(--theme-color);
   transition: color var(--transition-duration) ease;
 }
-.card-hover:hover .card__action-link {
+.card-hover:hover .card__action-link,
+.card-hover:focus-within .card__action-link {
   color: var(--grad-end); /* 悬停时颜色加深 */
 }
 .card__action-link i {
   transition: transform var(--transition-duration)
     var(--transition-timing-function);
 }
-.card-hover:hover .card__action-link i {
+.card-hover:hover .card__action-link i,
+.card-hover:focus-within .card__action-link i {
   transform: translateX(4px);
 }
 /* =================================================================== */
@@ -169,7 +180,6 @@ body {
 
 /* 1. 区域基础样式 */
 .quick-access-section {
-  /* 可以添加一个微妙的背景图案或渐变，以区别于其他白色背景 */
   background-color: #f9fafb; /* bg-gray-50 */
 }
 
@@ -184,20 +194,26 @@ body {
   text-decoration: none;
   transition: all var(--transition-duration) var(--transition-timing-function);
   box-shadow: 0 1px 3px 0 rgba(0,0,0,0.05);
+  outline: 2px solid transparent; /* 新增：初始透明边框 */
+  outline-offset: 2px; /* 边框外扩 */
 }
 
 /* 3. 悬停效果 */
-.quick-access-item:hover {
+.quick-access-item:hover,
+.quick-access-item:focus-within { /* 增加 :focus-within */
   transform: translateY(-4px);
   border-color: var(--item-theme-color, #6366f1);
   box-shadow: 0 10px 15px -3px rgba(0,0,0,0.07), 0 4px 6px -2px rgba(0,0,0,0.05);
+  outline-color: var(--item-theme-color, #6366f1); /* 悬停/聚焦时显示主题色边框 */
 }
 
-.quick-access-item:hover .quick-access-item__icon-wrapper {
+.quick-access-item:hover .quick-access-item__icon-wrapper,
+.quick-access-item:focus-within .quick-access-item__icon-wrapper {
   background-color: var(--item-theme-color, #6366f1);
 }
 
-.quick-access-item:hover .quick-access-item__icon {
+.quick-access-item:hover .quick-access-item__icon,
+.quick-access-item:focus-within .quick-access-item__icon {
   color: #fff;
   transform: scale(1.1);
 }
@@ -243,4 +259,34 @@ body {
 .item--github {
   --item-theme-color: #1f2937; /* gray-800 */
   --item-bg-color: #f3f4f6;   /* gray-100 */
+}
+
+/* =================================================================== */
+/*  流式浮现动画 (Flowing Fade-in Animation)                            */
+/* =================================================================== */
+
+[data-animate="fade-in"] {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease-out var(--animation-delay, 0s),
+              transform 0.6s ease-out var(--animation-delay, 0s);
+  will-change: opacity, transform;
+}
+
+[data-animate="fade-in"].is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* 头部滚动效果增强 */
+header {
+  transition: all 0.3s ease-in-out, backdrop-filter 0.3s ease-in-out; /* 确保所有相关属性平滑过渡 */
+  border-bottom: 1px solid transparent; /* 初始透明边框 */
+}
+
+.header-scrolled {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  border-bottom-color: var(--header-border-color); /* 滚动时显示边框 */
 }
