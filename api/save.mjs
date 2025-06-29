@@ -1,3 +1,5 @@
+// api/save.mjs
+
 import { kv } from "@vercel/kv";
 import { Ratelimit } from "@upstash/ratelimit";
 import { z } from "zod";
@@ -10,9 +12,20 @@ const ratelimit = new Ratelimit({
   prefix: "ratelimit:survey",
 });
 
+// [安全修复] 增强了Zod校验规则
+// 之前使用 .catchall(z.any()) 过于宽松，无法防止恶意或错误格式的数据。
+// 现在使用 .catchall(z.string(...)) 确保所有提交的答案都必须是字符串，
+// 并增加了最大长度限制，防止数据污染和潜在的注入风险。
 const SurveySchema = z
-  .object({})
-  .catchall(z.any());
+  .object({
+    q_email: z.string().email({ message: "邮箱格式不正确" }).optional(),
+  })
+  .catchall(
+    z
+      .string({ invalid_type_error: "答案必须是文本格式" })
+      .max(5000, { message: "答案内容过长" }) // 限制单个答案长度为5000字符
+      .optional()
+  );
 
 export default async function handler(request, response) {
   if (request.method !== "POST") {
@@ -53,11 +66,19 @@ export default async function handler(request, response) {
     const surveyData = validationResult.data;
     const surveyId = `survey_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`;
     const accessToken = randomUUID();
+    
+    const userEmail = surveyData.q_email || null; 
 
     await kv.hset(`survey:${surveyId}`, {
         data: JSON.stringify(surveyData),
         token: accessToken,
+        userEmail: userEmail,
     });
+
+    if (userEmail) {
+        await kv.lpush(`email_to_survey_ids:${userEmail.toLowerCase()}`, surveyId);
+        await kv.ltrim(`email_to_survey_ids:${userEmail.toLowerCase()}`, 0, 4); 
+    }
 
     return response.status(200).json({
       success: true,

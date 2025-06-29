@@ -1,3 +1,5 @@
+// viewer.js
+
 document.addEventListener("DOMContentLoaded", () => {
   const resultsRenderer = (() => {
     const allElements = {
@@ -22,7 +24,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let currentSurveyId = null;
     let isLoading = false;
     let animationObserver;
-    let currentSurveyToken = null; // 新增：保存当前问卷的令牌
+    let currentSurveyToken = null;
 
     const showNotification = (message, type = "success") => {
       if (!allElements.notification) return;
@@ -154,7 +156,8 @@ document.addEventListener("DOMContentLoaded", () => {
         const worksheet = XLSX.utils.json_to_sheet(flatData);
         const workbook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(workbook, worksheet, "问卷结果");
-        XPSX.writeFile(workbook, `问卷结果-${currentSurveyId}.${format}`);
+        // [BUG修复] 修正了拼写错误，从 XPSX 改为 XLSX
+        XLSX.writeFile(workbook, `问卷结果-${currentSurveyId}.${format}`);
         showNotification(`${format.toUpperCase()} 文件已导出`);
       } catch (error) {
         console.error(`导出 ${format} 失败:`, error);
@@ -202,11 +205,11 @@ document.addEventListener("DOMContentLoaded", () => {
       initAnimationObserver();
     };
 
-    const fetchAndRenderSurvey = async (surveyId, surveyToken) => { // 接收 token
+    const fetchAndRenderSurvey = async (surveyId, surveyToken) => {
       if (isLoading) return;
       isLoading = true;
       currentSurveyId = surveyId;
-      currentSurveyToken = surveyToken; // 保存令牌
+      currentSurveyToken = surveyToken;
       switchView("results");
       
       const loadingP = document.createElement('p');
@@ -224,32 +227,38 @@ document.addEventListener("DOMContentLoaded", () => {
       try {
         const [questionsRes, surveyRes] = await Promise.all([
           fetch("./questions.json"),
-          fetch(`./api/get-survey?id=${surveyId}${surveyToken ? `&token=${surveyToken}` : ''}`), // 拼接 token
+          fetch(`./api/get-survey?id=${surveyId}${surveyToken ? `&token=${surveyToken}` : ''}`),
         ]);
         if (!questionsRes.ok)
           throw new Error("无法加载问卷结构 (questions.json)。");
         sections = await questionsRes.json();
+        
         if (!surveyRes.ok) {
-          let errorData;
-          try {
-             errorData = await surveyRes.json();
-          } catch(e) {
-             errorData = { message: surveyRes.statusText || `服务器返回状态 ${surveyRes.status}` };
+          // [体验优化] 增强错误处理，针对需要Token的情况给出明确提示
+          let specificMessage;
+          if (surveyRes.status === 401 || surveyRes.status === 403) {
+            specificMessage = "访问被拒绝。该问卷可能需要专属链接才能访问，请尝试粘贴完整的链接地址。";
+          } else {
+             try {
+               const errorData = await surveyRes.json();
+               specificMessage = errorData.message || `服务器返回状态 ${surveyRes.status}`;
+            } catch(e) {
+               specificMessage = surveyRes.statusText || `服务器返回状态 ${surveyRes.status}`;
+            }
           }
-          throw new Error(
-            errorData.message || `无法获取ID为 ${surveyId} 的数据。`
-          );
+          throw new Error(specificMessage);
         }
+
         const data = await surveyRes.json();
         renderResults(data);
         const url = new URL(window.location);
         url.searchParams.set("id", surveyId);
-        if (surveyToken) url.searchParams.set("token", surveyToken); // 将 token 添加到 URL
-        window.history.pushState({ id: surveyId, token: surveyToken }, "", url); // 保存 token 到 state
+        if (surveyToken) url.searchParams.set("token", surveyToken);
+        window.history.pushState({ id: surveyId, token: surveyToken }, "", url);
       } catch (error) {
         console.error("获取问卷结果失败:", error);
         renderError(`加载失败: ${error.message}`);
-        setTimeout(() => switchView("input"), 3000);
+        setTimeout(() => switchView("input"), 3500); // 延长错误提示显示时间
       } finally {
         isLoading = false;
         if (allElements.submitIdBtn) {
@@ -295,10 +304,26 @@ document.addEventListener("DOMContentLoaded", () => {
       if (allElements.idInputForm) {
         allElements.idInputForm.addEventListener("submit", (e) => {
           e.preventDefault();
-          const surveyId = allElements.surveyIdInput.value.trim();
-          if (surveyId) {
-            // 在输入表单提交时，无法获取 token，所以只传 ID
-            fetchAndRenderSurvey(surveyId, null); 
+          const inputVal = allElements.surveyIdInput.value.trim();
+          if (inputVal) {
+            let idToFetch = inputVal;
+            let tokenToFetch = null;
+
+            try {
+                const url = new URL(inputVal);
+                if (url.origin === window.location.origin && (url.pathname.includes('/viewer.html') || url.pathname.includes('/result.html'))) {
+                    idToFetch = url.searchParams.get('id');
+                    tokenToFetch = url.searchParams.get('token');
+                }
+            } catch (error) {
+                // Not a valid URL, treat as just an ID
+            }
+            
+            if (idToFetch) {
+                fetchAndRenderSurvey(idToFetch, tokenToFetch);
+            } else {
+                renderError("无法从输入中提取有效ID。请确保输入的是正确的问卷ID或专属链接。");
+            }
           }
         });
       }
@@ -312,9 +337,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const params = new URLSearchParams(window.location.search);
       const initialSurveyId = params.get("id");
-      const initialSurveyToken = params.get("token"); // 获取 URL 中的 token
+      const initialSurveyToken = params.get("token");
       if (initialSurveyId) {
-        fetchAndRenderSurvey(initialSurveyId, initialSurveyToken); // 传递 token
+        fetchAndRenderSurvey(initialSurveyId, initialSurveyToken);
       } else {
         switchView("input");
       }

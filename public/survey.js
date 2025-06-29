@@ -444,9 +444,8 @@ document.addEventListener("DOMContentLoaded", () => {
         body: JSON.stringify(cleanedData),
       });
       const result = await response.json();
-      if (response.ok && result.id && result.token) { // 检查是否包含 token
+      if (response.ok && result.id && result.token) {
         localStorage.removeItem(formId);
-        // 跳转到包含 id 和 token 的新 URL
         window.location.href = `/result.html?status=success&id=${result.id}&token=${result.token}`;
       } else {
         throw new Error(result.message || "提交失败，服务器返回错误。");
@@ -644,11 +643,23 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const handleHistoryLookup = () => {
     if (!historyIdInput) return;
-    const id = historyIdInput.value.trim();
-    if (id) {
-      window.open(`/viewer.html?id=${id}`, "_blank");
+    const inputVal = historyIdInput.value.trim();
+    if (inputVal) {
+        // 检查输入是否是一个完整的URL
+        try {
+            const url = new URL(inputVal);
+            if (url.origin === window.location.origin && url.pathname.includes('/viewer.html')) {
+                window.open(url.href, "_blank"); // 如果是本站的viewer链接，直接打开
+            } else {
+                // 如果是纯ID，或者不是本站的链接，或者不含viewer.html，就尝试拼接
+                window.open(`/viewer.html?id=${inputVal}`, "_blank");
+            }
+        } catch (e) {
+            // 如果不是一个有效的URL，就假设是ID
+            window.open(`/viewer.html?id=${inputVal}`, "_blank");
+        }
     } else {
-      alert("请输入一个有效的问卷ID。");
+      alert("请输入有效的问卷ID或完整链接。");
       historyIdInput.focus();
     }
   };

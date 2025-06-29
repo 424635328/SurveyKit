@@ -1,0 +1,105 @@
+<!-- public/recover.html (完整修改版) -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>找回问卷链接 - SurveyKit</title>
+    <!-- 引入 Noto Sans SC 字体 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- 引入 Font Awesome 图标库 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- 引入我们自定义的样式文件 -->
+    <link rel="stylesheet" href="./recover.css"> 
+</head>
+<body>
+    <div class="recover-container">
+        <div class="recover-card">
+            <h1 class="card-title">找回问卷链接</h1>
+            <p class="card-subtitle">输入您提交问卷时留下的邮箱，或问卷ID，我们将为您发送专属链接。</p>
+            
+            <form id="recoverForm" class="recover-form">
+                <div class="form-group">
+                    <label for="email" class="sr-only">邮箱地址</label>
+                    <input type="email" id="email" name="email" placeholder="您的邮箱地址"
+                           class="form-input">
+                </div>
+                <div class="form-divider">或</div>
+                <div class="form-group">
+                    <label for="surveyId" class="sr-only">问卷ID</label>
+                    <input type="text" id="surveyId" name="surveyId" placeholder="您的问卷ID (可选)"
+                           class="form-input">
+                </div>
+                <button type="submit" id="submitRecover" 
+                        class="submit-button">
+                    发送链接到邮箱
+                </button>
+                <p id="message" class="message-text"></p>
+            </form>
+            <div class="back-home-section">
+                <a href="/index.html" class="back-home-link">返回首页</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const recoverForm = document.getElementById('recoverForm');
+            const surveyIdInput = document.getElementById('surveyId');
+            const emailInput = document.getElementById('email'); 
+            const submitRecoverBtn = document.getElementById('submitRecover');
+            const messageEl = document.getElementById('message');
+
+            recoverForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                messageEl.textContent = '';
+                messageEl.className = 'message-text'; // 重置类名
+
+                const surveyId = surveyIdInput.value.trim();
+                const email = emailInput.value.trim(); 
+
+                if (!surveyId && !email) { 
+                    messageEl.textContent = '请至少输入邮箱或问卷ID！';
+                    messageEl.classList.add('message-error');
+                    submitRecoverBtn.disabled = false;
+                    submitRecoverBtn.textContent = '发送链接到邮箱';
+                    return;
+                }
+                
+                submitRecoverBtn.disabled = true;
+                submitRecoverBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 发送中...';
+
+
+                try {
+                    const payload = {};
+                    if (email) payload.email = email;
+                    if (surveyId) payload.surveyId = surveyId;
+
+                    const response = await fetch('/api/recover-link.mjs', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    const result = await response.json();
+                    if (response.ok) {
+                        messageEl.textContent = result.message || '链接已发送！请检查您的邮箱。';
+                        messageEl.classList.add('message-success');
+                    } else {
+                        throw new Error(result.message || '找回链接失败，请重试。');
+                    }
+                } catch (error) {
+                    messageEl.textContent = `错误: ${error.message}`;
+                    messageEl.classList.add('message-error');
+                    console.error('Recover link error:', error);
+                } finally {
+                    submitRecoverBtn.disabled = false;
+                    submitRecoverBtn.textContent = '发送链接到邮箱';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -40,29 +40,26 @@ export default async function handler(request, response) {
     const { id, token: userToken } = validationResult.data;
     const adminToken = process.env.ADMIN_TOKEN;
 
-    if (adminToken && userToken === adminToken) {
-      const storedData = await kv.hgetall(`survey:${id}`);
-      if (!storedData || !storedData.data) {
-        return response.status(404).json({ message: `(Admin) 问卷 ${id} 不存在或无数据。` });
-      }
-      return response.status(200).json(JSON.parse(storedData.data));
+    const storedRecord = await kv.hgetall(`survey:${id}`);
+
+    if (!storedRecord || typeof storedRecord.token !== 'string' || storedRecord.data == null) {
+      console.warn(`问卷 ${id} 不存在或数据结构不完整/类型错误 (KV client auto-deserialization). Record:`, storedRecord);
+      // 使用 == null 来同时检查 undefined 和 null
+      return response.status(404).json({ message: "问卷不存在或数据已损坏。" });
+    }
+
+    const isOwner = userToken === storedRecord.token;
+    const isAdmin = adminToken && userToken === adminToken;
+
+    if (isOwner || isAdmin) {
+      return response.status(200).json(storedRecord.data);
     }
 
     if (!userToken) {
         return response.status(401).json({ message: "缺少访问令牌" });
+    } else {
+        return response.status(403).json({ message: "无权访问此问卷" });
     }
-
-    const storedData = await kv.hgetall(`survey:${id}`);
-
-    if (!storedData || !storedData.token) {
-      return response.status(404).json({ message: "问卷不存在" });
-    }
-
-    if (storedData.token !== userToken) {
-      return response.status(403).json({ message: "无权访问" });
-    }
-
-    return response.status(200).json(JSON.parse(storedData.data));
 
   } catch (error) {
     console.error(`获取问卷 ${request.query.id} 时发生未知错误:`, error);

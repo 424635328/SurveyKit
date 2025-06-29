@@ -1,3 +1,5 @@
+// result.js
+
 document.addEventListener("DOMContentLoaded", () => {
   const statusContainer = document.getElementById("status-container");
   const personalityCard = document.getElementById("personality-card");
@@ -10,20 +12,44 @@ document.addEventListener("DOMContentLoaded", () => {
   const actionsContainer = document.getElementById("actions-container");
   const mySurveyIdEl = document.getElementById("my-survey-id");
   const copyIdBtn = document.getElementById("copyIdBtn");
+  const myAccessTokenEl = document.getElementById("my-access-token");
+  const copyTokenBtn = document.getElementById("copyTokenBtn");
   const viewMySubmissionBtn = document.getElementById("viewMySubmissionBtn");
   const compareIdInput = document.getElementById("compareIdInput");
   const startCompareBtn = document.getElementById("startCompareBtn");
   const generateCompareLinkBtn = document.getElementById("generateCompareLinkBtn");
   const goToMbtiAnalysisBtn = document.getElementById("goToMbtiAnalysisBtn");
+  const exclusiveSurveyLinkEl = document.getElementById("exclusive-survey-link");
+  const copyExclusiveLinkBtn = document.getElementById("copy-exclusive-link-btn");
 
   const params = new URLSearchParams(window.location.search);
   const status = params.get("status");
   const surveyId = params.get("id");
-  const surveyToken = params.get("token"); // 获取 URL 中的 token
+  const surveyToken = params.get("token");
   const message = params.get("message");
   let surveyData = null;
   let currentAvailableEggs = [];
   let lastDisplayedEggIndex = -1;
+
+  function copyToClipboard(textToCopy, buttonElement, isIconButton = false) {
+    navigator.clipboard.writeText(textToCopy).then(() => {
+      if (isIconButton) {
+        const originalInnerHtml = buttonElement.innerHTML;
+        buttonElement.innerHTML = '<i class="fa fa-check"></i>';
+        setTimeout(() => {
+          buttonElement.innerHTML = originalInnerHtml;
+        }, 2000);
+      } else {
+        const originalTextContent = buttonElement.textContent;
+        buttonElement.textContent = 'Copied!';
+        setTimeout(() => {
+          buttonElement.textContent = originalTextContent;
+        }, 2000);
+      }
+    }).catch(() => {
+      alert('复制失败，请手动复制。');
+    });
+  }
 
   const personalityAnalyzer = (() => {
     const SCORING_RULES = {
@@ -248,37 +274,42 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
+  const processSurveyData = (data) => {
+    surveyData = data;
+    const { primary, secondary } = personalityAnalyzer.analyze(surveyData);
+    if (primary && personalityCard && personalityTagEl && personalityDescEl) {
+      personalityTagEl.textContent = primary.tag;
+      personalityDescEl.textContent = primary.desc;
+      if (secondary && secondaryPersonalityEl) {
+        secondaryPersonalityEl.textContent = `同时，你似乎也带有一点「${secondary.tag}」的特质。`;
+        secondaryPersonalityEl.style.display = "block";
+      } else {
+        if (secondaryPersonalityEl) secondaryPersonalityEl.style.display = "none";
+      }
+      personalityCard.style.display = "block";
+    }
+    showEgg();
+  };
+  
   const renderPage = async () => {
     if (status === "success" && surveyId) {
       statusContainer.innerHTML = `<div class="icon success">✓</div><h2>提交成功！</h2><p>你的秘密档案已被妥善保管。</p>`;
       if (actionsContainer) actionsContainer.style.display = "flex";
 
       try {
-        const response = await fetch(`/api/get-survey?id=${surveyId}${surveyToken ? `&token=${surveyToken}` : ''}`); // 拼接 token
-        if (!response.ok) throw new Error("无法获取刚提交的数据");
-        surveyData = await response.json();
-
-        const { primary, secondary } = personalityAnalyzer.analyze(surveyData);
-        if (
-          primary &&
-          personalityCard &&
-          personalityTagEl &&
-          personalityDescEl
-        ) {
-          personalityTagEl.textContent = primary.tag;
-          personalityDescEl.textContent = primary.desc;
-          if (secondary && secondaryPersonalityEl) {
-            secondaryPersonalityEl.textContent = `同时，你似乎也带有一点「${secondary.tag}」的特质。`;
-            secondaryPersonalityEl.style.display = "block";
-          } else {
-            if (secondaryPersonalityEl)
-              secondaryPersonalityEl.style.display = "none";
-          }
-          personalityCard.style.display = "block";
+        const storedData = sessionStorage.getItem('lastSurveyData');
+        if (storedData) {
+            processSurveyData(JSON.parse(storedData));
+            sessionStorage.removeItem('lastSurveyData'); 
+        } else {
+            const response = await fetch(`/api/get-survey?id=${surveyId}${surveyToken ? `&token=${surveyToken}` : ''}`);
+            if (!response.ok) throw new Error("无法获取刚提交的数据");
+            const fetchedData = await response.json();
+            processSurveyData(fetchedData);
         }
-        showEgg();
       } catch (error) {
-        console.error("获取额外数据失败:", error);
+        if (personalityCard) personalityCard.style.display = 'none';
+        if (eggContainer) eggContainer.style.display = 'none';
       }
     } else {
       statusContainer.innerHTML = `<div class="icon error">✗</div><h2>提交失败</h2><p>${
@@ -289,23 +320,34 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const setupActions = () => {
     if (!surveyId) return;
+    
+    const exclusiveLink = `${window.location.origin}/viewer.html?id=${surveyId}${surveyToken ? `&token=${surveyToken}` : ''}`;
+    if (exclusiveSurveyLinkEl) {
+        exclusiveSurveyLinkEl.textContent = exclusiveLink;
+    }
+    if (copyExclusiveLinkBtn) {
+        copyExclusiveLinkBtn.addEventListener("click", () => {
+            copyToClipboard(exclusiveLink, copyExclusiveLinkBtn, true);
+        });
+    }
+
     if (mySurveyIdEl) mySurveyIdEl.textContent = surveyId;
-    if (copyIdBtn)
-      copyIdBtn.addEventListener("click", () => {
-        navigator.clipboard.writeText(surveyId).then(
-          () => {
-            const originalText = copyIdBtn.textContent;
-            copyIdBtn.textContent = "✅";
-            setTimeout(() => {
-              copyIdBtn.textContent = originalText || "📋";
-            }, 2000);
-          },
-          () => alert("复制失败，请手动复制。")
-        );
-      });
+    if (copyIdBtn) {
+        copyIdBtn.addEventListener("click", () => {
+            copyToClipboard(surveyId, copyIdBtn);
+        });
+    }
+
+    if (myAccessTokenEl) myAccessTokenEl.textContent = surveyToken;
+    if (copyTokenBtn) {
+        copyTokenBtn.addEventListener("click", () => {
+            copyToClipboard(surveyToken, copyTokenBtn);
+        });
+    }
+
     if (viewMySubmissionBtn)
       viewMySubmissionBtn.addEventListener("click", () =>
-        window.open(`/viewer.html?id=${surveyId}${surveyToken ? `&token=${surveyToken}` : ''}`, "_blank") // 拼接 token
+        window.open(`/viewer.html?id=${surveyId}${surveyToken ? `&token=${surveyToken}` : ''}`, "_blank")
       );
     if (startCompareBtn)
       startCompareBtn.addEventListener("click", () => {
@@ -315,12 +357,11 @@ document.addEventListener("DOMContentLoaded", () => {
           compareIdInput.focus();
           return;
         }
-        // 对比页面的第一个 ID 及其 Token
         window.open(`/compare.html?id1=${surveyId}&token1=${surveyToken || ''}&id2=${otherId}`, "_blank");
       });
     if (generateCompareLinkBtn)
       generateCompareLinkBtn.addEventListener("click", () => {
-        const compareUrl = `${window.location.origin}/compare.html?id1=${surveyId}${surveyToken ? `&token1=${surveyToken}` : ''}`; // 拼接 token
+        const compareUrl = `${window.location.origin}/compare.html?id1=${surveyId}${surveyToken ? `&token1=${surveyToken}` : ''}`;
         navigator.clipboard.writeText(compareUrl).then(
           () =>
             alert(
@@ -334,7 +375,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (goToMbtiAnalysisBtn)
       goToMbtiAnalysisBtn.addEventListener("click", () => {
-        window.open(`/mbti.html?id=${surveyId}${surveyToken ? `&token=${surveyToken}` : ''}`, "_blank"); // 拼接 token
+        window.open(`/mbti.html?id=${surveyId}${surveyToken ? `&token=${surveyToken}` : ''}`, "_blank");
       });
   };
 

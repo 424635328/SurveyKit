@@ -50,9 +50,26 @@ SurveyKit 的诞生源于一个简单的想法：**提问，是深入了解一�
 
 - **📊 优雅的结果呈现与分享**:
   - **访谈式结果页**: 将数据渲染成一篇排版精美的访谈录。
+  - **专属链接与安全**: 提交问卷后生成**独一无二的专属链接（包含密钥）**，确保只有持有链接的用户才能访问自己的结果。结果页会突出显示此链接并提示用户保存。
+  - **找回机制**: 用户可凭提交时留下的邮箱或问卷ID，通过邮件**安全找回**专属链接，避免丢失。
   - **默契度大挑战**: 支持与朋友对比答案，动态计算并展示默契度分数。
   - **多种导出格式**: 问卷结果支持导出为结构化的 **JSON**, **TXT**, 以及扁平化的 **Excel** 和 **CSV** 文件。
-  - **隐私至上**: 可在 Vercel 后台为结果查看页设置密码保护。
+
+---
+
+## 🔒 安全性 (Security)
+
+SurveyKit 致力于保障用户数据的隐私与安全，在设计和实现中融入了多项安全实践：
+
+-   **Serverless 架构**: 部署在 Vercel Serverless 环境，自动处理基础设施安全更新和补丁，减少传统服务器风险。
+-   **API 授权**: 所有问卷答案的读取接口都实现了基于**独有令牌 (Access Token)** 的授权机制。没有正确令牌无法访问数据，防止任意用户通过猜测 ID 批量访问。
+-   **管理员后门**: 为项目管理员提供了基于**环境变量**的独立超级令牌，可在必要时合法访问所有数据，不影响普通用户安全模型。
+-   **API 速率限制**: 对所有关键后端 API (提交、读取、AI 分析、找回链接) 均实施了速率限制，有效抵御自动化攻击和资源耗尽（DoS）风险。
+-   **输入校验**: 前后端均采用 `Zod` 进行严格的数据输入校验，防止注入攻击、恶意数据格式和程序崩溃。
+-   **XSS 防护**: 前端所有渲染用户生成内容的区域都进行了严格的 HTML 转义或使用安全的 DOM API (`textContent`, `createElement`)，彻底杜绝跨站脚本攻击 (XSS) 风险。
+-   **凭证安全**: 敏感 API 密钥（如 AI 服务、邮件服务密钥）通过 Vercel 环境变量安全管理，不暴露在代码库中。
+
+---
 
 ## 🛠️ 技术栈 (Tech Stack)
 
@@ -62,6 +79,7 @@ SurveyKit 的诞生源于一个简单的想法：**提问，是深入了解一�
 | **AI 服务**   | ![Volcengine](https://img.shields.io/badge/-Volcano_Ark-CF2E2D.svg?logo=volvo&logoColor=white) (火山方舟)                                                                                                                                                         |
 | **后端/部署** | ![Vercel](https://img.shields.io/badge/-Vercel-000000?logo=vercel&logoColor=white) & ![Node.js](https://img.shields.io/badge/-Node.js-339933?logo=node.js&logoColor=white) (Serverless)                                                                           |
 | **数据库**    | ![Redis](https://img.shields.io/badge/-Redis-DC382D?logo=redis&logoColor=white) (Vercel KV)                                                                                                                                                                       |
+| **邮件服务**  | ![Resend](https://img.shields.io/badge/-Resend-000000.svg?logo=resend&logoColor=white)                                                                                                                                                                            |
 | **核心依赖**  | ![Zod](https://img.shields.io/badge/-Zod-3E67B1?logo=zod&logoColor=white) ![Upstash](https://img.shields.io/badge/-Upstash_Ratelimit-16A34A?logo=upstash&logoColor=white) ![SheetJS](https://img.shields.io/badge/-SheetJS-217346?logo=microsoft-excel&logoColor=white) |
 
 ## 📁 项目结构 (Project Structure)
@@ -77,6 +95,7 @@ SurveyKit 的诞生源于一个简单的想法：**提问，是深入了解一�
 │   ├── viewer.html         # 问卷答案预览器 (已移至根目录)
 │   ├── compare.html        # 默契度对比页
 │   ├── mbti.html           # AI人格分析页
+│   ├── recover.html        # 找回问卷链接页 (新增)
 │   │
 │   ├── hub/                # 🛠️ 工具中心模块
 │   │   ├── hub.html
@@ -94,7 +113,8 @@ SurveyKit 的诞生源于一个简单的想法：**提问，是深入了解一�
 ├── api/                    # Vercel Serverless Functions
 │   ├── save.mjs
 │   ├── get-survey.mjs
-│   └── analyze-mbti.mjs
+│   ├── analyze-mbti.mjs
+│   └── recover-link.mjs    # 找回链接API (新增)
 │
 ├── package.json            # 项目依赖与配置
 └── README.md               # 项目说明文档
@@ -116,19 +136,21 @@ npm install
 
 ### 3. 设置环境变量
 
-在 Vercel 项目设置的 **"Environment Variables"** 中，添加你的火山方舟 API 密钥：
+在 Vercel 项目设置的 **"Environment Variables"** 中，添加你的火山方舟 API 密钥、邮件服务密钥和管理员令牌：
 
-- **Name**: `ARK_API_KEY`
-- **Value**: `你的火山引擎API Key`
+-   **`ARK_API_KEY`**: `你的火山引擎API Key` (用于AI服务)
+-   **`RESEND_API_KEY`**: `你的Resend API Key` (用于发送邮件)
+-   **`SENDER_EMAIL`**: `你的Resend验证过的发送邮箱地址` (例如 `onboarding@resend.dev` 或 `noreply@yourdomain.com`)
+-   **`ADMIN_TOKEN`**: `你设置的一个长而随机的管理员密钥` (用于访问所有问卷数据，请务必保密)
 
 ### 4. 部署到 Vercel (关键步骤)
 
-1. 登录 Vercel，从你的 GitHub 导入你 Fork 的仓库。
-2. 在 **"Project Settings" -> "General"** 中，找到 **"Root Directory"** 设置。
-3. **将根目录修改为 `public`**。这是最关键的一步，它告诉 Vercel 你的所有网站内容都在 `public` 文件夹下。
-4. 返回部署页面，**框架预设 (Framework Preset)** 应自动识别为 **"Other"**。
-5. 在 **"Storage"** 标签页创建一个新的 KV 数据库并连接到项目。
-6. 点击 "Deploy"。
+1.  登录 Vercel，从你的 GitHub 导入你 Fork 的仓库。
+2.  在 **"Project Settings" -> "General"** 中，找到 **"Root Directory"** 设置。
+3.  **将根目录修改为 `public`**。这是最关键的一步，它告诉 Vercel 你的所有网站内容都在 `public` 文件夹下。
+4.  返回部署页面，**框架预设 (Framework Preset)** 应自动识别为 **"Other"**。
+5.  在 **"Storage"** 标签页创建一个新的 KV 数据库并连接到项目。
+6.  点击 "Deploy"。
 
 部署完成后，Vercel 会将 `public` 目录作为网站根目录来提供服务，所有链接都将正常工作！
 
@@ -138,25 +160,27 @@ npm install
 
 ### 方式一：使用可视化编辑器 (推荐)
 
-1. 访问部署好的项目，进入 **工具中心** (访问路径为 `/hub/hub.html`)。
-2. 点击 **"可视化问卷编辑器"**。
-3. 在编辑器中自由添加、删除、修改问题和选项。
-4. 完成后，点击 **导出** 按钮，选择 `JSON` 格式，将文件保存为 `questions.json`。
-5. 用这个新文件替换掉你项目 `public/` 目录下的同名文件，然后重新部署。
+1.  访问部署好的项目，进入 **工具中心** (访问路径为 `/hub/hub.html`)。
+2.  点击 **"可视化问卷编辑器"**。
+3.  在编辑器中自由添加、删除、修改问题和选项。
+4.  完成时，请确保添加一个用于**收集用户邮箱的问题**（例如，`id` 为 `q_email`，`type` 为 `text`，`inputmode` 为 `email`），这将使得“找回链接”功能正常工作。
+5.  完成后，点击 **导出** 按钮，选择 `JSON` 格式，将文件保存为 `questions.json`。
+6.  用这个新文件替换掉你项目 `public/` 目录下的同名文件，然后重新部署。
 
 ### 方式二：手动编辑 `questions.json`
 
 直接在你本地代码的 `public/questions.json` 文件中进行修改。文件结构定义如下：
 
-| 字段       | 类型    | 描述                                                                                                       | 示例                                                            |
-| :--------- | :------ | :--------------------------------------------------------------------------------------------------------- | :-------------------------------------------------------------- |
-| **`id`**   | String  | **(必须)** 问题的唯一标识符。                                                                              | `"q1_drink_choice"`                                             |
-| **`text`** | String  | **(必须)** 显示给用户的问题文本（可包含题号）。                                                              | `"1. 咖啡 vs 奶茶？"`                                              |
-| **`type`** | String  | **(必须)** 问题类型。支持：`"radio"`, `"select"`, `"text"`, `"textarea"`, `"color"`, `"range"`。            | `"radio"`                                                       |
-| `options`  | Array   | (对于 `radio` 和 `select` 必须) 定义选项。                                                       | `[{"value": "coffee", "label": "☕ 咖啡"}]` |
-| `hasOther` | Boolean | (可选) 若为 `true`，为选择题自动添加一个可填写的“其他”选项。                          | `true`                                                          |
-| `rangeLeft`| String  | (可选, for `range`) 滑块左侧的文本描述。                                                                   | `"安静独处"`                                                    |
-| `rangeRight`| String | (可选, for `range`) 滑块右侧的文本描述。                                                                   | `"随时派对"`                                                    |
+| 字段        | 类型    | 描述                                                                                                       | 示例                                                            |
+| :---------- | :------ | :--------------------------------------------------------------------------------------------------------- | :-------------------------------------------------------------- |
+| **`id`**    | String  | **(必须)** 问题的唯一标识符。对于邮箱问题，请使用 `q_email`。                                              | `"q1_drink_choice"`, `"q_email"`                                |
+| **`text`**  | String  | **(必须)** 显示给用户的问题文本（可包含题号）。                                                              | `"1. 咖啡 vs 奶茶？"`, `"你的邮箱地址："`                         |
+| **`type`**  | String  | **(必须)** 问题类型。支持：`"radio"`, `"select"`, `"text"`, `"textarea"`, `"color"`, `"range"`。            | `"radio"`, `"text"`                                             |
+| `inputmode` | String  | (可选, for `text`) 软键盘类型，例如 `email`。                                                              | `"email"`                                                       |
+| `options`   | Array   | (对于 `radio` 和 `select` 必须) 定义选项。                                                       | `[{"value": "coffee", "label": "☕ 咖啡"}]` |
+| `hasOther`  | Boolean | (可选) 若为 `true`，为选择题自动添加一个可填写的“其他”选项。                          | `true`                                                          |
+| `rangeLeft` | String  | (可选, for `range`) 滑块左侧的文本描述。                                                                   | `"安静独处"`                                                    |
+| `rangeRight`| String  | (可选, for `range`) 滑块右侧的文本描述。                                                                   | `"随时派对"`                                                    |
 
 **注意**：如果你修改了用于人格分析的问题 ID 或选项，需要同步更新 `api/analyze-mbti.mjs` 中相关的分析逻辑。
 
@@ -164,32 +188,37 @@ npm install
 
 我们正致力于让 SurveyKit 变得更加强大和灵活。
 
-- #### 📝 **多问卷管理系统**
+-   #### 📝 **多问卷管理系统**
 
-  - **动态问卷**: 开发管理后台，允许用户通过 UI 创建并保存多套问卷，每套问卷生成唯一的分享链接 (`/s/[surveyId]`)。
+    -   **动态问卷**: 开发管理后台，允许用户通过 UI 创建并保存多套问卷，每套问卷生成唯一的分享链接 (`/s/[surveyId]`)。
 
-- #### 🎨 **主题与个性化**
+-   #### 🎨 **主题与个性化**
 
-  - **一键暗色模式**: 实现全局主题切换。
-  - **主题定制器**: 完善工具中心的“主题定制器”，允许为每套问卷选择主色调。
+    -   **一键暗色模式**: 实现全局主题切换。
+    -   **主题定制器**: 完善工具中心的“主题定制器”，允许为每套问卷选择主色调。
 
-- #### 🖼️ **结果分享与导出**
+-   #### 🖼️ **结果分享与导出**
 
-  - **生成分享图卡**: 在结果页，使用 `html2canvas` 将精选问答渲染成设计精美的图片，方便在社交媒体分享。
+    -   **生成分享图卡**: 在结果页，使用 `html2canvas` 将精选问答渲染成设计精美的图片，方便在社交媒体分享。
 
-- #### 🧪 **自动化测试**
+-   #### 🧪 **自动化测试**
 
-  - **单元/端到端测试**: 使用 **Vitest** 或 **Cypress** 为核心功能添加自动化测试，保证代码质量。
+    -   **单元/端到端测试**: 使用 **Vitest** 或 **Cypress** 为核心功能添加自动化测试，保证代码质量。
+
+-   #### 🗑️ **数据生命周期管理**
+
+    -   **自动清理**: 为问卷数据设置过期时间 (TTL)，自动清理旧数据以节省存储和保护隐私。
+    -   **用户删除**: 提供用户通过其专属链接自行删除问卷数据的功能。
 
 ## 🤝 贡献指南 (Contributing)
 
 欢迎所有形式的贡献！无论你是想修复一个 Bug，实现一个新功能，还是仅仅改进一下文档，我们都非常欢迎。
 
-1. **Fork** 这个仓库
-2. 创建你的功能分支 (`git checkout -b feature/AmazingFeature`)
-3. 提交你的更改 (`git commit -m 'Add some AmazingFeature'`)
-4. 推送到你的分支 (`git push origin feature/AmazingFeature`)
-5. **开启一个 Pull Request**
+1.  **Fork** 这个仓库
+2.  创建你的功能分支 (`git checkout -b feature/AmazingFeature`)
+3.  提交你的更改 (`git commit -m 'Add some AmazingFeature'`)
+4.  推送到你的分支 (`git push origin feature/AmazingFeature`)
+5.  **开启一个 Pull Request**
 
 ## 📄 许可证 (License)
 

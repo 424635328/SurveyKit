@@ -19,18 +19,20 @@
 
         <main id="view-container">
             <div id="id-input-view" class="view-section">
-                <p class="prompt-text animated-line">请输入或粘贴一个有效的问卷ID来查看结果。</p>
+                <p class="prompt-text animated-line">请输入或粘贴完整的问卷链接（包含ID和密钥），或仅输入ID来尝试访问公开问卷（如果存在）。</p>
                 <form id="id-input-form" class="input-form animated-line">
-                    <input type="text" id="survey-id-input" placeholder="例如: s_1a2b3c4d5e" required>
+                    <input type="text" id="survey-id-input" placeholder="例如: https://your.app/viewer.html?id=xxx&token=yyy 或 问卷ID" required>
                     <button type="submit" id="submit-id-btn"><i class="fa fa-search"></i> 查看结果</button>
                 </form>
+                <p class="mt-4 text-center text-sm text-gray-600">
+                    忘记专属链接？<a href="/recover.html" class="text-blue-600 hover:underline">点此找回</a>
+                </p>
             </div>
 
             <div id="results-view" class="view-section hidden">
                 <div class="export-actions animated-line">
                     <p id="current-id-display">正在查看 ID: <span></span></p>
                     
-                    <!-- Action Button Group -->
                     <div class="action-buttons-group">
                         <button id="search-new-btn" class="action-button search-new-button">
                             <i class="fa fa-search"></i> 查询其他ID
