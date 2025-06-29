@@ -1,0 +1,291 @@
+/* mbti.css - 全新现代化设计 */
+
+/* 引入外部字体 */
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap");
+
+body,
+html {
+  font-family: "Noto Sans SC", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.page-background {
+  background: linear-gradient(
+    135deg,
+    #f5f3ff 0%,
+    #ede9fe 100%
+  ); /* 淡紫色渐变背景 */
+  padding: 40px 20px;
+  min-height: 100vh;
+}
+
+.mbti-container {
+  max-width: 900px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+/* 页面头部 */
+.page-header {
+  margin-bottom: 50px;
+}
+.page-icon {
+  font-size: 3rem;
+  color: #8b5cf6; /* 紫色主题 */
+  margin-bottom: 1rem;
+}
+h1 {
+  font-size: clamp(2.2rem, 5vw, 3rem);
+  font-weight: 700;
+  color: #4c1d95; /* 深紫色 */
+  margin: 0;
+}
+.subtitle {
+  font-size: 1.15rem;
+  color: #6d28d9;
+  margin-top: 0.5rem;
+}
+.time-estimate {
+  font-size: 0.95rem;
+  color: #7c3aed;
+  margin-top: 1rem;
+  font-style: italic;
+}
+
+/* 输入区域 */
+.input-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+}
+
+.input-card {
+  width: 100%;
+  max-width: 420px;
+  background: #fff;
+  border-radius: 1rem;
+  padding: 2.5rem 2rem;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.input-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.card-icon-wrapper {
+  width: 4.5rem;
+  height: 4.5rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-image: linear-gradient(135deg, #8b5cf6, #6366f1);
+  color: white;
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+}
+.card-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #4c1d95;
+  margin: 0;
+}
+.card-description {
+  color: #6b7280;
+  margin: 0.5rem 0 1.5rem 0;
+}
+.supported-formats {
+  font-size: 0.8rem;
+  color: #9ca3af;
+  margin-top: 0.75rem;
+}
+
+.separator {
+  color: #a78bfa;
+  font-weight: 700;
+}
+
+/* 输入框和按钮 */
+#surveyIdInput {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid #ddd6fe;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  margin-bottom: 1.5rem;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+#surveyIdInput:focus {
+  outline: none;
+  border-color: #8b5cf6;
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
+}
+.action-button {
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #fff;
+  background-image: linear-gradient(
+    to right,
+    #6366f1 0%,
+    #8b5cf6 51%,
+    #6366f1 100%
+  );
+  background-size: 200% auto;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.4s ease;
+}
+.action-button:hover {
+  background-position: right center;
+  transform: translateY(-2px);
+}
+.action-button i {
+  margin-right: 0.5rem;
+}
+
+/* 拖拽区 */
+.drop-zone {
+  border: 2px dashed #c4b5fd;
+  cursor: pointer;
+}
+.drop-zone.is-active {
+  background-color: #f5f3ff;
+  border-color: #8b5cf6;
+}
+.drop-zone.disabled-drop-zone {
+  opacity: 0.6;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* 禁用状态 */
+.action-button:disabled,
+#surveyIdInput:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  background-image: none;
+  background-color: #e0e0e0;
+  transform: none;
+}
+
+/* 结果区域 */
+.result-section {
+  margin-top: 50px;
+  background-color: #fff;
+  border-radius: 1rem;
+  padding: 2rem 2.5rem;
+  text-align: left;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+}
+.report-header {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #f3f4f6;
+  margin-bottom: 1.5rem;
+}
+.mbti-type-badge {
+  flex-shrink: 0;
+  width: 5rem;
+  height: 5rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: white;
+  background-image: linear-gradient(135deg, #8b5cf6, #6366f1);
+}
+#mbti-type-name {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #4c1d95;
+  margin: 0;
+}
+.tagline {
+  font-size: 1.1rem;
+  color: #6d28d9;
+  font-style: italic;
+  margin-top: 0.25rem;
+}
+.analysis-report p {
+  line-height: 1.8;
+  color: #374151;
+  margin-bottom: 1.25rem;
+  white-space: pre-wrap;
+}
+
+/* 加载与错误 */
+.loading-spinner .spinner {
+  border: 4px solid rgba(139, 92, 246, 0.2);
+  border-top: 4px solid #8b5cf6;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 1s linear infinite;
+  margin: 40px auto 15px auto;
+}
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.loading-spinner p {
+  font-size: 1.1rem;
+  color: #6b7280;
+  font-weight: 500;
+}
+.loading-spinner p::after {
+  content: "|";
+  animation: blink-caret 0.75s step-end infinite;
+}
+@keyframes blink-caret {
+  from,
+  to {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.error-message {
+  color: #991b1b;
+  background-color: #fee2e2;
+  border: 1px solid #fecaca;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+}
+
+/* 响应式 */
+@media (min-width: 768px) {
+  .input-area {
+    flex-direction: row;
+    align-items: stretch;
+  }
+  .separator {
+    align-self: center;
+  }
+}

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>默契度对比</title>
+    <link rel="stylesheet" href="viewer.css">
+    <link rel="stylesheet" href="compare.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <div class="compare-container">
+        <h1>默契度大挑战 🧐</h1>
+        <p class="subtitle">输入双方问卷ID，揭示你们的默契与不同！</p>
+
+        <!-- ★ 双ID输入界面 (新增) ★ -->
+        <div id="double-id-prompt" class="section-card double-id-prompt" style="display: none;">
+            <div class="card-header">
+                <span class="card-icon">🤝</span>
+                <h3>输入双方问卷ID</h3>
+            </div>
+            <p>请输入两个问卷ID进行对比，看看你们的默契度如何！</p>
+            <div class="double-compare-form">
+                <div class="input-group">
+                    <label for="firstIdInput">第一个问卷ID</label>
+                    <input type="text" id="firstIdInput" placeholder="在此输入第一个问卷ID" autocomplete="off">
+                </div>
+                <div class="input-group">
+                    <label for="secondIdInput">第二个问卷ID</label>
+                    <input type="text" id="secondIdInput" placeholder="在此输入第二个问卷ID" autocomplete="off">
+                </div>
+                <button id="compareTwoIdsBtn" class="primary-action-btn">开始对比</button>
+            </div>
+            <p class="small-text">还没有问卷ID？<a href="/">点击这里</a>去填写一份吧！</p>
+        </div>
+
+        <!-- ★ 单ID输入界面 (原接收方输入ID界面) ★ -->
+        <div id="single-id-prompt" class="section-card single-id-prompt" style="display: none;">
+            <div class="card-header">
+                <span class="card-icon">🤝</span>
+                <h3>加入这场默契挑战！</h3>
+            </div>
+            <p>你的朋友向你发起了挑战。请在下方粘贴你自己的问卷ID，来看看你们的匹配度吧！</p>
+            <div class="compare-form">
+                <input type="text" id="receiverIdInput" placeholder="在此粘贴你自己的问卷ID" autocomplete="off">
+                <button id="finalizeCompareBtn" class="primary-action-btn">揭晓结果</button>
+            </div>
+            <p class="small-text">还没有自己的问卷？<a href="/">点击这里</a>去填写一份吧！</p>
+        </div>
+
+        <!-- ★ 加载动画区域 ★ -->
+        <div id="loading-compare-spinner" class="loading-spinner" style="display: none;">
+            <div class="spinner"></div>
+            <p id="loading-compare-text">正在计算默契度，请稍候...</p>
+        </div>
+
+        <!-- ★ 错误信息区域 ★ -->
+        <div id="error-message" class="error-message" style="display: none;"></div>
+
+        <!-- 默契度得分仪表盘 -->
+        <div id="match-score-container" class="section-card match-score-container" style="display: none;">
+            <div class="card-header">
+                <span class="card-icon">🎯</span>
+                <h3>默契度得分</h3>
+            </div>
+            <div class="score-circle">
+                <span id="match-score">0</span>%
+            </div>
+            <p id="match-summary"></p>
+        </div>
+
+        <!-- 对比结果容器 -->
+        <div id="compare-results-container" class="section-card compare-results-container" style="display: none;">
+            <div class="card-header">
+                <span class="card-icon">📋</span>
+                <h3>对比详情</h3>
+            </div>
+            <div class="results-table-header">
+                <div class="question-column">问题</div>
+                <div class="answer-column">答案一</div>
+                <div class="answer-column">答案二</div>
+            </div>
+            <div id="results-list">
+                <!-- 对比结果项会在这里动态加载 -->
+            </div>
+        </div>
+
+        <footer class="page-footer">
+            <p>返回 <a href="/">问卷首页</a></p>
+        </footer>
+    </div>
+
+    <script src="compare.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,202 @@
+/* home.css - (美化升级版) */
+
+/* 基础字体与滚动行为 */
+body {
+  font-family: 'Noto Sans SC', sans-serif;
+  scroll-behavior: smooth;
+}
+
+/* ==========================================================================
+   动画系统 (Animation System)
+   ========================================================================== */
+
+[data-text] {
+  visibility: hidden; /* 在JS处理前，确保元素不可见，但空间已预留 */
+}
+
+.animated-char {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(100%); /* 从下方滑入 */
+  transition: opacity 0.6s cubic-bezier(0.2, 0.8, 0.2, 1), 
+              transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+  transition-delay: calc(var(--i) * 25ms); /* 交错延迟 */
+}
+
+.start-animation .animated-char {
+  visibility: visible;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.fade-in-element {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) 0.2s, 
+              transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) 0.2s; /* 统一延迟 */
+}
+
+.fade-in-element.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ==========================================================================
+   自定义组件与布局样式
+   ========================================================================== */
+
+/* 1. Hero & CTA 背景 */
+.hero-background {
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 1200px; height: 1200px;
+  background-image: radial-gradient(circle, rgba(165, 180, 252, 0.3), transparent 60%);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.cta-background {
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(135deg, #4338ca 0%, #6d28d9 100%);
+  z-index: 0;
+}
+.cta-section .section-title { color: #fff; }
+.cta-section .section-subtitle { color: #c4b5fd; }
+
+/* 2. 向下滚动提示 */
+#scroll-down-indicator {
+  color: #a5b4fc;
+  font-size: 1.5rem;
+  opacity: 0.7;
+  animation: bounce 2s infinite;
+  transition: opacity 0.5s ease;
+}
+#scroll-down-indicator.hidden {
+  opacity: 0;
+}
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% { transform: translateY(0) translateX(-50%); }
+  40% { transform: translateY(-15px) translateX(-50%); }
+  60% { transform: translateY(-7px) translateX(-50%); }
+}
+
+/* 3. Section 标题 */
+.section-title {
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 1rem;
+}
+.section-subtitle {
+  max-width: 42rem;
+  margin-left: auto;
+  margin-right: auto;
+  font-size: 1.125rem;
+  color: #64748b;
+}
+@media (min-width: 768px) {
+  .section-title { font-size: 2.5rem; }
+  .section-subtitle { font-size: 1.25rem; }
+}
+
+/* 4. Feature Card */
+.feature-card {
+  position: relative;
+  background-color: #fff;
+  padding: 2rem;
+  border-radius: 1rem;
+  border: 1px solid #e2e8f0;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  overflow: hidden;
+}
+.feature-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 10px 20px rgba(99, 102, 241, 0.1), 0 0 0 1px #c7d2fe;
+}
+.feature-icon {
+  display: inline-flex;
+  width: 3.5rem; height: 3.5rem;
+  border-radius: 0.75rem;
+  align-items: center; justify-content: center;
+  background-color: #eef2ff;
+  color: #6366f1;
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+/* 5. 按钮 */
+.primary-btn, .secondary-btn, .secondary-btn-on-dark {
+  display: inline-flex;
+  align-items: center; justify-content: center;
+  padding: 0.75rem 1.75rem;
+  font-weight: 500;
+  border-radius: 9999px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  border: 1px solid transparent;
+}
+.primary-btn i, .secondary-btn i, .secondary-btn-on-dark i {
+  transition: transform 0.3s ease;
+}
+.primary-btn:hover i, .secondary-btn:hover i, .secondary-btn-on-dark:hover i {
+  transform: translateX(3px);
+}
+.primary-btn {
+  background-image: linear-gradient(to right, #6366f1 0%, #8b5cf6 51%, #6366f1 100%);
+  background-size: 200% auto;
+  color: #fff;
+  box-shadow: 0 4px 15px 0 rgba(139, 92, 246, 0.3);
+}
+.primary-btn:hover {
+  background-position: right center;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px 0 rgba(139, 92, 246, 0.4);
+}
+.secondary-btn {
+  background-color: #fff;
+  color: #4f46e5;
+  border-color: #e0e7ff;
+}
+.secondary-btn:hover {
+  background-color: #eef2ff;
+  transform: translateY(-2px);
+}
+.secondary-btn-on-dark {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.2);
+}
+.secondary-btn-on-dark:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+/* 6. 导航链接 (用于非活动状态) */
+.nav-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #475569;
+    transition: color 0.2s ease;
+}
+.nav-link:hover {
+    color: #4f46e5;
+}
+.nav-link-mobile {
+    display: block;
+    border-radius: 0.375rem;
+    padding: 0.5rem 0.75rem;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #475569;
+}
+.nav-link-mobile:hover {
+    background-color: #f1f5f9;
+    color: #4f46e5;
+}
+.nav-link-mobile.active {
+    background-color: #eef2ff;
+    color: #4338ca;
+}

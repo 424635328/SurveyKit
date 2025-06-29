@@ -1,0 +1,392 @@
+/* ==========================================================================
+   1. Base Styles & Custom Properties (Consistent with other pages)
+   ========================================================================== */
+:root {
+  --primary-color: #4f46e5;
+  --secondary-color: #6b7280;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  border-width: 0;
+  border-style: solid;
+  border-color: #e5e7eb;
+}
+
+html {
+  line-height: 1.5;
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  line-height: inherit;
+}
+
+.font-noto-sans-sc {
+  font-family: "Noto Sans SC", sans-serif;
+}
+.bg-gray-50 {
+  background-color: #f9fafb;
+}
+.min-h-screen {
+  min-height: 100vh;
+}
+.flex {
+  display: flex;
+}
+.flex-col {
+  flex-direction: column;
+}
+.flex-grow {
+  flex-grow: 1;
+}
+
+/* ==========================================================================
+   2. Shared Components (Header, Footer)
+   ========================================================================== */
+.container {
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+@media (min-width: 768px) {
+  .container {
+    max-width: 768px;
+  }
+}
+@media (min-width: 1024px) {
+  .container {
+    max-width: 1024px;
+  }
+}
+@media (min-width: 1280px) {
+  .container {
+    max-width: 1280px;
+  }
+}
+
+/* Header, Navigation, Footer... (保持不变) */
+header.sticky {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background-color: rgba(255, 255, 255, 0.9);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+}
+.justify-between {
+  justify-content: space-between;
+}
+.items-center {
+  align-items: center;
+}
+.space-x-2 > :not([hidden]) ~ :not([hidden]) {
+  margin-left: 0.5rem;
+}
+.space-x-8 > :not([hidden]) ~ :not([hidden]) {
+  margin-left: 2rem;
+}
+.text-primary {
+  color: var(--primary-color);
+}
+.text-2xl {
+  font-size: 1.5rem;
+}
+.text-xl {
+  font-size: 1.25rem;
+}
+.font-bold {
+  font-weight: 700;
+}
+.bg-gradient-to-r {
+  background-image: linear-gradient(to right, var(--primary-color), #9333ea);
+}
+.bg-clip-text {
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+.text-transparent {
+  color: transparent;
+}
+.text-gray-600 {
+  color: #4b5563;
+}
+.hover\:text-primary:hover {
+  color: var(--primary-color);
+}
+.transition-colors {
+  transition: color 0.2s ease;
+}
+.mr-2 {
+  margin-right: 0.5rem;
+}
+.font-medium {
+  font-weight: 500;
+}
+.hidden {
+  display: none;
+}
+@media (min-width: 768px) {
+  .md\:flex {
+    display: flex;
+  }
+  .md\:hidden {
+    display: none;
+  }
+}
+.py-4 {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+.px-4 {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+#mobile-menu {
+  border-top: 1px solid #f3f4f6;
+}
+#mobile-menu .flex-col {
+  flex-direction: column;
+}
+#mobile-menu .space-y-3 > :not([hidden]) ~ :not([hidden]) {
+  margin-top: 0.75rem;
+}
+#mobile-menu a {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+footer {
+  background-color: #1f2937;
+  color: #fff;
+}
+.py-10 {
+  padding-top: 2.5rem;
+  padding-bottom: 2.5rem;
+}
+.mt-16 {
+  margin-top: 4rem;
+}
+.text-gray-400 {
+  color: #9ca3af;
+}
+.text-sm {
+  font-size: 0.875rem;
+}
+.mb-6 {
+  margin-bottom: 1.5rem;
+}
+.mb-2 {
+  margin-bottom: 0.5rem;
+}
+.space-x-6 > :not([hidden]) ~ :not([hidden]) {
+  margin-left: 1.5rem;
+}
+.hover\:text-white:hover {
+  color: #fff;
+}
+.text-center {
+  text-align: center;
+}
+@media (min-width: 768px) {
+  .md\:flex-row {
+    flex-direction: row;
+  }
+  .md\:text-left {
+    text-align: left;
+  }
+  .md\:mb-0 {
+    margin-bottom: 0;
+  }
+  .md\:justify-start {
+    justify-content: flex-start;
+  }
+}
+
+/* ==========================================================================
+   3. Help Page Specific Styles
+   ========================================================================== */
+main {
+  padding-top: 3rem;
+  padding-bottom: 3rem;
+}
+@media (min-width: 768px) {
+  main {
+    padding-top: 5rem;
+    padding-bottom: 5rem;
+  }
+}
+
+.max-w-4xl {
+  max-width: 56rem;
+}
+.mx-auto {
+  margin-left: auto;
+  margin-right: auto;
+}
+.space-y-16 > :not([hidden]) ~ :not([hidden]) {
+  margin-top: 4rem;
+}
+.space-y-6 > :not([hidden]) ~ :not([hidden]) {
+  margin-top: 1.5rem;
+}
+.space-y-4 > :not([hidden]) ~ :not([hidden]) {
+  margin-top: 1rem;
+}
+.text-lg {
+  font-size: 1.125rem;
+}
+.text-gray-700 {
+  color: #374151;
+}
+.border-b {
+  border-bottom-width: 1px;
+}
+.pb-3 {
+  padding-bottom: 0.75rem;
+}
+.list-disc {
+  list-style-type: disc;
+}
+.list-decimal {
+  list-style-type: decimal;
+}
+.list-inside {
+  list-style-position: inside;
+}
+.font-semibold {
+  font-weight: 600;
+}
+.text-\[clamp\(2rem\,5vw\,3rem\)\] {
+  font-size: clamp(2rem, 5vw, 3rem);
+}
+
+.doc-section h2,
+.doc-section h3 {
+  color: #111827;
+}
+.doc-section li,
+.doc-section p {
+  line-height: 1.75;
+}
+
+/* ==========================================================================
+   4. NEW, IMPROVED ANIMATION SYSTEM
+   ========================================================================== */
+
+@keyframes slide-in {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(101%);
+  }
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animated-line {
+  /* 初始状态：透明，为动画做准备 */
+  opacity: 0;
+  position: relative;
+  /* 确保动画开始前，伪元素不会意外显示 */
+  overflow: hidden;
+}
+
+.animated-line::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  /* “幕布”的颜色，与背景色相同 */
+  background: #f9fafb; /* bg-gray-50 */
+  transform: translateX(-100%);
+  /* 让伪元素在 JS 添加 is-visible 类之前不播放动画 */
+  animation: none;
+}
+
+/* 触发动画的类 */
+.animated-line.is-visible {
+  /* 1. 首先让文本内容（除了幕布）浮现 */
+  animation: fade-in-up 0.6s ease forwards;
+  /* 动画延迟由 JS 控制 */
+  animation-delay: inherit;
+}
+
+.animated-line.is-visible::after {
+  /* 2. 接着播放“幕布”滑开的动画 */
+  animation: slide-in 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  animation-delay: inherit;
+}
+/* ==========================================================================
+   5. ADDED STYLES FOR QUICK NAVIGATION
+   ========================================================================== */
+
+.mt-20 {
+  margin-top: 5rem;
+}
+
+.shadow-sm {
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+}
+
+.p-8 {
+  padding: 2rem;
+}
+
+.rounded-2xl {
+  border-radius: 1rem;
+}
+
+.bg-white {
+  background-color: #fff;
+}
+
+.mr-3 {
+  margin-right: 0.75rem;
+}
+
+.gap-4 {
+  gap: 1rem;
+}
+
+.grid {
+  display: grid;
+}
+
+.grid-cols-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+@media (min-width: 768px) {
+  .md\:grid-cols-4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.quick-link.animated-line {
+  /* 确保链接块作为一个整体进行动画 */
+  display: flex;
+}
+
+.hover\:border-primary:hover {
+  border-color: var(--primary-color);
+}
+
+.hover\:bg-primary\/5:hover {
+  background-color: rgba(79, 70, 229, 0.05);
+}

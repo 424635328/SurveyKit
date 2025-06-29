@@ -1,0 +1,9 @@
+{
+  "handler": "api/analyze-mbti.mjs",
+  "runtime": "nodejs22.x",
+  "environment": {},
+  "launcherType": "Nodejs",
+  "shouldAddHelpers": true,
+  "shouldAddSourcemapSupport": false,
+  "awsLambdaHandler": ""
+}

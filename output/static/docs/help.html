@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>帮助文档 - SurveyKit</title>
+  <link rel="icon" href="../favicon.ico" type="image/x-icon">
+
+  <!-- 外部字体与图标 -->
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="help.css">
+
+</head>
+<body class="font-noto-sans-sc bg-gray-50 min-h-screen flex flex-col">
+
+    <!-- 导航栏 -->
+    <header class="sticky top-0 z-50 bg-white/90 backdrop-blur-md shadow-sm">
+      <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+        <div class="flex items-center space-x-2">
+          <span class="text-primary text-2xl"><i class="fa fa-wpforms" aria-hidden="true"></i></span>
+          <h1 class="text-xl font-bold bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">SurveyKit</h1>
+        </div>
+        
+        <nav class="hidden md:flex items-center space-x-8">
+          <a href="../index.html" class="text-gray-600 hover:text-primary transition-colors duration-200 flex items-center"><i class="fa fa-home mr-2" aria-hidden="true"></i> 首页</a>
+          <a href="../hub/hub.html" class="text-gray-600 hover:text-primary transition-colors duration-200 flex items-center"><i class="fa fa-wrench mr-2" aria-hidden="true"></i> 工具中心</a>
+          <a href="#" class="text-primary font-medium flex items-center"><i class="fa fa-book mr-2" aria-hidden="true"></i> 帮助文档</a>
+          <a href="https://github.com/424635328/SurveyKit" target="_blank" rel="noopener" class="text-gray-600 hover:text-primary transition-colors duration-200 flex items-center"><i class="fa fa-github mr-2" aria-hidden="true"></i> GitHub</a>
+        </nav>
+        
+        <button class="md:hidden text-gray-600 focus:outline-none" id="menu-toggle" aria-label="Toggle navigation menu">
+          <i class="fa fa-bars text-xl" aria-hidden="true"></i>
+        </button>
+      </div>
+      
+      <div class="md:hidden hidden bg-white border-t border-gray-100 shadow-md" id="mobile-menu">
+        <div class="container mx-auto px-4 py-3 flex flex-col space-y-3">
+          <a href="../index.html" class="text-gray-600 hover:text-primary py-2 transition-colors duration-200 flex items-center"><i class="fa fa-home mr-2" aria-hidden="true"></i> 首页</a>
+          <a href="../hub/hub.html" class="text-gray-600 hover:text-primary py-2 transition-colors duration-200 flex items-center"><i class="fa fa-wrench mr-2" aria-hidden="true"></i> 工具中心</a>
+          <a href="#" class="text-primary font-medium py-2 flex items-center"><i class="fa fa-book mr-2" aria-hidden="true"></i> 帮助文档</a>
+          <a href="https://github.com/424635328/SurveyKit" target="_blank" rel="noopener" class="text-gray-600 hover:text-primary py-2 transition-colors duration-200 flex items-center"><i class="fa fa-github mr-2" aria-hidden="true"></i> GitHub</a>
+        </div>
+      </div>
+    </header>
+  
+    <!-- 主内容区 -->
+    <main class="flex-grow container mx-auto px-4 py-12 md:py-20">
+      
+      <!-- 页面标题 -->
+      <section class="text-center mb-16 md:mb-20">
+        <h1 class="animated-line text-[clamp(2rem,5vw,3rem)] font-bold mb-4">SurveyKit 帮助中心</h1>
+        <p class="animated-line max-w-2xl mx-auto text-lg text-gray-600">在这里，找到你所需要的一切指引，轻松玩转 SurveyKit。</p>
+      </section>
+
+      <!-- 文档内容区 -->
+      <div class="max-w-4xl mx-auto space-y-16">
+
+        <!-- Section 1: 快速开始 -->
+        <section class="doc-section">
+          <h2 class="animated-line text-2xl font-bold mb-6 border-b pb-3">🚀 快速开始：三步体验核心功能</h2>
+          <ol class="list-decimal list-inside space-y-4 text-gray-700">
+            <li class="animated-line">访问首页，点击“立即开始填写问卷”，完成一份预设的深度问卷。</li>
+            <li class="animated-line">提交问卷后，复制你的专属问卷ID，然后点击“一键跳转AI分析”按钮。</li>
+            <li class="animated-line">在AI分析页粘贴ID，观看由大模型为你生成的专属人格报告。</li>
+          </ol>
+        </section>
+
+        <!-- Section 2: 工具中心 -->
+        <section class="doc-section">
+          <h2 class="animated-line text-2xl font-bold mb-6 border-b pb-3">🛠️ 工具中心：定制你的专属问卷</h2>
+          <p class="animated-line mb-6">“工具中心”是你创造和管理问卷的核心地带。我们推荐使用可视化编辑器来定制你的问卷。</p>
+          <div class="space-y-4">
+            <h3 class="animated-line text-xl font-semibold">1. 进入编辑器</h3>
+            <p class="animated-line">从导航栏进入“工具中心”，点击“自定义问卷内容”卡片即可开始。</p>
+
+            <h3 class="animated-line text-xl font-semibold mt-6">2. 编辑问卷</h3>
+            <ul class="list-disc list-inside space-y-2 text-gray-700">
+              <li class="animated-line"><strong>添加分区/问题</strong>：点击对应的“+”按钮。</li>
+              <li class="animated-line"><strong>调整顺序</strong>：使用每个卡片右上角的上下箭头按钮。</li>
+              <li class="animated-line"><strong>修改内容</strong>：直接在输入框中修改问题文本、ID、选项等。</li>
+              <li class="animated-line"><strong>删除元素</strong>：点击对应的垃圾桶或关闭图标。</li>
+            </ul>
+
+            <h3 class="animated-line text-xl font-semibold mt-6">3. 导入与导出</h3>
+            <p class="animated-line">编辑器右上角提供了强大的导入导出功能，支持 JSON, Excel, CSV, TXT 四种格式，方便你备份、迁移和批量处理问卷。</p>
+            
+            <h3 class="animated-line text-xl font-semibold mt-6">4. 应用你的问卷</h3>
+            <p class="animated-line">编辑完成后，点击“导出为 JSON”，将文件命名为 `questions.json` 并下载。用这个新文件替换你项目中 `public/` 目录下的同名文件，然后重新部署项目，你的问卷就会更新！</p>
+          </div>
+        </section>
+
+        <!-- Section 3: 核心亮点解析 -->
+        <section class="doc-section">
+          <h2 class="animated-line text-2xl font-bold mb-6 border-b pb-3">✨ 核心亮点功能解析</h2>
+          <div class="space-y-4">
+            <h3 class="animated-line text-xl font-semibold">默契度对比</h3>
+            <p class="animated-line">当你和朋友都完成了问卷后，可以进入“默契度对比”页面，分别输入你们的问卷ID，系统会自动计算并展示你们的答案异同和默契度分数。</p>
+
+            <h3 class="animated-line text-xl font-semibold mt-6">智能题号导航</h3>
+            <p class="animated-line">在问卷填写页面，注意右上角的网格导航。它不仅能展示你的答题进度，点击任意题号，就能“飞”到对应问题，对于长问卷尤其方便。</p>
+
+            <h3 class="animated-line text-xl font-semibold mt-6">结果导出与分享</h3>
+            <p class="animated-line">在提交问卷后的结果页，你可以将你的答案导出为一份排版精美的 `.txt` 文档，方便存档或通过文本分享给他人。</p>
+          </div>
+        </section>
+
+        <!-- Section 4: 常见问题 (FAQ) -->
+        <section class="doc-section">
+          <h2 class="animated-line text-2xl font-bold mb-6 border-b pb-3">❓ 常见问题 (FAQ)</h2>
+          <div class="space-y-6">
+            <div>
+              <h3 class="animated-line font-semibold">Q: 为什么我的问卷没有更新？</h3>
+              <p class="animated-line text-gray-700">A: 请确保你已将导出的新 `questions.json` 文件正确放置在项目的 `public/` 目录下，并已成功重新部署到 Vercel。</p>
+            </div>
+            <div>
+              <h3 class="animated-line font-semibold">Q: AI分析失败或返回错误怎么办？</h3>
+              <p class="animated-line text-gray-700">A: 这通常是由于网络问题或后端服务暂时不可用。请稍后再试。如果问题持续，可以检查Vercel的函数日志，或在GitHub上提交一个Issue。</p>
+            </div>
+            <div>
+              <h3 class="animated-line font-semibold">Q: 我可以自己部署这个项目吗？</h3>
+              <p class="animated-line text-gray-700">A: 当然可以！请参考项目根目录下的 `README.md` 文件，里面有详细的部署指南。</p>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- 新增：快速导航区块 -->
+      <section class="mt-20">
+        <div class="bg-white rounded-2xl shadow-sm p-8">
+          <h3 class="animated-line text-xl font-bold mb-6 flex items-center">
+            <i class="fa fa-compass text-primary mr-3"></i> 探索更多
+          </h3>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <a href="../index.html" class="quick-link animated-line flex items-center p-4 rounded-xl border border-gray-100 hover:border-primary hover:bg-primary/5 transition-colors duration-200">
+              <i class="fa fa-home text-primary text-xl mr-3"></i>
+              <span>返回首页</span>
+            </a>
+            <a href="../hub/hub.html" class="quick-link animated-line flex items-center p-4 rounded-xl border border-gray-100 hover:border-primary hover:bg-primary/5 transition-colors duration-200">
+              <i class="fa fa-wrench text-primary text-xl mr-3"></i>
+              <span>工具中心</span>
+            </a>
+            <a href="../survey.html" class="quick-link animated-line flex items-center p-4 rounded-xl border border-gray-100 hover:border-primary hover:bg-primary/5 transition-colors duration-200">
+              <i class="fa fa-list-alt text-primary text-xl mr-3"></i>
+              <span>开始问卷</span>
+            </a>
+            <a href="../mbti.html" class="quick-link animated-line flex items-center p-4 rounded-xl border border-gray-100 hover:border-primary hover:bg-primary/5 transition-colors duration-200">
+              <i class="fa fa-robot text-primary text-xl mr-3"></i>
+              <span>AI分析</span>
+            </a>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  
+    <!-- 页脚 -->
+    <footer class="bg-gray-800 text-white py-10 mt-16">
+      <div class="container mx-auto px-4">
+        <div class="flex flex-col md:flex-row justify-between items-center text-center md:text-left">
+          <div class="mb-6 md:mb-0">
+            <div class="flex items-center justify-center md:justify-start mb-2">
+              <span class="text-primary text-2xl mr-2"><i class="fa fa-wpforms" aria-hidden="true"></i></span>
+              <h2 class="text-xl font-bold">SurveyKit</h2>
+            </div>
+            <p class="text-gray-400 text-sm">© 2025 SurveyKit. 保留所有权利。</p>
+          </div>
+          <div class="flex space-x-6">
+            <a href="https://github.com/424635328/SurveyKit" target="_blank" rel="noopener" class="text-gray-400 hover:text-white transition-colors duration-200" aria-label="View on GitHub">
+              <i class="fa fa-github text-xl" aria-hidden="true"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </footer>
+  
+    <script src="help.js"></script>
+</body>
+</html>

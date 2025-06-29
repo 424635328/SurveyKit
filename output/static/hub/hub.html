@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SurveyKit 工具中心</title>
+    <!-- 外部样式与字体 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css"
+      rel="stylesheet">
+    <!-- 本地样式 -->
+    <link rel="stylesheet" href="hub.css">
+  </head>
+  <body class="font-sans bg-gray-50 text-gray-800 min-h-screen flex flex-col">
+
+    <!-- 导航栏 -->
+    <header
+      class="sticky top-0 z-50 bg-white/80 backdrop-blur-md shadow-sm transition-all duration-300">
+      <div
+        class="container mx-auto px-4 py-4 flex justify-between items-center">
+        <div class="flex items-center space-x-2">
+          <span class="text-indigo-500 text-2xl"><i
+              class="fa fa-wpforms"></i></span>
+          <h1
+            class="text-xl font-bold bg-gradient-to-r from-indigo-500 to-purple-600 bg-clip-text text-transparent">SurveyKit</h1>
+        </div>
+
+        <nav class="hidden md:flex items-center space-x-8">
+          <a href="../index.html"
+            class="text-gray-600 hover:text-indigo-500 transition-colors duration-200 flex items-center">
+            <i class="fa fa-home mr-2"></i> 首页
+          </a>
+          <a href="#" class="text-indigo-500 font-medium flex items-center">
+            <i class="fa fa-wrench mr-2"></i> 工具中心
+          </a>
+          <a href="../docs/help.html"
+            class="text-gray-600 hover:text-indigo-500 transition-colors duration-200 flex items-center">
+            <i class="fa fa-book mr-2"></i> 帮助文档
+          </a>
+          <a href="https://github.com/424635328/SurveyKit" target="_blank"
+            rel="noopener"
+            class="text-gray-600 hover:text-indigo-500 transition-colors duration-200 flex items-center">
+            <i class="fa fa-github mr-2"></i> GitHub
+          </a>
+        </nav>
+
+        <button class="md:hidden text-gray-600 focus:outline-none"
+          id="menu-toggle" aria-label="Toggle mobile menu">
+          <i class="fa fa-bars text-xl"></i>
+        </button>
+      </div>
+
+      <!-- 移动端菜单 -->
+      <div class="md:hidden hidden bg-white border-t border-gray-100 shadow-md"
+        id="mobile-menu">
+        <div class="container mx-auto px-4 py-3 flex flex-col space-y-3">
+          <a href="../index.html"
+            class="text-gray-600 hover:text-indigo-500 py-2 transition-colors duration-200 flex items-center">
+            <i class="fa fa-home mr-2"></i> 首页
+          </a>
+          <a href="#"
+            class="text-indigo-500 font-medium py-2 flex items-center">
+            <i class="fa fa-wrench mr-2"></i> 工具中心
+          </a>
+          <a href="../docs/help.html"
+            class="text-gray-600 hover:text-indigo-500 py-2 transition-colors duration-200 flex items-center">
+            <i class="fa fa-book mr-2"></i> 帮助文档
+          </a>
+          <a href="https://github.com/424635328/SurveyKit" rel="noopener"
+            target="_blank"
+            class="text-gray-600 hover:text-indigo-500 py-2 transition-colors duration-200 flex items-center">
+            <i class="fa fa-github mr-2"></i> GitHub
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <!-- 主内容区 -->
+    <main class="flex-grow container mx-auto px-4 py-12 md:py-20">
+      <!-- 页面标题 -->
+      <div class="text-center mb-16 max-w-3xl mx-auto">
+        <h2
+          class="text-[clamp(1.8rem,4vw,2.8rem)] font-bold mb-4 leading-tight text-shadow">
+          SurveyKit <span
+            class="bg-gradient-to-r from-indigo-500 to-purple-600 bg-clip-text text-transparent">工具中心</span>
+        </h2>
+        <p class="text-gray-600 text-lg">一站式问卷创作、管理与辅助工具集</p>
+      </div>
+
+      <!-- 主要工具卡片网格 -->
+      <div
+        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16 items-start">
+
+        <!-- 1. Visual Questionnaire Editor -->
+        <div
+          class="lg:col-span-1 rounded-2xl shadow-lg overflow-hidden card-hover group h-full flex flex-col bg-white card--creator card--primary">
+          <div class="card__banner h-48">
+            <i class="fa fa-edit text-white text-6xl card__icon"></i>
+          </div>
+          <div class="card__content">
+            <h3 class="text-2xl font-bold mb-3">可视化问卷编辑器</h3>
+            <p
+              class="text-gray-600 mb-6 flex-grow">核心工具。通过图形界面创建、编辑和预览问卷，支持导入/导出多种格式。</p>
+            <a href="./custom-questions/custom-questions.html"
+              class="self-start mt-auto card__action-link">
+              开始创作 <i class="fa fa-arrow-right ml-2"></i>
+            </a>
+          </div>
+        </div>
+
+        <!-- 2. Questionnaire Answer Viewer -->
+        <div
+          class="rounded-2xl shadow-md overflow-hidden card-hover group flex flex-col bg-white card--viewer">
+          <div class="card__banner h-36">
+            <i class="fa fa-search text-white text-5xl card__icon"></i>
+          </div>
+          <div class="card__content">
+            <h3 class="text-xl font-bold mb-3">问卷答案预览器</h3>
+            <p
+              class="text-gray-600 mb-6 flex-grow">输入一个有效的问卷ID，快速查看该问卷的完整答案，方便验证与回顾。</p>
+            <a href="../viewer.html" class="card__action-link">
+              立即预览 <i class="fa fa-arrow-right ml-2"></i>
+            </a>
+          </div>
+        </div>
+
+        <!-- 3. JSON Validator -->
+        <div
+          class="rounded-2xl shadow-md overflow-hidden card-hover group flex flex-col bg-white card--validator">
+          <div class="card__banner h-36">
+            <i class="fa fa-check-circle text-white text-5xl card__icon"></i>
+          </div>
+          <div class="card__content">
+            <h3 class="text-xl font-bold mb-3">JSON 校验与格式化</h3>
+            <p class="text-gray-600 mb-6 flex-grow">粘贴您的 <code
+                class="inline-code">questions.json</code> 内容，一键检查语法错误并美化格式。</p>
+            <a href="./toolchain/validator.html" class="card__action-link">
+              开始校验 <i class="fa fa-arrow-right ml-2"></i>
+            </a>
+          </div>
+        </div>
+
+        <!-- 4. AI Idea Generator -->
+        <div
+          class="rounded-2xl shadow-md overflow-hidden card-hover group flex flex-col bg-white card--creative">
+          <div class="card__banner h-36">
+            <i class="fa fa-magic text-white text-5xl card__icon"></i>
+          </div>
+          <div class="card__content">
+            <h3 class="text-xl font-bold mb-3">AI 题目灵感生成器</h3>
+            <p class="text-gray-600 mb-6 flex-grow">卡壳了？输入关键词，让 AI
+              帮你构思有趣、深刻的问卷题目。</p>
+            <a href="./toolchain/ai-generator.html" class="card__action-link">
+              获取灵感 <i class="fa fa-arrow-right ml-2"></i>
+            </a>
+          </div>
+        </div>
+
+        <!-- 5. Data Format Converter -->
+        <div
+          class="rounded-2xl shadow-md overflow-hidden card-hover group flex flex-col bg-white card--utility">
+          <div class="card__banner h-36">
+            <i class="fa fa-exchange text-white text-5xl card__icon"></i>
+          </div>
+          <div class="card__content">
+            <h3 class="text-xl font-bold mb-3">数据格式转换器</h3>
+            <p class="text-gray-600 mb-6 flex-grow">在 JSON, CSV, Excel
+              等格式间自由转换问卷结构或答案数据。</p>
+            <a href="./toolchain/converter.html" class="card__action-link">
+              开始转换 <i class="fa fa-arrow-right ml-2"></i>
+            </a>
+          </div>
+        </div>
+
+        <!-- 6. Word Cloud Generator -->
+        <div
+          class="rounded-2xl shadow-md overflow-hidden card-hover group flex flex-col bg-white card--creative">
+          <div class="card__banner h-36">
+            <i class="fa fa-cloud text-white text-5xl card__icon"></i>
+          </div>
+          <div class="card__content">
+            <h3 class="text-xl font-bold mb-3">答案词云生成器</h3>
+            <p
+              class="text-gray-600 mb-6 flex-grow">将所有文本答案一键生成可视化词云，快速发现高频词汇与核心观点。</p>
+            <a href="../status/blank.html" class="card__action-link">
+              生成词云 <i class="fa fa-arrow-right ml-2"></i>
+            </a>
+          </div>
+        </div>
+
+      </div>
+      <!-- 快速访问 (REPLACE THIS SECTION IN YOUR hub.html) -->
+      <div
+        class="bg-white rounded-2xl shadow-md p-8 md:p-10 mb-12 quick-access-section">
+        <h3 class="text-2xl font-bold mb-8 flex items-center text-gray-700">
+          <i class="fa fa-paper-plane-o text-indigo-500 mr-3"></i> 快速直达
+        </h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+
+          <!-- 问卷填写页 -->
+          <a href="../survey.html" class="quick-access-item group item--survey">
+            <div class="quick-access-item__icon-wrapper">
+              <i class="fa fa-list-alt quick-access-item__icon"></i>
+            </div>
+            <div class="quick-access-item__text-wrapper">
+              <h4 class="font-semibold text-gray-800">问卷填写页</h4>
+              <p class="text-sm text-gray-500">开始一次新的探索</p>
+            </div>
+          </a>
+
+          <!-- AI分析页 -->
+          <a href="../mbti.html" class="quick-access-item group item--ai">
+            <div class="quick-access-item__icon-wrapper">
+              <i class="fa fa-robot quick-access-item__icon"></i>
+            </div>
+            <div class="quick-access-item__text-wrapper">
+              <h4 class="font-semibold text-gray-800">AI人格分析</h4>
+              <p class="text-sm text-gray-500">生成你的专属报告</p>
+            </div>
+          </a>
+
+          <!-- 默契度对比 -->
+          <a href="../compare.html"
+            class="quick-access-item group item--compare">
+            <div class="quick-access-item__icon-wrapper">
+              <i class="fa fa-users quick-access-item__icon"></i>
+            </div>
+            <div class="quick-access-item__text-wrapper">
+              <h4 class="font-semibold text-gray-800">默契度对比</h4>
+              <p class="text-sm text-gray-500">和朋友比比看</p>
+            </div>
+          </a>
+
+          <!-- 项目仓库 -->
+          <a href="https://github.com/424635328/SurveyKit" target="_blank"
+            rel="noopener" class="quick-access-item group item--github">
+            <div class="quick-access-item__icon-wrapper">
+              <i class="fa fa-github quick-access-item__icon"></i>
+            </div>
+            <div class="quick-access-item__text-wrapper">
+              <h4 class="font-semibold text-gray-800">项目仓库</h4>
+              <p class="text-sm text-gray-500">查看源代码与贡献</p>
+            </div>
+          </a>
+
+        </div>
+      </div>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="bg-gray-800 text-white py-10">
+      <div class="container mx-auto px-4">
+        <div
+          class="flex flex-col md:flex-row justify-between items-center text-center md:text-left space-y-6 md:space-y-0">
+          <div class="flex items-center">
+            <span class="text-indigo-500 text-2xl mr-2"><i
+                class="fa fa-wpforms"></i></span>
+            <h2 class="text-xl font-bold">SurveyKit</h2>
+          </div>
+
+          <div class="text-gray-400 text-sm">
+            © 2025 SurveyKit. 保留所有权利。
+          </div>
+
+          <div class="flex space-x-6">
+            <a href="https://github.com/424635328/SurveyKit" target="_blank"
+              rel="noopener"
+              class="text-gray-400 hover:text-white transition-colors duration-200"
+              aria-label="GitHub">
+              <i class="fa fa-github text-xl"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- 本地脚本 -->
+    <script src="hub.js"></script>
+  </body>
+</html>
