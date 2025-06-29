@@ -1,0 +1,106 @@
+name: 🐛 Bug 报告 (Bug Report)
+about: 报告项目中发现的错误或异常行为。
+
+labels:
+  - bug
+  - needs triage
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        感谢您花时间帮助我们改进项目！
+
+        请尽量详细地填写以下信息，以便我们更容易理解和解决问题。
+
+  - type: textarea
+    id: description
+    attributes:
+      label: 问题描述
+      description: 请清晰、简洁地描述您遇到的问题。
+      placeholder: 例如：当执行某个特定操作时，应用崩溃并显示错误信息。
+      render: markdown
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: 重现步骤
+      description: 请提供详细的步骤，以便我们能够重现此问题。清晰的步骤是解决问题的关键。
+      placeholder: |
+        1. 前往 '...'
+        2. 点击 '....'
+        3. 滚动到 '....'
+        4. 发现问题...
+      render: markdown
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: 预期行为
+      description: 您期望在这种情况下发生什么？
+      placeholder: 例如：我期望应用能够正常完成操作，而不是崩溃。
+      render: markdown
+    validations:
+      required: true
+
+  - type: textarea
+    id: error-messages
+    attributes:
+      label: 错误信息和日志 (如果适用)
+      description: 请复制并粘贴任何相关的错误信息、终端输出或日志。请使用代码块 (\`\`\`) 包裹以保持格式。
+      render: markdown
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: 截图或录屏 (如果适用)
+      description: 如果可能，请提供截图或短视频链接。这能非常直观地帮助我们理解问题。
+
+  - type: input
+    id: os
+    attributes:
+      label: 操作系统
+      placeholder: 例如：Windows 11, macOS Sonoma, Ubuntu 22.04
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: 项目版本
+      description: 请提供您所使用的项目版本号。如果是从代码构建，请提供 Commit Hash (可使用 `git rev-parse HEAD` 获取)。
+      placeholder: 例如：v1.2.3 或 a1b2c3d
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: 运行环境 (如果适用)
+      description: 请描述您的运行环境，例如：浏览器和版本、Node.js 版本、或任何相关的依赖库版本。
+      placeholder: |
+        - 浏览器: Chrome 108.0
+        - Node.js: v18.12.1
+        - 其他相关库: library-x v2.5.0
+      render: markdown
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: 其他上下文信息
+      description: 您认为对理解和解决问题有帮助的任何其他信息。
+
+  - type: checkboxes
+    id: confirmation
+    attributes:
+      label: 确认事项
+      description: 在提交之前，请确认您已完成以下操作。
+      options:
+        - label: 我已在现有的 Issues 中搜索，没有发现重复的报告。
+          required: true
+        - label: 我已阅读并理解了项目的贡献指南 (CONTRIBUTING.md)。
+          required: false # 可选，因为不是所有项目都有这个文件

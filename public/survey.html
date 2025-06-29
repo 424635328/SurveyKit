@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>深度问卷 - SurveyKit</title>
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="survey.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <div class="survey-page-container">
+        <!-- 顶部Header和进度条 -->
+        <header class="survey-header-top">
+            <a href="/" class="home-button">🏠 项目首页</a>
+            <div class="progress-bar-container">
+                <progress id="scrollProgress" value="0" max="100"></progress>
+                <p class="counter" id="completionCounter">已完成 0 / 0 题</p>
+            </div>
+        </header>
+
+        <!-- 新增：右侧跳题网格容器 -->
+        <div class="jump-grid-container">
+            <div class="jump-grid-header">
+                <h3>🚀 题号导航</h3>
+                <span class="jump-grid-toggle">▲</span> <!-- 可选：添加一个折叠/展开按钮 -->
+            </div>
+            <div id="jumpGrid" class="jump-grid">
+                <!-- 网格内容将由JS动态生成 -->
+            </div>
+        </div>
+
+        <div class="survey-main-content-wrapper">
+            <div class="survey-container section-card">
+                <div class="card-title-group">
+                    <h1>秘密档案 🤫</h1>
+                    <p class="subtitle">这是一个深度探索邀请，所有问题都是选填，随心回答。</p>
+                </div>
+
+                <!-- 问题表单区域 -->
+                <form id="surveyForm">
+                    <p class="loading-message">正在为您生成问卷...</p>
+                    <!-- 问卷内容将由JS动态渲染到这里 -->
+                </form>
+
+                <!-- 提交按钮，现在位于问卷内容之后 -->
+                <div class="form-actions">
+                    <button type="button" id="submitButton" class="submit-btn primary-btn">封存我的答案 💌</button>
+                </div>
+            </div>
+
+            <!-- 底部功能区 - 历史记录查找（只保留这一部分） -->
+            <footer class="page-footer section-card">
+                <div class="bottom-actions-grid">
+                    <div class="history-lookup">
+                        <h3>🔍 查找历史档案</h3>
+                        <p>粘贴问卷ID，即可查看你或朋友的往期答案。</p>
+                        <div class="history-input-group">
+                            <input type="text" id="historyIdInput" placeholder="粘贴问卷ID">
+                            <button id="lookupBtn" title="查找">前往</button>
+                        </div>
+                    </div>
+                    <!-- 原来的 jump-to-question div 已移除 -->
+                </div>
+                <p class="author-info">Author: Lemm0n YellOw</p>
+            </footer>
+        </div>
+    </div>
+
+    <!-- 提交确认模态框 -->
+    <div id="confirmModal" class="modal-overlay">
+        <div class="modal-content">
+            <h3 class="modal-title">确认提交</h3>
+            <p id="modalMessage" class="modal-text">你还有一些问题未回答，确定要现在封存这份档案吗？</p>
+            <div class="modal-actions">
+                <button id="cancelButton" class="modal-button secondary">再想想</button>
+                <button id="confirmButton" class="modal-button primary">确认提交</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="survey.js" type="module"></script>
+
+</body>
+
+</html>

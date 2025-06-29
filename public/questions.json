@@ -1,0 +1,1273 @@
+[
+  {
+    "legend": "Part 1: 直觉与本能 (1-5)",
+    "questions": [
+      {
+        "id": "q1_beverage",
+        "text": "1. 当你需要提神时，第一选择是？",
+        "type": "radio",
+        "options": [
+          { "value": "一杯浓缩黑咖啡", "label": "☕ 一杯浓缩黑咖啡" },
+          { "value": "一杯加满料的奶茶", "label": "🥤 一杯加满料的奶茶" }
+        ],
+        "hasOther": true
+      },
+      {
+        "id": "q2_travel_prep",
+        "text": "2. 一场说走就走的旅行，你最先打包的是？",
+        "type": "radio",
+        "options": [
+          { "value": "相机和日记本", "label": "📷 相机和日记本" },
+          { "value": "充电宝和降噪耳机", "label": "🔋 充电宝和降噪耳机" }
+        ],
+        "hasOther": true
+      },
+      {
+        "id": "q3_rainy_day_feeling",
+        "text": "3. 窗外下起了雨，你的第一感觉是？",
+        "type": "radio",
+        "options": [
+          {
+            "value": "终于可以宅家了，很安心",
+            "label": "终于可以宅家了，很安心"
+          },
+          {
+            "value": "有点打乱计划，略感烦躁",
+            "label": "有点打乱计划，略感烦躁"
+          }
+        ],
+        "hasOther": true
+      },
+      {
+        "id": "q4_party_role",
+        "text": "4. 在一个派对上，你更可能是？",
+        "type": "radio",
+        "options": [
+          {
+            "value": "在角落安静观察大家的人",
+            "label": "在角落安静观察大家的人"
+          },
+          {
+            "value": "穿梭于人群中的社交达人",
+            "label": "穿梭于人群中的社交达人"
+          }
+        ],
+        "hasOther": true
+      },
+      {
+        "id": "q5_book_or_movie",
+        "text": "5. 一个好故事，你倾向于通过哪种方式体验？",
+        "type": "radio",
+        "options": [
+          {
+            "value": "读书，享受文字想象空间",
+            "label": "读书，享受文字想象空间"
+          },
+          {
+            "value": "看电影，沉浸于视听盛宴",
+            "label": "看电影，沉浸于视听盛宴"
+          }
+        ],
+        "hasOther": true
+      }
+    ]
+  },
+  {
+    "legend": "Part 2: 品味与审美 (6-12)",
+    "questions": [
+      {
+        "id": "q6_personal_color",
+        "text": "6. 如果让你为自己的个性选一个代表色，你会选哪个？",
+        "type": "color",
+        "defaultValue": "#a7c5eb"
+      },
+      {
+        "id": "q7_room_style",
+        "text": "7. 你理想的居住空间是什么风格？",
+        "type": "select",
+        "placeholder": "选择一种风格",
+        "options": [
+          "极简主义，整洁有序",
+          "复古怀旧，充满故事感",
+          "自然田园，绿植环绕",
+          "现代工业，冷峻利落"
+        ],
+        "hasOther": true
+      },
+      {
+        "id": "q8_music_for_focus",
+        "text": "8. 当需要专注工作或学习时，你偏爱什么样的背景音？",
+        "type": "radio",
+        "options": [
+          { "value": "纯白噪音或自然声", "label": "纯白噪音或自然声" },
+          { "value": "没有歌词的纯音乐", "label": "没有歌词的纯音乐" },
+          { "value": "随机播放的流行歌单", "label": "随机播放的流行歌单" },
+          { "value": "绝对的安静", "label": "绝对的安静" }
+        ],
+        "hasOther": true
+      },
+      {
+        "id": "q9_art_preference",
+        "text": "9. 在博物馆里，哪类展品最吸引你？",
+        "type": "select",
+        "placeholder": "选择一类展品",
+        "options": ["古典油画", "现代雕塑", "历史文物", "互动装置艺术"],
+        "hasOther": true
+      },
+      {
+        "id": "q10_fashion_statement",
+        "text": "10. 对你而言，穿衣打扮更重要的是？",
+        "type": "radio",
+        "options": [
+          { "value": "舒适自在，取悦自己", "label": "舒适自在，取悦自己" },
+          { "value": "得体大方，适应场合", "label": "得体大方，适应场合" },
+          { "value": "彰显个性，表达自我", "label": "彰显个性，表达自我" }
+        ],
+        "hasOther": true
+      },
+      {
+        "id": "q11_scent_memory",
+        "text": "11. 哪一种气味最能唤起你温暖的回忆？",
+        "type": "select",
+        "placeholder": "选择一种气味",
+        "options": [
+          "雨后泥土的清新",
+          "刚出炉面包的香甜",
+          "旧书本的墨香",
+          "干净衣物的阳光味"
+        ],
+        "hasOther": true
+      },
+      {
+        "id": "q12_city_or_nature",
+        "text": "12. 如果选择一幅画挂在墙上，你会选？",
+        "type": "radio",
+        "options": [
+          { "value": "繁华的都市夜景", "label": "繁华的都市夜景" },
+          { "value": "宁静的森林湖泊", "label": "宁静的森林湖泊" }
+        ],
+        "hasOther": true
+      }
+    ]
+  },
+  {
+    "legend": "Part 3: 创造力与想象 (13-20)",
+    "questions": [
+      {
+        "id": "q13_superpower_choice",
+        "text": "13. 如果可以拥有一种超能力，你会选择？",
+        "type": "select",
+        "placeholder": "选择一种超能力",
+        "options": [
+          "瞬间移动，无视距离",
+          "心灵感应，洞察人心",
+          "点石成金，财富自由",
+          "掌控时间，修复遗憾"
+        ],
+        "hasOther": true
+      },
+      {
+        "id": "q14_spirit_animal",
+        "text": "14. 如果有一种动物能代表你的内在灵魂，你觉得是？",
+        "type": "select",
+        "placeholder": "选择一种精神动物",
+        "options": [
+          "深海中的鲸，孤独而深邃",
+          "森林里的狐狸，聪敏又神秘",
+          "草原上的雄狮，勇敢且具领导力",
+          "屋檐下的燕子，恋家又向往远方"
+        ],
+        "hasOther": true
+      },
+      {
+        "id": "q15_doodle_habit",
+        "text": "15. 开会或上课走神时，你更可能在纸上画些什么？",
+        "type": "radio",
+        "options": [
+          { "value": "重复的几何图形", "label": "重复的几何图形" },
+          { "value": "想象中的人脸或眼睛", "label": "想象中的人脸或眼睛" },
+          { "value": "毫无意义的涂鸦线条", "label": "毫无意义的涂鸦线条" },
+          { "value": "我从不走神", "label": "我从不走神" }
+        ],
+        "hasOther": true
+      },
+      {
+        "id": "q16_new_word",
+        "text": "16. 如果你能创造一个新词并让全世界使用，这个词会用来形容？",
+        "type": "select",
+        "placeholder": "选择一个形容方向",
+        "options": [
+          "一种难以言说的美好感觉",
+          "一种微妙的社交尴尬",
+          "一种对未来的乐观期待",
+          "一种独处时的舒适感"
+        ],
+        "hasOther": true
+      },
+      {
+        "id": "q17_dream_job",
+        "text": "17. 抛开现实，你最想从事的梦幻职业是？",
+        "type": "select",
+        "placeholder": "选择一个梦幻职业",
+        "options": ["星际植物学家", "时光旅行导游", "梦境设计师", "情绪调酒师"],
+        "hasOther": true
+      },
+      {
+        "id": "q18_window_view",
+        "text": "18. 你希望自己房间的窗外是什么景象？",
+        "type": "radio",
+        "options": [
+          { "value": "看得见星空的原野", "label": "看得见星空的原野" },
+          { "value": "人来人往的繁华街角", "label": "人来人往的繁华街角" },
+          { "value": "一望无际的蔚蓝大海", "label": "一望无际的蔚蓝大海" }
+        ],
+        "hasOther": true
+      },
+      {
+        "id": "q19_magic_item",
+        "text": "19. 如果能得到一件魔法道具，你希望是？",
+        "type": "select",
+        "placeholder": "选择一件魔法道具",
+        "options": [
+          "一个能装下一切的背包",
+          "一双能去任何地方的靴子",
+          "一支能写出所有答案的笔",
+          "一面能预见未来的镜子"
+        ],
+        "hasOther": true
+      },
+      {
+        "id": "q20_fictional_friend",
+        "text": "20. 你最想和哪个虚拟世界的角色成为朋友？",
+        "type": "text",
+        "placeholder": "例如：哆啦A梦、福尔摩斯..."
+      }
+    ]
+  },
+  {
+    "legend": "Part 4: 价值观与哲学 (21-30)",
+    "questions": [
+      {
+        "id": "q21_life_motto",
+        "text": "21. 哪句话更接近你的人生信条？",
+        "type": "radio",
+        "options": [
+          { "value": "过程比结果更重要", "label": "过程比结果更重要" },
+          { "value": "结果是检验一切的标准", "label": "结果是检验一切的标准" }
+        ],
+        "hasOther": true
+      },
+      {
+        "id": "q22_luck_or_effort",
+        "text": "22. 你认为成功更多地取决于？",
+        "type": "radio",
+        "options": [
+          { "value": "不懈的努力", "label": "不懈的努力" },
+          { "value": "关键时刻的运气", "label": "关键时刻的运气" },
+          { "value": "正确的选择", "label": "正确的选择" }
+        ],
+        "hasOther": true
+      },
+      {
+        "id": "q23_truth_or_happiness",
+        "text": "23. 如果必须二选一，你选择？",
+        "type": "radio",
+        "options": [
+          { "value": "知道一个残酷的真相", "label": "知道一个残酷的真相" },
+          { "value": "活在一个美丽的谎言里", "label": "活在一个美丽的谎言里" }
+        ],
+        "hasOther": true
+      },
+      {
+        "id": "q24_past_or_future",
+        "text": "24. 你的思绪更常停留在？",
+        "type": "radio",
+        "options": [
+          { "value": "对过去的复盘与怀念", "label": "对过去的复盘与怀念" },
+          { "value": "对未来的规划与想象", "label": "对未来的规划与想象" },
+          { "value": "活在当下，专注此刻", "label": "活在当下，专注此刻" }
+        ],
+        "hasOther": true
+      },
+      {
+        "id": "q25_knowledge_or_experience",
+        "text": "25. 你更倾向于通过哪种方式学习？",
+        "type": "radio",
+        "options": [
+          {
+            "value": "从书本和理论中汲取知识",
+            "label": "从书本和理论中汲取知识"
+          },
+          {
+            "value": "从亲身实践和试错中获得经验",
+            "label": "从亲身实践和试错中获得经验"
+          }
+        ],
+        "hasOther": true
+      },
+      {
+        "id": "q26_meaning_of_life",
+        "text": "26. 对你而言，人生的意义在于？",
+        "type": "select",
+        "placeholder": "选择一个方向",
+        "options": [
+          "体验和感受世界",
+          "创造和留下价值",
+          "守护和爱护他人",
+          "实现自我超越"
+        ],
+        "hasOther": true
+      },
+      {
+        "id": "q27_ideal_world",
+        "text": "27. 你理想中的世界，更重要的是？",
+        "type": "radio",
+        "options": [
+          { "value": "绝对的公平", "label": "绝对的公平" },
+          { "value": "绝对的自由", "label": "绝对的自由" }
+        ],
+        "hasOther": true
+      },
+      {
+        "id": "q28_regret_type",
+        "text": "28. 你更容易为什么感到后悔？",
+        "type": "radio",
+        "options": [
+          { "value": "为做过的事后悔", "label": "为做过的事后悔" },
+          { "value": "为没做过的事后悔", "label": "为没做过的事后悔" }
+        ],
+        "hasOther": true
+      },
+      {
+        "id": "q29_wisdom_source",
+        "text": "29. 你觉得智慧更多来源于？",
+        "type": "select",
+        "placeholder": "选择智慧的来源",
+        "options": ["丰富的阅历", "深刻的思考", "系统的学习", "与他人的交流"],
+        "hasOther": true
+      },
+      {
+        "id": "q30_forgive_or_forget",
+        "text": "30. 面对伤害，你的处理方式更接近？",
+        "type": "radio",
+        "options": [
+          {
+            "value": "我可以原谅，但永不忘记",
+            "label": "我可以原谅，但永不忘记"
+          },
+          { "value": "忘记是最好的原谅", "label": "忘记是最好的原谅" }
+        ],
+        "hasOther": true
+      }
+    ]
+  },
+  {
+    "legend": "Part 5: 社交与人际 (31-40)",
+    "questions": [
+      {
+        "id": "q31_social_battery",
+        "text": "31. 你的“社交电量”通常处于什么状态？",
+        "type": "range",
+        "min": 0,
+        "max": 100,
+        "defaultValue": 50
+      },
+      {
+        "id": "q32_friendship_basis",
+        "text": "32. 对你来说，一段深厚友谊的基础是？",
+        "type": "select",
+        "placeholder": "选择友谊的基础",
+        "options": [
+          "相似的价值观",
+          "共同的兴趣爱好",
+          "无条件的支持与信任",
+          "轻松愉快的幽默感"
+        ],
+        "hasOther": true
+      },
+      {
+        "id": "q33_conflict_style",
+        "text": "33. 与朋友发生矛盾时，你通常会？",
+        "type": "radio",
+        "options": [
+          { "value": "主动沟通，解决问题", "label": "主动沟通，解决问题" },
+          { "value": "冷处理，等待时间淡化", "label": "冷处理，等待时间淡化" },
+          { "value": "倾向于妥协，避免冲突", "label": "倾向于妥协，避免冲突" }
+        ],
+        "hasOther": true
+      },
+      {
+        "id": "q34_group_preference",
+        "text": "34. 你更享受什么样的聚会？",
+        "type": "radio",
+        "options": [
+          { "value": "几个密友的深度长谈", "label": "几个密友的深度长谈" },
+          { "value": "一大群人的热闹派对", "label": "一大群人的热闹派对" }
+        ],
+        "hasOther": true
+      },
+      {
+        "id": "q35_giving_or_receiving",
+        "text": "35. 在人际关系中，你更享受？",
+        "type": "radio",
+        "options": [
+          {
+            "value": "为他人付出带来的满足感",
+            "label": "为他人付出带来的满足感"
+          },
+          {
+            "value": "接受他人关爱带来的幸福感",
+            "label": "接受他人关爱带来的幸福感"
+          }
+        ],
+        "hasOther": true
+      },
+      {
+        "id": "q36_listening_style",
+        "text": "36. 当朋友向你倾诉时，你更倾向于？",
+        "type": "select",
+        "placeholder": "选择你的倾听风格",
+        "options": [
+          "提供解决方案和建议",
+          "安静地倾听和共情",
+          "用自己的经历来安慰",
+          "用幽默来转移注意力"
+        ],
+        "hasOther": true
+      },
+      {
+        "id": "q37_first_impression",
+        "text": "37. 你通常给人的第一印象是？",
+        "type": "radio",
+        "options": [
+          { "value": "高冷，有距离感", "label": "高冷，有距离感" },
+          { "value": "热情，容易亲近", "label": "热情，容易亲近" },
+          { "value": "安静，不太起眼", "label": "安静，不太起眼" }
+        ],
+        "hasOther": true
+      },
+      {
+        "id": "q38_reply_speed",
+        "text": "38. 收到非紧急消息，你的回复习惯是？",
+        "type": "radio",
+        "options": [
+          { "value": "看到就回的“秒回怪”", "label": "看到就回的“秒回怪”" },
+          { "value": "攒到有空再统一回复", "label": "攒到有空再统一回复" }
+        ],
+        "hasOther": true
+      },
+      {
+        "id": "q39_alone_vs_lonely",
+        "text": "39. 对你来说，“独处”和“孤独”的区别是？",
+        "type": "radio",
+        "options": [
+          {
+            "value": "独处是主动选择，孤独是被动感受",
+            "label": "独处是主动选择，孤独是被动感受"
+          },
+          { "value": "对我来说两者差不多", "label": "对我来说两者差不多" }
+        ],
+        "hasOther": true
+      },
+      {
+        "id": "q40_love_language",
+        "text": "40. 你最偏爱的“爱的语言”是？",
+        "type": "select",
+        "placeholder": "选择爱的语言",
+        "options": [
+          "肯定的言辞",
+          "精心的时刻",
+          "接受礼物",
+          "服务的行动",
+          "身体的接触"
+        ],
+        "hasOther": true
+      }
+    ]
+  },
+  {
+    "legend": "Part 6: 生活习惯与日常 (41-50)",
+    "questions": [
+      {
+        "id": "q41_morning_or_night",
+        "text": "41. 你觉得自己是“晨型人”还是“夜型人”？",
+        "type": "radio",
+        "options": [
+          { "value": "晨型人，早睡早起", "label": "晨型人，早睡早起" },
+          { "value": "夜型人，越夜越清醒", "label": "夜型人，越夜越清醒" }
+        ],
+        "hasOther": true
+      },
+      {
+        "id": "q42_workspace_style",
+        "text": "42. 你的工作或学习桌面通常是？",
+        "type": "radio",
+        "options": [
+          { "value": "整洁有序，一尘不染", "label": "整洁有序，一尘不染" },
+          { "value": "混乱但有我自己的逻辑", "label": "混乱但有我自己的逻辑" }
+        ],
+        "hasOther": true
+      },
+      {
+        "id": "q43_food_explorer",
+        "text": "43. 点外卖或下馆子时，你更倾向于？",
+        "type": "radio",
+        "options": [
+          {
+            "value": "点熟悉的老几样，安全可靠",
+            "label": "点熟悉的老几样，安全可靠"
+          },
+          {
+            "value": "尝试没吃过的新品，追求刺激",
+            "label": "尝试没吃过的新品，追求刺激"
+          }
+        ],
+        "hasOther": true
+      },
+      {
+        "id": "q44_digital_organization",
+        "text": "44. 你的手机应用是如何组织的？",
+        "type": "radio",
+        "options": [
+          { "value": "按颜色或类型分门别类", "label": "按颜色或类型分门别类" },
+          {
+            "value": "随缘摆放，靠搜索找应用",
+            "label": "随缘摆放，靠搜索找应用"
+          }
+        ],
+        "hasOther": true
+      },
+      {
+        "id": "q45_information_source",
+        "text": "45. 你获取新闻和资讯的主要渠道是？",
+        "type": "select",
+        "placeholder": "选择主要渠道",
+        "options": ["主流新闻App", "社交媒体", "朋友和社群推荐", "播客或视频"],
+        "hasOther": true
+      },
+      {
+        "id": "q46_saving_habit",
+        "text": "46. 你的消费习惯更接近？",
+        "type": "radio",
+        "options": [
+          {
+            "value": "有明确的储蓄和预算计划",
+            "label": "有明确的储蓄和预算计划"
+          },
+          { "value": "活在当下，及时行乐", "label": "活在当下，及时行乐" }
+        ],
+        "hasOther": true
+      },
+      {
+        "id": "q47_perfect_weekend",
+        "text": "47. 一个完美的周末，必须包含？",
+        "type": "select",
+        "placeholder": "选择一个必要元素",
+        "options": [
+          "睡到自然醒",
+          "一顿美味的大餐",
+          "完成一件计划中的事",
+          "什么都不做，彻底放空"
+        ],
+        "hasOther": true
+      },
+      {
+        "id": "q48_memory_keeping",
+        "text": "48. 你用什么方式记录生活？",
+        "type": "radio",
+        "options": [
+          { "value": "拍照和录视频", "label": "拍照和录视频" },
+          { "value": "写日记或手账", "label": "写日记或手账" },
+          { "value": "收藏有意义的物品", "label": "收藏有意义的物品" },
+          { "value": "记在脑子里就够了", "label": "记在脑子里就够了" }
+        ],
+        "hasOther": true
+      },
+      {
+        "id": "q49_unplug_way",
+        "text": "49. 当你想从电子世界抽离时，会选择？",
+        "type": "radio",
+        "options": [
+          { "value": "去户外散步或运动", "label": "去户外散步或运动" },
+          { "value": "看一本纸质书", "label": "看一本纸质书" },
+          { "value": "和朋友面对面聊天", "label": "和朋友面对面聊天" }
+        ],
+        "hasOther": true
+      },
+      {
+        "id": "q50_holiday_preference",
+        "text": "50. 对于假期，你更喜欢？",
+        "type": "radio",
+        "options": [
+          {
+            "value": "充满冒险和探索的长途旅行",
+            "label": "充满冒险和探索的长途旅行"
+          },
+          {
+            "value": "在熟悉的地方彻底放松的“宅度假”",
+            "label": "在熟悉的地方彻底放松的“宅度假”"
+          }
+        ],
+        "hasOther": true
+      }
+    ]
+  },
+  {
+    "legend": "Part 7: 情绪与内在世界 (51-60)",
+    "questions": [
+      {
+        "id": "q51_stress_relief",
+        "text": "51. 感到压力很大时，你的首选解压方式是？",
+        "type": "select",
+        "placeholder": "选择解压方式",
+        "options": ["大吃一顿", "疯狂运动", "向人倾诉", "独自静处"],
+        "hasOther": true
+      },
+      {
+        "id": "q52_nostalgia_trigger",
+        "text": "52. 什么东西最容易让你陷入怀旧情绪？",
+        "type": "radio",
+        "options": [
+          { "value": "一首老歌", "label": "一首老歌" },
+          { "value": "一张旧照片", "label": "一张旧照片" },
+          { "value": "一种熟悉的气味", "label": "一种熟悉的气味" }
+        ],
+        "hasOther": true
+      },
+      {
+        "id": "q53_decision_making",
+        "text": "53. 做重要决定时，你更依赖？",
+        "type": "radio",
+        "options": [
+          { "value": "详尽的数据和利弊分析", "label": "详尽的数据和利弊分析" },
+          { "value": "内心的直觉和第一感觉", "label": "内心的直觉和第一感觉" }
+        ],
+        "hasOther": true
+      },
+      {
+        "id": "q54_crying_reason",
+        "text": "54. 上一次流泪，更可能是因为？",
+        "type": "radio",
+        "options": [
+          { "value": "被电影或故事感动", "label": "被电影或故事感动" },
+          { "value": "现实中的委屈或压力", "label": "现实中的委屈或压力" },
+          { "value": "喜极而泣", "label": "喜极而泣" }
+        ],
+        "hasOther": true
+      },
+      {
+        "id": "q55_energy_source",
+        "text": "55. 让你感到“充电”的活动是？",
+        "type": "select",
+        "placeholder": "选择充电活动",
+        "options": [
+          "高质量的独处",
+          "与志同道合的人深度交流",
+          "完成一个有挑战性的任务",
+          "沉浸在大自然中"
+        ],
+        "hasOther": true
+      },
+      {
+        "id": "q56_self_talk",
+        "text": "56. 你的“内心对话”风格更接近？",
+        "type": "radio",
+        "options": [
+          { "value": "严厉的教练，鞭策自己", "label": "严厉的教练，鞭策自己" },
+          { "value": "温柔的朋友，鼓励自己", "label": "温柔的朋友，鼓励自己" }
+        ],
+        "hasOther": true
+      },
+      {
+        "id": "q57_anger_expression",
+        "text": "57. 当你生气时，你的表现更倾向于？",
+        "type": "radio",
+        "options": [
+          { "value": "直接表达不满", "label": "直接表达不满" },
+          { "value": "沉默，但内心波涛汹涌", "label": "沉默，但内心波涛汹涌" },
+          { "value": "通过运动或写作来发泄", "label": "通过运动或写作来发泄" }
+        ],
+        "hasOther": true
+      },
+      {
+        "id": "q58_joy_source",
+        "text": "58. 哪种快乐对你来说更持久？",
+        "type": "radio",
+        "options": [
+          { "value": "获得成就带来的喜悦", "label": "获得成就带来的喜悦" },
+          { "value": "与人分享带来的快乐", "label": "与人分享带来的快乐" }
+        ],
+        "hasOther": true
+      },
+      {
+        "id": "q59_facing_fear",
+        "text": "59. 面对恐惧，你的第一反应是？",
+        "type": "select",
+        "placeholder": "选择你的反应",
+        "options": [
+          "直面它，战胜它",
+          "分析它，理解它",
+          "暂时回避，寻找支持",
+          "假装它不存在"
+        ],
+        "hasOther": true
+      },
+      {
+        "id": "q60_inner_child",
+        "text": "60. 你觉得你内心的“小孩”最喜欢什么？",
+        "type": "radio",
+        "options": [
+          { "value": "无拘无束地玩耍", "label": "无拘无束地玩耍" },
+          { "value": "得到肯定和赞扬", "label": "得到肯定和赞扬" },
+          { "value": "对世界充满好奇地探索", "label": "对世界充满好奇地探索" }
+        ],
+        "hasOther": true
+      }
+    ]
+  },
+  {
+    "legend": "Part 8: 轻度“暴露”与偏好 (61-75)",
+    "questions": [
+      {
+        "id": "q61_guilty_pleasure",
+        "text": "61. 你最大的“罪恶快感”来源是？",
+        "type": "select",
+        "placeholder": "选择一项",
+        "options": [
+          "深夜吃高热量零食",
+          "花一整天 binge-watching 剧集",
+          "在网上看沙雕视频",
+          "疯狂购物"
+        ],
+        "hasOther": true
+      },
+      {
+        "id": "q62_phone_wallpaper",
+        "text": "62. 你的手机壁纸是？",
+        "type": "radio",
+        "options": [
+          { "value": "风景或宠物照片", "label": "风景或宠物照片" },
+          { "value": "偶像或家人的照片", "label": "偶像或家人的照片" },
+          { "value": "默认壁纸或深色壁纸", "label": "默认壁纸或深色壁纸" },
+          { "value": "动漫或艺术作品", "label": "动漫或艺术作品" }
+        ],
+        "hasOther": true
+      },
+      {
+        "id": "q63_go_to_karaoke_song",
+        "text": "63. 如果去KTV，你的必点曲目风格是？",
+        "type": "radio",
+        "options": [
+          { "value": "撕心裂肺的情歌", "label": "撕心裂肺的情歌" },
+          { "value": "嗨翻全场的摇滚/流行", "label": "嗨翻全场的摇滚/流行" },
+          { "value": "我只是去吃果盘的", "label": "我只是去吃果盘的" }
+        ],
+        "hasOther": true
+      },
+      {
+        "id": "q64_first_app_morning",
+        "text": "64. 早上醒来，你最先打开的App通常是？",
+        "type": "select",
+        "placeholder": "选择一个App类型",
+        "options": [
+          "社交媒体 (微信、微博)",
+          "资讯类 (新闻、知乎)",
+          "娱乐类 (视频、音乐)",
+          "工作/学习类 (邮件、待办)"
+        ],
+        "hasOther": true
+      },
+      {
+        "id": "q65_weird_skill",
+        "text": "65. 你有没有什么很厉害但没什么用的“隐藏技能”？",
+        "type": "radio",
+        "options": [
+          { "value": "有，而且我为此自豪", "label": "有，而且我为此自豪" },
+          { "value": "好像没有特别的", "label": "好像没有特别的" }
+        ],
+        "hasOther": true
+      },
+      {
+        "id": "q66_collecting_habit",
+        "text": "66. 你有收藏什么的习惯吗？",
+        "type": "select",
+        "placeholder": "选择收藏类别",
+        "options": [
+          "电影票根、明信片等",
+          "手办、模型或盲盒",
+          "书籍、唱片或邮票",
+          "没有收藏习惯"
+        ],
+        "hasOther": true
+      },
+      {
+        "id": "q67_ideal_ superpower_in_life",
+        "text": "67. 如果有一种生活中的“微超能力”，你希望是？",
+        "type": "radio",
+        "options": [
+          { "value": "永远不会找错路", "label": "永远不会找错路" },
+          { "value": "吃什么都不会胖", "label": "吃什么都不会胖" },
+          { "value": "能让植物茁壮成长", "label": "能让植物茁壮成长" },
+          {
+            "value": "能立刻让小猫小狗喜欢你",
+            "label": "能立刻让小猫小狗喜欢你"
+          }
+        ],
+        "hasOther": true
+      },
+      {
+        "id": "q68_sleep_position",
+        "text": "68. 你的常用睡姿是？",
+        "type": "radio",
+        "options": [
+          { "value": "侧卧", "label": "侧卧" },
+          { "value": "仰卧", "label": "仰卧" },
+          { "value": "俯卧", "label": "俯卧" },
+          { "value": "不固定，满床滚", "label": "不固定，满床滚" }
+        ],
+        "hasOther": true
+      },
+      {
+        "id": "q69_beverage_temperature",
+        "text": "69. 喝东西时，你更偏爱？",
+        "type": "radio",
+        "options": [
+          { "value": "必须是冰的", "label": "必须是冰的" },
+          { "value": "常温就好", "label": "常温就好" },
+          { "value": "喜欢温热的", "label": "喜欢温热的" }
+        ],
+        "hasOther": true
+      },
+      {
+        "id": "q70_window_seat_or_aisle",
+        "text": "70. 坐飞机或火车，你选？",
+        "type": "radio",
+        "options": [
+          { "value": "靠窗，看风景", "label": "靠窗，看风景" },
+          { "value": "靠走道，方便活动", "label": "靠走道，方便活动" }
+        ],
+        "hasOther": true
+      },
+      {
+        "id": "q71_supermarket_path",
+        "text": "71. 在超市购物，你的路线是？",
+        "type": "radio",
+        "options": [
+          { "value": "按清单直奔主题", "label": "按清单直奔主题" },
+          {
+            "value": "随心所欲，逛遍每个货架",
+            "label": "随心所欲，逛遍每个货架"
+          }
+        ],
+        "hasOther": true
+      },
+      {
+        "id": "q72_playlist_or_album",
+        "text": "72. 听音乐时，你更习惯？",
+        "type": "radio",
+        "options": [
+          { "value": "听算法推荐的歌单", "label": "听算法推荐的歌单" },
+          { "value": "完整地听一张专辑", "label": "完整地听一张专辑" }
+        ],
+        "hasOther": true
+      },
+      {
+        "id": "q73_old_item_handling",
+        "text": "73. 对于不再使用的旧物，你倾向于？",
+        "type": "radio",
+        "options": [
+          { "value": "果断扔掉或卖掉", "label": "果断扔掉或卖掉" },
+          {
+            "value": "总觉得以后还能用，囤着",
+            "label": "总觉得以后还能用，囤着"
+          }
+        ],
+        "hasOther": true
+      },
+      {
+        "id": "q74_game_preference",
+        "text": "74. 如果玩游戏，你更喜欢？",
+        "type": "select",
+        "placeholder": "选择游戏类型",
+        "options": ["策略经营类", "角色扮演类", "休闲益智类", "竞技对抗类"],
+        "hasOther": true
+      },
+      {
+        "id": "q75_emoji_style",
+        "text": "75. 你最常用的表情包风格是？",
+        "type": "select",
+        "placeholder": "选择表情包风格",
+        "options": [
+          "可爱的猫猫狗狗",
+          "搞笑的真人表情包",
+          "二次元动漫截图",
+          "系统自带的Emoji"
+        ],
+        "hasOther": true
+      }
+    ]
+  },
+  {
+    "legend": "Part 9: 思维模式与决策 (76-85)",
+    "questions": [
+      {
+        "id": "q76_problem_solving",
+        "text": "76. 遇到一个复杂问题，你的第一步是？",
+        "type": "radio",
+        "options": [
+          {
+            "value": "先动手尝试，在行动中找思路",
+            "label": "先动手尝试，在行动中找思路"
+          },
+          {
+            "value": "静下来，彻底想清楚再行动",
+            "label": "静下来，彻底想清楚再行动"
+          }
+        ],
+        "hasOther": true
+      },
+      {
+        "id": "q77_learning_style",
+        "text": "77. 学习新东西时，哪种方式对你最有效？",
+        "type": "select",
+        "placeholder": "选择学习方式",
+        "options": ["看视频教程", "读文字和图表", "听别人讲解", "自己动手摸索"],
+        "hasOther": true
+      },
+      {
+        "id": "q78_big_picture_or_details",
+        "text": "78. 你的思维模式更倾向于？",
+        "type": "radio",
+        "options": [
+          {
+            "value": "关注宏观大局和长远规划",
+            "label": "关注宏观大局和长远规划"
+          },
+          { "value": "注重细节和具体执行", "label": "注重细节和具体执行" }
+        ],
+        "hasOther": true
+      },
+      {
+        "id": "q79_comfort_zone",
+        "text": "79. 关于“舒适区”，你的看法是？",
+        "type": "radio",
+        "options": [
+          {
+            "value": "是需要不断打破和走出的地方",
+            "label": "是需要不断打破和走出的地方"
+          },
+          {
+            "value": "是补充能量、提供安全感的港湾",
+            "label": "是补充能量、提供安全感的港湾"
+          }
+        ],
+        "hasOther": true
+      },
+      {
+        "id": "q80_ multitasking",
+        "text": "80. 你更习惯的工作模式是？",
+        "type": "radio",
+        "options": [
+          { "value": "同时处理多项任务", "label": "同时处理多项任务" },
+          { "value": "一次只专注一件事", "label": "一次只专注一件事" }
+        ],
+        "hasOther": true
+      },
+      {
+        "id": "q81_accepting_criticism",
+        "text": "81. 收到批评时，你的第一反应是？",
+        "type": "radio",
+        "options": [
+          { "value": "反思其中有价值的部分", "label": "反思其中有价值的部分" },
+          { "value": "本能地想要辩护", "label": "本能地想要辩护" },
+          { "value": "感到沮丧和自我怀疑", "label": "感到沮丧和自我怀疑" }
+        ],
+        "hasOther": true
+      },
+      {
+        "id": "q82_new_idea_source",
+        "text": "82. 你的新点子通常来源于？",
+        "type": "select",
+        "placeholder": "选择灵感来源",
+        "options": [
+          "与他人头脑风暴",
+          "独处时的胡思乱想",
+          "阅读或看电影时",
+          "走路或洗澡时"
+        ],
+        "hasOther": true
+      },
+      {
+        "id": "q83_rule_follower_or_breaker",
+        "text": "83. 面对规则，你的天性是？",
+        "type": "radio",
+        "options": [
+          { "value": "倾向于遵守和维护规则", "label": "倾向于遵守和维护规则" },
+          {
+            "value": "总想找到规则的漏洞或更优解",
+            "label": "总想找到规则的漏洞或更优解"
+          }
+        ],
+        "hasOther": true
+      },
+      {
+        "id": "q84_information_trust",
+        "text": "84. 对于一个新信息，你更倾向于？",
+        "type": "radio",
+        "options": [
+          { "value": "先相信，再去寻找反证", "label": "先相信，再去寻找反证" },
+          { "value": "先质疑，再去寻找证据", "label": "先质疑，再去寻找证据" }
+        ],
+        "hasOther": true
+      },
+      {
+        "id": "q85_decision_regret",
+        "text": "85. 做完决定后，你是否容易感到后悔？",
+        "type": "radio",
+        "options": [
+          { "value": "很少，做了就向前看", "label": "很少，做了就向前看" },
+          { "value": "有时会，反复琢磨", "label": "有时会，反复琢磨" }
+        ],
+        "hasOther": true
+      }
+    ]
+  },
+  {
+    "legend": "Part 10: 终极幻想与反思 (86-100)",
+    "questions": [
+      {
+        "id": "q86_dinner_with_anyone",
+        "text": "86. 如果能和世界上任何人（在世或已故）共进晚餐，你会选？",
+        "type": "select",
+        "placeholder": "选择共餐对象类型",
+        "options": [
+          "一位伟大的科学家",
+          "一位传奇的艺术家",
+          "一位深刻的哲学家",
+          "一位你最亲密的家人"
+        ],
+        "hasOther": true
+      },
+      {
+        "id": "q87_one_day_as_someone_else",
+        "text": "87. 如果能体验一天别人的人生，你会想成为？",
+        "type": "radio",
+        "options": [
+          {
+            "value": "一名宇航员，在空间站俯瞰地球",
+            "label": "一名宇航员，在空间站俯瞰地球"
+          },
+          {
+            "value": "一名顶级运动员，感受胜利瞬间",
+            "label": "一名顶级运动员，感受胜利瞬间"
+          },
+          {
+            "value": "一名隐居的工匠，专注创作",
+            "label": "一名隐居的工匠，专注创作"
+          }
+        ],
+        "hasOther": true
+      },
+      {
+        "id": "q88_message_in_a_bottle",
+        "text": "88. 你在海边捡到一个漂流瓶，更希望里面是？",
+        "type": "radio",
+        "options": [
+          { "value": "一张藏宝图", "label": "一张藏宝图" },
+          { "value": "一封动人的情书", "label": "一封动人的情书" },
+          { "value": "一个来自过去的秘密", "label": "一个来自过去的秘密" }
+        ],
+        "hasOther": true
+      },
+      {
+        "id": "q89_perfect_memory",
+        "text": "89. 如果能将一段记忆永久完美保存，你会选择？",
+        "type": "select",
+        "placeholder": "选择一段记忆",
+        "options": [
+          "一次成功的瞬间",
+          "一次与家人的旅行",
+          "一段懵懂的初恋时光",
+          "一个宁静的午后"
+        ],
+        "hasOther": true
+      },
+      {
+        "id": "q90_last_day_on_earth",
+        "text": "90. 如果明天是世界末日，今天你会做什么？",
+        "type": "radio",
+        "options": [
+          { "value": "和最爱的人待在一起", "label": "和最爱的人待在一起" },
+          { "value": "吃遍所有想吃的美食", "label": "吃遍所有想吃的美食" },
+          {
+            "value": "去做一件一直想做却没敢做的事",
+            "label": "去做一件一直想做却没敢做的事"
+          }
+        ],
+        "hasOther": true
+      },
+      {
+        "id": "q91_ideal_age",
+        "text": "91. 你认为人生最美好的年龄阶段是？",
+        "type": "select",
+        "placeholder": "选择一个年龄段",
+        "options": [
+          "无忧无虑的童年",
+          "充满活力的青年",
+          "事业有成的中年",
+          "智慧沉淀的老年",
+          "就是现在"
+        ],
+        "hasOther": true
+      },
+      {
+        "id": "q92_history_witness",
+        "text": "92. 如果能穿越回去见证一个历史瞬间，你会选？",
+        "type": "radio",
+        "options": [
+          { "value": "金字塔的建成", "label": "金字塔的建成" },
+          { "value": "文艺复兴的佛罗伦萨", "label": "文艺复兴的佛罗伦萨" },
+          { "value": "第一次工业革命", "label": "第一次工业革命" },
+          { "value": "人类第一次登月", "label": "人类第一次登月" }
+        ],
+        "hasOther": true
+      },
+      {
+        "id": "q93_ideal_teacher",
+        "text": "93. 你理想中的“老师”或“导师”是什么样的？",
+        "type": "radio",
+        "options": [
+          {
+            "value": "知识渊博，能解答所有问题",
+            "label": "知识渊博，能解答所有问题"
+          },
+          {
+            "value": "循循善诱，能激发你的潜力",
+            "label": "循循善诱，能激发你的潜力"
+          },
+          {
+            "value": "像朋友一样，能与你平等交流",
+            "label": "像朋友一样，能与你平等交流"
+          }
+        ],
+        "hasOther": true
+      },
+      {
+        "id": "q94_life_as_a_book",
+        "text": "94. 如果你的人生是一本书，你希望它的结局是？",
+        "type": "select",
+        "placeholder": "选择一个结局",
+        "options": [
+          "一个圆满的Happy Ending",
+          "一个引人深思的开放式结局",
+          "一个悲壮但伟大的史诗结尾",
+          "故事未完待续..."
+        ],
+        "hasOther": true
+      },
+      {
+        "id": "q95_ultimate_freedom",
+        "text": "95. 对你来说，“终极的自由”意味着什么？",
+        "type": "radio",
+        "options": [
+          {
+            "value": "财务自由，不再为钱工作",
+            "label": "财务自由，不再为钱工作"
+          },
+          {
+            "value": "心灵自由，不受他人看法束缚",
+            "label": "心灵自由，不受他人看法束缚"
+          },
+          {
+            "value": "行动自由，可以随时去任何地方",
+            "label": "行动自由，可以随时去任何地方"
+          }
+        ],
+        "hasOther": true
+      },
+      {
+        "id": "q96_epitaph",
+        "text": "96. 你希望自己的墓志铭上写什么？",
+        "type": "select",
+        "placeholder": "选择一句墓志铭",
+        "options": [
+          "“他/她来过，爱过，体验过”",
+          "“一位有趣的探索者长眠于此”",
+          "“别为我哭泣，这是一个新的开始”",
+          "“我还有好多事没做完呢！”"
+        ],
+        "hasOther": true
+      },
+      {
+        "id": "q97_legacy",
+        "text": "97. 你希望留给这个世界最重要的东西是？",
+        "type": "radio",
+        "options": [
+          {
+            "value": "一个改变世界的创造或发明",
+            "label": "一个改变世界的创造或发明"
+          },
+          {
+            "value": "一段被铭记的、充满爱的关系",
+            "label": "一段被铭记的、充满爱的关系"
+          },
+          {
+            "value": "一些能启发他人的思想或作品",
+            "label": "一些能启发他人的思想或作品"
+          }
+        ],
+        "hasOther": true
+      },
+      {
+        "id": "q98_define_success",
+        "text": "98. 你如何定义一个“成功的人生”？",
+        "type": "select",
+        "placeholder": "选择成功的定义",
+        "options": [
+          "拥有巨大的影响力",
+          "过得幸福快乐",
+          "实现了自我价值",
+          "对社会有所贡献"
+        ],
+        "hasOther": true
+      },
+      {
+        "id": "q99_one_question_to_universe",
+        "text": "99. 如果你能向上帝或宇宙问一个问题并得到答案，你会问什么？",
+        "type": "radio",
+        "options": [
+          {
+            "value": "“这一切的意义是什么？”",
+            "label": "“这一切的意义是什么？”"
+          },
+          { "value": "“宇宙之外还有什么？”", "label": "“宇宙之外还有什么？”" },
+          {
+            "value": "“我怎样才能让在乎的人幸福？”",
+            "label": "“我怎样才能让在乎的人幸福？”"
+          }
+        ],
+        "hasOther": true
+      },
+      {
+        "id": "q100_final_words",
+        "text": "100. 终于完成了！最后，选择一种方式结束这次探索吧。",
+        "type": "radio",
+        "options": [
+          {
+            "value": "满意地合上档案，感觉更了解自己了",
+            "label": "满意地合上档案，感觉更了解自己了"
+          },
+          {
+            "value": "长舒一口气，感觉有点累但值得",
+            "label": "长舒一口气，感觉有点累但值得"
+          },
+          {
+            "value": "意犹未尽，还想再来一遍",
+            "label": "意犹未尽，还想再来一遍"
+          }
+        ],
+        "hasOther": true
+      }
+    ]
+  }
+]

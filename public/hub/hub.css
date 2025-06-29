@@ -1,0 +1,246 @@
+/* =================================================================== */
+/*  SurveyKit - hub.css (Gradient Card Style)                          */
+/* =================================================================== */
+
+/* :root -> 全局自定义属性
+ * ----------------------------------------- */
+:root {
+  /* 过渡与动画 */
+  --transition-duration: 0.3s;
+  --transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* 阴影 */
+  --shadow-color-light: rgba(0, 0, 0, 0.04);
+  --shadow-color-medium: rgba(0, 0, 0, 0.1);
+  --shadow-card-hover: 0 10px 25px -5px var(--shadow-color-medium),
+    0 10px 10px -5px var(--shadow-color-light);
+  --shadow-text: 0 2px 4px var(--shadow-color-medium);
+
+  /* 代码高亮 */
+  --code-bg-color: rgba(239, 68, 68, 0.1);
+  --code-text-color: #c53030;
+
+  /* 渐变色板 (Gradient Palette) */
+  --grad-creator-start: #34d399;
+  --grad-creator-end: #059669; /* emerald-400 to emerald-600 */
+  --grad-viewer-start: #60a5fa;
+  --grad-viewer-end: #2563eb; /* blue-400 to blue-600 */
+  --grad-validator-start: #fb923c;
+  --grad-validator-end: #ea580c; /* orange-400 to orange-600 */
+  --grad-creative-start: #c084fc;
+  --grad-creative-end: #9333ea; /* purple-400 to purple-600 */
+  --grad-utility-start: #94a3b8;
+  --grad-utility-end: #475569; /* slate-400 to slate-600 */
+
+  /* 主题色变量 (用于链接和光晕) */
+  --theme-color-creator: #10b981;
+  --theme-color-viewer: #3b82f6;
+  --theme-color-validator: #f97316;
+  --theme-color-creative: #a855f7;
+  --theme-color-utility: #64748b;
+}
+
+/* 基础样式与滚动条
+ * ----------------------------------------- */
+body {
+  scroll-behavior: smooth;
+}
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #a1a1a1;
+}
+
+/* 辅助工具类
+ * ----------------------------------------- */
+.text-shadow {
+  text-shadow: var(--shadow-text);
+}
+.inline-code {
+  background-color: var(--code-bg-color);
+  color: var(--code-text-color);
+  padding: 0.125rem 0.375rem;
+  border-radius: 0.25rem;
+  font-size: 0.875em;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", "Courier New", monospace;
+}
+
+/* =================================================================== */
+/*  卡片组件系统 (Gradient Card System)                              */
+/* =================================================================== */
+
+/* 1. 卡片基础结构与交互 */
+.card-hover {
+  transition: transform var(--transition-duration)
+      var(--transition-timing-function),
+    box-shadow var(--transition-duration) var(--transition-timing-function);
+}
+.card-hover:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-card-hover);
+}
+.card-hover:hover .card__icon {
+  transform: scale(1.1);
+}
+.card__icon {
+  transition: transform var(--transition-duration)
+    var(--transition-timing-function);
+}
+
+/* 2. 卡片顶部渐变区域 */
+.card__banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-image: linear-gradient(
+    135deg,
+    var(--grad-start, #ccc),
+    var(--grad-end, #999)
+  );
+}
+
+/* 3. 卡片内容区域 */
+.card__content {
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1; /* 确保内容区能撑满剩余空间 */
+}
+
+/* 4. 卡片颜色主题化 */
+.card--creator {
+  --grad-start: var(--grad-creator-start);
+  --grad-end: var(--grad-creator-end);
+  --theme-color: var(--theme-color-creator);
+}
+.card--viewer {
+  --grad-start: var(--grad-viewer-start);
+  --grad-end: var(--grad-viewer-end);
+  --theme-color: var(--theme-color-viewer);
+}
+.card--validator {
+  --grad-start: var(--grad-validator-start);
+  --grad-end: var(--grad-validator-end);
+  --theme-color: var(--theme-color-validator);
+}
+.card--creative {
+  --grad-start: var(--grad-creative-start);
+  --grad-end: var(--grad-creative-end);
+  --theme-color: var(--theme-color-creative);
+}
+.card--utility {
+  --grad-start: var(--grad-utility-start);
+  --grad-end: var(--grad-utility-end);
+  --theme-color: var(--theme-color-utility);
+}
+
+/* 将主题色应用到标题和链接 */
+.card-hover h3 {
+  color: var(--theme-color);
+}
+.card__action-link {
+  font-weight: 600;
+  color: var(--theme-color);
+  transition: color var(--transition-duration) ease;
+}
+.card-hover:hover .card__action-link {
+  color: var(--grad-end); /* 悬停时颜色加深 */
+}
+.card__action-link i {
+  transition: transform var(--transition-duration)
+    var(--transition-timing-function);
+}
+.card-hover:hover .card__action-link i {
+  transform: translateX(4px);
+}
+/* =================================================================== */
+/*  快速访问区域优化 (Quick Access Section)                            */
+/* =================================================================== */
+
+/* 1. 区域基础样式 */
+.quick-access-section {
+  /* 可以添加一个微妙的背景图案或渐变，以区别于其他白色背景 */
+  background-color: #f9fafb; /* bg-gray-50 */
+}
+
+/* 2. 快速访问项 (小卡片) 基础样式 */
+.quick-access-item {
+  display: flex;
+  align-items: center;
+  padding: 1.25rem; /* p-5 */
+  border-radius: 0.75rem; /* rounded-xl */
+  background-color: #fff;
+  border: 1px solid #e5e7eb; /* border-gray-200 */
+  text-decoration: none;
+  transition: all var(--transition-duration) var(--transition-timing-function);
+  box-shadow: 0 1px 3px 0 rgba(0,0,0,0.05);
+}
+
+/* 3. 悬停效果 */
+.quick-access-item:hover {
+  transform: translateY(-4px);
+  border-color: var(--item-theme-color, #6366f1);
+  box-shadow: 0 10px 15px -3px rgba(0,0,0,0.07), 0 4px 6px -2px rgba(0,0,0,0.05);
+}
+
+.quick-access-item:hover .quick-access-item__icon-wrapper {
+  background-color: var(--item-theme-color, #6366f1);
+}
+
+.quick-access-item:hover .quick-access-item__icon {
+  color: #fff;
+  transform: scale(1.1);
+}
+
+/* 4. 图标区域样式 */
+.quick-access-item__icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 3.5rem;  /* w-14 */
+  height: 3.5rem; /* h-14 */
+  margin-right: 1rem; /* mr-4 */
+  border-radius: 0.5rem; /* rounded-lg */
+  background-color: var(--item-bg-color, #f3f4f6);
+  transition: background-color var(--transition-duration) ease;
+}
+
+.quick-access-item__icon {
+  font-size: 1.75rem; /* text-3xl */
+  color: var(--item-theme-color, #6366f1);
+  transition: all var(--transition-duration) var(--transition-timing-function);
+}
+
+/* 5. 文本区域样式 */
+.quick-access-item__text-wrapper p {
+  transition: color var(--transition-duration) ease;
+}
+
+/* 6. 不同访问项的主题颜色定义 */
+.item--survey {
+  --item-theme-color: #3b82f6; /* blue-500 */
+  --item-bg-color: #eff6ff;   /* blue-50 */
+}
+.item--ai {
+  --item-theme-color: #8b5cf6; /* purple-500 */
+  --item-bg-color: #f5f3ff;   /* purple-50 */
+}
+.item--compare {
+  --item-theme-color: #10b981; /* emerald-500 */
+  --item-bg-color: #ecfdf5;   /* emerald-50 */
+}
+.item--github {
+  --item-theme-color: #1f2937; /* gray-800 */
+  --item-bg-color: #f3f4f6;   /* gray-100 */
+}
