@@ -1,4 +1,4 @@
-// public/survey.js
+// public/survey.js - Secure Version
 
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("surveyForm");
@@ -11,10 +11,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const historyIdInput = document.getElementById("historyIdInput");
   const lookupBtn = document.getElementById("lookupBtn");
   const loadingMessage = form.querySelector(".loading-message");
-  
-  const jumpGridContainer = document.querySelector('.jump-grid-container');
-  const jumpGridElement = document.getElementById('jumpGrid');
-  const jumpGridToggleButton = document.querySelector('.jump-grid-toggle');
+  const modalMessage = document.getElementById("modalMessage"); // 确保获取这个元素
+
+  const jumpGridContainer = document.querySelector(".jump-grid-container");
+  const jumpGridElement = document.getElementById("jumpGrid");
+  const jumpGridToggleButton = document.querySelector(".jump-grid-toggle");
 
   const formId = "deep-survey-draft";
   let totalQuestions = 0;
@@ -25,178 +26,284 @@ document.addEventListener("DOMContentLoaded", () => {
     console.error("Survey form or submit button not found!");
     if (loadingMessage) {
       loadingMessage.textContent = "页面加载错误：问卷表单或提交按钮缺失。";
-      loadingMessage.style.color = 'red';
+      loadingMessage.style.color = "red";
     }
     return;
   }
 
-  /**
-   * 逐字打印文本到元素
-   * @param {HTMLElement} element - 要打印文本的DOM元素
-   * @param {string} text - 要打印的完整文本
-   * @param {number} delay - 每个字符之间的延迟（毫秒）
-   * @returns {Promise<void>} - 在文本打印完成后解析
-   */
   const animateText = (element, text, delay = 35) => {
-    return new Promise(resolve => {
-        if (!element || typeof text !== 'string') {
-            resolve();
-            return;
+    return new Promise((resolve) => {
+      if (!element || typeof text !== "string") {
+        resolve();
+        return;
+      }
+      if (
+        element.dataset.animated === "true" ||
+        element.textContent.length > 0
+      ) {
+        element.textContent = text;
+        element.style.opacity = "1";
+        element.style.whiteSpace = "pre-wrap";
+        element.style.width = "auto";
+        resolve();
+        return;
+      }
+      element.textContent = "";
+      element.style.opacity = "1";
+      element.style.width = "auto";
+      element.style.whiteSpace = "pre";
+      element.style.overflow = "hidden";
+      let i = 0;
+      const interval = setInterval(() => {
+        if (i < text.length) {
+          element.textContent += text.charAt(i);
+          i++;
+        } else {
+          clearInterval(interval);
+          element.style.whiteSpace = "pre-wrap";
+          element.style.width = "auto";
+          element.dataset.animated = "true";
+          resolve();
         }
-        
-        if (element.dataset.animated === 'true' || element.textContent.length > 0) {
-            element.textContent = text;
-            element.style.opacity = '1';
-            element.style.whiteSpace = 'pre-wrap';
-            element.style.width = 'auto';
-            resolve();
-            return;
-        }
-
-        element.textContent = '';
-        element.style.opacity = '1';
-        element.style.width = 'auto'; // 文本可以正常流式布局
-        element.style.whiteSpace = 'pre'; // 暂时设置为 pre，实现逐字不换行效果
-        element.style.overflow = 'hidden';
-
-        let i = 0;
-        const interval = setInterval(() => {
-            if (i < text.length) {
-                element.textContent += text.charAt(i);
-                i++;
-            } else {
-                clearInterval(interval);
-                element.style.whiteSpace = 'pre-wrap'; // 恢复正常换行
-                element.style.width = 'auto';
-                element.dataset.animated = 'true';
-                resolve();
-            }
-        }, delay);
+      }, delay);
     });
   };
 
+  // ========================================================================
+  // =======================  XSS 漏洞修复核心区域  =========================
+  // ========================================================================
   /**
-   * 渲染问卷结构到页面
+   * (安全重构版) 渲染问卷结构到页面
    * @param {Array} sections - 问卷的分区数据
    */
   const renderSurvey = (sections) => {
-    let formContentHTML = "";
+    // 先清空表单内容
+    form.textContent = "";
     let questionCount = 0;
 
     sections.forEach((section) => {
-      formContentHTML += `<fieldset><legend>${section.legend}</legend>`;
+      // 1. 创建 <fieldset>
+      const fieldset = document.createElement("fieldset");
+
+      // 2. 创建并安全地设置 <legend>
+      const legend = document.createElement("legend");
+      legend.textContent = section.legend || ""; // 使用 textContent
+      fieldset.appendChild(legend);
+
       section.questions.forEach((q) => {
         questionCount++;
-        // 移除问题文本开头的数字和点，以防止重复显示题号
-        const cleanText = q.text.replace(/^\s*\d+\.\s*/, '').trim(); // <--- 关键改动在这里
-        formContentHTML += `<div class="question-block" data-question-number="${questionCount}">
-                                <label for="${q.id}">
-                                    <span class="question-number">${questionCount}. </span>
-                                    <span class="question-text" data-original-text="${cleanText}"></span>
-                                </label>`;
+        const cleanText = q.text
+          ? q.text.replace(/^\s*\d+\.\s*/, "").trim()
+          : "";
+
+        // 3. 创建问题容器 <div>
+        const questionBlock = document.createElement("div");
+        questionBlock.className = "question-block";
+        questionBlock.dataset.questionNumber = questionCount;
+
+        // 4. 创建 <label> 和题号
+        const label = document.createElement("label");
+        label.htmlFor = q.id; // .htmlFor 等同于 setAttribute('for', ...)，是安全的
+
+        const questionNumberSpan = document.createElement("span");
+        questionNumberSpan.className = "question-number";
+        questionNumberSpan.textContent = `${questionCount}. `;
+        label.appendChild(questionNumberSpan);
+
+        const questionTextSpan = document.createElement("span");
+        questionTextSpan.className = "question-text";
+        questionTextSpan.dataset.originalText = cleanText; // 存储原始文本用于动画
+        label.appendChild(questionTextSpan);
+
+        questionBlock.appendChild(label);
+
+        // 5. 根据问题类型创建输入控件 (Switch 语句)
+        let inputContainer;
         switch (q.type) {
           case "radio":
-            formContentHTML += `<div class="radio-group ${q.className || ""}">`;
-            q.options.forEach(
-              (opt) =>
-                (formContentHTML += `<input type="radio" id="${
-                  q.id
-                }_${(typeof opt === 'object' ? opt.value : opt).replace(/\s+/g, "-")}" name="${q.id}" value="${
-                  typeof opt === 'object' ? opt.value : opt
-                }"><label class="radio-label" for="${q.id}_${(typeof opt === 'object' ? opt.value : opt).replace(
-                  /\s+/g,
-                  "-"
-                )}">${typeof opt === 'object' ? opt.label : opt}</label>`)
-            );
-            if (q.hasOther)
-              formContentHTML += `<div class="other-option"><input type="radio" id="${q.id}_other" name="${q.id}" value="other"><label class="radio-label" for="${q.id}_other">其他...</label><input type="text" name="${q.id}_other" class="other-text-input" placeholder="请填写你的答案"></div>`;
-            formContentHTML += `</div>`;
+            inputContainer = document.createElement("div");
+            inputContainer.className = `radio-group ${
+              q.className || ""
+            }`.trim();
+            q.options.forEach((opt) => {
+              const value = typeof opt === "object" ? opt.value : opt;
+              const labelText = typeof opt === "object" ? opt.label : opt;
+              const id = `${q.id}_${String(value).replace(/\s+/g, "-")}`;
+
+              const radioInput = document.createElement("input");
+              radioInput.type = "radio";
+              radioInput.id = id;
+              radioInput.name = q.id;
+              radioInput.value = value;
+              inputContainer.appendChild(radioInput);
+
+              const radioLabel = document.createElement("label");
+              radioLabel.className = "radio-label";
+              radioLabel.htmlFor = id;
+              radioLabel.textContent = labelText; // 安全设置
+              inputContainer.appendChild(radioLabel);
+            });
+            if (q.hasOther) {
+              const otherDiv = document.createElement("div");
+              otherDiv.className = "other-option";
+              const otherId = `${q.id}_other`;
+
+              const otherRadio = document.createElement("input");
+              otherRadio.type = "radio";
+              otherRadio.id = otherId;
+              otherRadio.name = q.id;
+              otherRadio.value = "other";
+              otherDiv.appendChild(otherRadio);
+
+              const otherLabel = document.createElement("label");
+              otherLabel.className = "radio-label";
+              otherLabel.htmlFor = otherId;
+              otherLabel.textContent = "其他...";
+              otherDiv.appendChild(otherLabel);
+
+              const otherTextInput = document.createElement("input");
+              otherTextInput.type = "text";
+              otherTextInput.name = `${q.id}_other`;
+              otherTextInput.className = "other-text-input";
+              otherTextInput.placeholder = "请填写你的答案";
+              otherDiv.appendChild(otherTextInput);
+
+              inputContainer.appendChild(otherDiv);
+            }
             break;
           case "select":
-            formContentHTML += `<select id="${q.id}" name="${
-              q.id
-            }"><option value="" disabled selected>${
-              q.placeholder || "请选择"
-            }</option>`;
-            q.options.forEach(
-              (opt) => (formContentHTML += `<option value="${typeof opt === 'object' ? opt.value : opt}">${typeof opt === 'object' ? opt.label : opt}</option>`)
-            );
-            if (q.hasOther)
-              formContentHTML += `<option value="other">其他...</option>`;
-            formContentHTML += `</select>`;
-            if (q.hasOther)
-              formContentHTML += `<input type="text" name="${q.id}_other" class="other-text-input" placeholder="请填写你的答案">`;
+            inputContainer = document.createElement("div"); // 用于包裹 select 和 other input
+            const select = document.createElement("select");
+            select.id = q.id;
+            select.name = q.id;
+
+            const placeholderOption = document.createElement("option");
+            placeholderOption.value = "";
+            placeholderOption.disabled = true;
+            placeholderOption.selected = true;
+            placeholderOption.textContent = q.placeholder || "请选择";
+            select.appendChild(placeholderOption);
+
+            q.options.forEach((opt) => {
+              const option = document.createElement("option");
+              option.value = typeof opt === "object" ? opt.value : opt;
+              option.textContent = typeof opt === "object" ? opt.label : opt;
+              select.appendChild(option);
+            });
+            if (q.hasOther) {
+              const otherOption = document.createElement("option");
+              otherOption.value = "other";
+              otherOption.textContent = "其他...";
+              select.appendChild(otherOption);
+            }
+            inputContainer.appendChild(select);
+
+            if (q.hasOther) {
+              const otherTextInput = document.createElement("input");
+              otherTextInput.type = "text";
+              otherTextInput.name = `${q.id}_other`;
+              otherTextInput.className = "other-text-input";
+              otherTextInput.placeholder = "请填写你的答案";
+              inputContainer.appendChild(otherTextInput);
+            }
             break;
           case "color":
-            formContentHTML += `<div class="color-picker-wrapper"><input type="color" id="${
-              q.id
-            }" name="${q.id}" value="${
-              q.defaultValue || "#a7c5eb"
-            }"><span>(点击色块选择)</span></div>`;
+            inputContainer = document.createElement("div");
+            inputContainer.className = "color-picker-wrapper";
+            const colorInput = document.createElement("input");
+            colorInput.type = "color";
+            colorInput.id = q.id;
+            colorInput.name = q.id;
+            colorInput.value = q.defaultValue || "#a7c5eb";
+            inputContainer.appendChild(colorInput);
+            const colorSpan = document.createElement("span");
+            colorSpan.textContent = "(点击色块选择)";
+            inputContainer.appendChild(colorSpan);
             break;
           case "range":
-            formContentHTML += `<div class="range-group"><span>${q.rangeLeft || '安静独处'}</span><input type="range" id="${
-              q.id
-            }" name="${q.id}" min="${q.min || 0}" max="${
-              q.max || 100
-            }" value="${
+            inputContainer = document.createElement("div");
+            const rangeGroup = document.createElement("div");
+            rangeGroup.className = "range-group";
+
+            const leftSpan = document.createElement("span");
+            leftSpan.textContent = q.rangeLeft || "安静独处";
+            rangeGroup.appendChild(leftSpan);
+
+            const rangeInput = document.createElement("input");
+            rangeInput.type = "range";
+            rangeInput.id = q.id;
+            rangeInput.name = q.id;
+            rangeInput.min = q.min || 0;
+            rangeInput.max = q.max || 100;
+            rangeInput.value = q.defaultValue || 50;
+            rangeGroup.appendChild(rangeInput);
+
+            const rightSpan = document.createElement("span");
+            rightSpan.textContent = q.rangeRight || "随时派对";
+            rangeGroup.appendChild(rightSpan);
+            inputContainer.appendChild(rangeGroup);
+
+            const rangeValueDisplay = document.createElement("div");
+            rangeValueDisplay.id = `rangeValue_${q.id}`;
+            rangeValueDisplay.className = "range-value-display";
+            rangeValueDisplay.textContent = `当前状态: ${
               q.defaultValue || 50
-            }"><span>${q.rangeRight || '随时派对'}</span></div><div id="rangeValue_${
-              q.id
-            }" class="range-value-display">当前状态: ${
-              q.defaultValue || 50
-            }%</div>`;
+            }%`;
+            inputContainer.appendChild(rangeValueDisplay);
             break;
           case "textarea":
-            formContentHTML += `<textarea id="${q.id}" name="${q.id}" rows="${
-              q.rows || 2
-            }"></textarea>`;
+            inputContainer = document.createElement("textarea");
+            inputContainer.id = q.id;
+            inputContainer.name = q.id;
+            inputContainer.rows = q.rows || 2;
             break;
-          default:
-            formContentHTML += `<input type="text" id="${q.id}" name="${
-              q.id
-            }" inputmode="${q.inputmode || "text"}">`;
+          default: // text
+            inputContainer = document.createElement("input");
+            inputContainer.type = "text";
+            inputContainer.id = q.id;
+            inputContainer.name = q.id;
+            if (q.inputmode) {
+              inputContainer.inputMode = q.inputmode;
+            }
             break;
         }
-        formContentHTML += `</div>`;
+
+        if (inputContainer) {
+          questionBlock.appendChild(inputContainer);
+        }
+
+        fieldset.appendChild(questionBlock);
       });
-      formContentHTML += `</fieldset>`;
+
+      form.appendChild(fieldset);
     });
-    form.innerHTML = formContentHTML;
 
     totalQuestions = questionCount;
 
     if (loadingMessage) {
-        loadingMessage.style.display = 'none';
+      loadingMessage.style.display = "none";
     }
   };
 
-  /**
-   * 保存问卷填写进度到 localStorage
-   */
   const saveProgress = () => {
     const formData = new FormData(form);
     const data = {};
     for (const [key, value] of formData.entries()) {
-        const trimmedValue = typeof value === 'string' ? value.trim() : value;
-        if (key.endsWith('_other')) {
-            const mainKey = key.replace(/_other$/, '');
-            if (formData.get(mainKey) === 'other' && trimmedValue !== '') {
-                data[key] = trimmedValue;
-            } else {
-                continue;
-            }
+      const trimmedValue = typeof value === "string" ? value.trim() : value;
+      if (key.endsWith("_other")) {
+        const mainKey = key.replace(/_other$/, "");
+        if (formData.get(mainKey) === "other" && trimmedValue !== "") {
+          data[key] = trimmedValue;
         } else {
-            data[key] = trimmedValue;
+          continue;
         }
+      } else {
+        data[key] = trimmedValue;
+      }
     }
     localStorage.setItem(formId, JSON.stringify(data));
   };
 
-  /**
-   * 从 localStorage 加载问卷填写进度
-   * 对于已加载草稿的题目，直接显示完整文本，不进行动画
-   */
   const loadProgress = () => {
     const savedData = localStorage.getItem(formId);
     if (savedData) {
@@ -206,13 +313,19 @@ document.addEventListener("DOMContentLoaded", () => {
           const element = form.elements[key];
           if (element) {
             if (element.length && element[0]?.type === "radio") {
-              const targetRadio = document.querySelector(`input[name="${key}"][value="${data[key]}"]`);
+              const targetRadio = document.querySelector(
+                `input[name="${key}"][value="${data[key]}"]`
+              );
               if (targetRadio) {
                 targetRadio.checked = true;
-                targetRadio.dispatchEvent(new Event("change", { bubbles: true }));
+                targetRadio.dispatchEvent(
+                  new Event("change", { bubbles: true })
+                );
               }
               if (data[key] === "other" && data[`${key}_other`]) {
-                const otherTextInput = form.querySelector(`input[name="${key}_other"]`);
+                const otherTextInput = form.querySelector(
+                  `input[name="${key}_other"]`
+                );
                 if (otherTextInput) {
                   otherTextInput.value = data[`${key}_other`];
                   otherTextInput.classList.add("show");
@@ -222,7 +335,9 @@ document.addEventListener("DOMContentLoaded", () => {
               element.value = data[key];
               element.dispatchEvent(new Event("change", { bubbles: true }));
               if (data[key] === "other" && data[`${key}_other`]) {
-                const otherTextInput = form.querySelector(`input[name="${key}_other"]`);
+                const otherTextInput = form.querySelector(
+                  `input[name="${key}_other"]`
+                );
                 if (otherTextInput) {
                   otherTextInput.value = data[`${key}_other`];
                   otherTextInput.classList.add("show");
@@ -234,12 +349,17 @@ document.addEventListener("DOMContentLoaded", () => {
                 handleRangeUpdate(element);
               }
             }
-            // 对于加载进来的题目，如果它们有值，直接显示完整文本，并标记为已动画
-            const questionTextEl = document.querySelector(`.question-block label[for="${key}"] .question-text`);
-            if (questionTextEl && questionTextEl.dataset.originalText && data[key]) {
-                questionTextEl.textContent = questionTextEl.dataset.originalText;
-                questionTextEl.style.opacity = '1';
-                questionTextEl.dataset.animated = 'true'; // 标记为已动画，不再重新动画
+            const questionTextEl = document.querySelector(
+              `.question-block label[for="${key}"] .question-text`
+            );
+            if (
+              questionTextEl &&
+              questionTextEl.dataset.originalText &&
+              data[key]
+            ) {
+              questionTextEl.textContent = questionTextEl.dataset.originalText;
+              questionTextEl.style.opacity = "1";
+              questionTextEl.dataset.animated = "true";
             }
           }
         }
@@ -252,72 +372,56 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
-  /**
-   * 更新滚动进度条
-   */
   const updateScrollProgress = () => {
     if (!progressBarElement) return;
-    
-    const totalHeight = document.documentElement.scrollHeight;
-    const viewportHeight = window.innerHeight;
-    const scrollableDistance = totalHeight - viewportHeight;
-    const scrolled = window.scrollY;
-
+    const totalHeight = document.documentElement.scrollHeight,
+      viewportHeight = window.innerHeight,
+      scrollableDistance = totalHeight - viewportHeight,
+      scrolled = window.scrollY;
     if (scrollableDistance <= 0) {
-        progressBarElement.value = 100;
+      progressBarElement.value = 100;
     } else {
-        progressBarElement.value = (scrolled / scrollableDistance) * 100;
+      progressBarElement.value = (scrolled / scrollableDistance) * 100;
     }
   };
 
-  /**
-   * 计算已完成的题目数量
-   */
   const getFilledCount = () => {
     if (!form) return 0;
     const formData = new FormData(form);
     const answeredQuestions = new Set();
-    
-    document.querySelectorAll('.question-block label').forEach(label => {
-        const questionId = label.getAttribute('for');
-        if (!questionId) return;
-
-        let value = formData.get(questionId);
-
-        if (value === 'other') {
-            const otherValue = formData.get(`${questionId}_other`);
-            if (otherValue && String(otherValue).trim() !== '') {
-                answeredQuestions.add(questionId);
-            }
-        } else if (value && String(value).trim() !== '') {
-            answeredQuestions.add(questionId);
+    document.querySelectorAll(".question-block label").forEach((label) => {
+      const questionId = label.getAttribute("for");
+      if (!questionId) return;
+      let value = formData.get(questionId);
+      if (value === "other") {
+        const otherValue = formData.get(`${questionId}_other`);
+        if (otherValue && String(otherValue).trim() !== "") {
+          answeredQuestions.add(questionId);
         }
+      } else if (value && String(value).trim() !== "") {
+        answeredQuestions.add(questionId);
+      }
     });
     return answeredQuestions.size;
   };
 
-  /**
-   * 更新完成度计数器
-   */
   const updateCompletionProgress = () => {
     if (!completionCounter) return;
     completionCounter.textContent = `已完成 ${getFilledCount()} / ${totalQuestions} 题`;
     updateJumpGridStatus();
   };
 
-  /**
-   * 处理输入框焦点，确保在移动端键盘弹出时输入框可见
-   */
   const handleInputFocus = (event) => {
     const target = event.target;
     if (
-      (target.tagName === "INPUT" && (target.type === "text" || target.type === "number")) ||
+      (target.tagName === "INPUT" &&
+        (target.type === "text" || target.type === "number")) ||
       target.tagName === "TEXTAREA"
     ) {
-      const rect = target.getBoundingClientRect();
-      const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
-      const buffer = 80;
-
+      const rect = target.getBoundingClientRect(),
+        viewportHeight =
+          window.innerHeight || document.documentElement.clientHeight,
+        buffer = 80;
       if (rect.bottom > viewportHeight - buffer || rect.top < buffer) {
         setTimeout(
           () => target.scrollIntoView({ behavior: "smooth", block: "center" }),
@@ -327,9 +431,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
-  /**
-   * 处理“其他”选项的动态显示和隐藏
-   */
   const handleOtherOption = (event) => {
     const target = event.target;
     if (
@@ -337,46 +438,40 @@ document.addEventListener("DOMContentLoaded", () => {
       (target.tagName === "SELECT" || target.type === "radio")
     ) {
       const name = target.name;
-      const otherInput = form.querySelector(`input[type="text"][name="${name}_other"]`);
-      
+      const otherInput = form.querySelector(
+        `input[type="text"][name="${name}_other"]`
+      );
       if (otherInput) {
         if (target.value === "other") {
           otherInput.classList.add("show");
           otherInput.focus();
         } else {
           otherInput.classList.remove("show");
-          otherInput.value = '';
+          otherInput.value = "";
         }
       }
     }
   };
 
-  /**
-   * 执行问卷提交操作
-   */
   const performSubmit = async () => {
     if (confirmModal) confirmModal.classList.remove("show");
-
-    const formData = new FormData(form);
-    const cleanedData = {};
-
+    const formData = new FormData(form),
+      cleanedData = {};
     for (const [key, value] of formData.entries()) {
-        const trimmedValue = typeof value === 'string' ? value.trim() : value;
-        if (key.endsWith('_other')) {
-            const mainKey = key.replace(/_other$/, '');
-            if (formData.get(mainKey) === 'other' && trimmedValue !== '') {
-                cleanedData[mainKey] = trimmedValue;
-            } else {
-                continue;
-            }
-        } else if (!cleanedData.hasOwnProperty(key)) {
-            cleanedData[key] = trimmedValue;
+      const trimmedValue = typeof value === "string" ? value.trim() : value;
+      if (key.endsWith("_other")) {
+        const mainKey = key.replace(/_other$/, "");
+        if (formData.get(mainKey) === "other" && trimmedValue !== "") {
+          cleanedData[mainKey] = trimmedValue;
+        } else {
+          continue;
         }
+      } else if (!cleanedData.hasOwnProperty(key)) {
+        cleanedData[key] = trimmedValue;
+      }
     }
-
     submitButton.textContent = "正在传送中...";
     submitButton.disabled = true;
-
     try {
       const response = await fetch("/api/save.mjs", {
         method: "POST",
@@ -398,9 +493,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
-  /**
-   * 处理表单提交事件（由提交按钮点击触发）
-   */
   const handleFormSubmit = (e) => {
     e.preventDefault();
     const filledCount = getFilledCount();
@@ -413,9 +505,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
-  /**
-   * 触发问卷分区（fieldset）的淡入动画
-   */
   const animateFieldsets = () => {
     const fieldsets = document.querySelectorAll("fieldset");
     if ("IntersectionObserver" in window) {
@@ -436,176 +525,157 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
-  /**
-   * 初始化跳题网格
-   */
   const initJumpGrid = () => {
     if (!jumpGridElement) return;
-
-    jumpGridElement.innerHTML = ''; // 清空可能存在的旧内容
-    gridCells = []; // 重置存储的单元格引用
-    for (let i = 1; i <= 100; i++) { // 固定生成100个单元格
-        const cell = document.createElement('div');
-        cell.classList.add('grid-cell');
-        cell.textContent = i;
-        cell.dataset.questionNumber = i; // 存储题号
-        
-        cell.addEventListener('click', () => {
-            scrollToQuestion(i);
-        });
-        
-        jumpGridElement.appendChild(cell);
-        gridCells.push(cell);
+    jumpGridElement.innerHTML = "";
+    gridCells = [];
+    for (let i = 1; i <= 100; i++) {
+      const cell = document.createElement("div");
+      cell.classList.add("grid-cell");
+      cell.textContent = i;
+      cell.dataset.questionNumber = i;
+      cell.addEventListener("click", () => {
+        scrollToQuestion(i);
+      });
+      jumpGridElement.appendChild(cell);
+      gridCells.push(cell);
     }
-
-    // 绑定折叠/展开按钮
     if (jumpGridToggleButton && jumpGridContainer) {
-        jumpGridToggleButton.addEventListener('click', () => {
-            jumpGridContainer.classList.toggle('collapsed');
-        });
+      jumpGridToggleButton.addEventListener("click", () => {
+        jumpGridContainer.classList.toggle("collapsed");
+      });
     }
   };
 
-  /**
-   * 滚动到指定题目
-   */
   const scrollToQuestion = (questionNumber) => {
-    const targetQuestionBlock = document.querySelector(`.question-block[data-question-number="${questionNumber}"]`);
+    const targetQuestionBlock = document.querySelector(
+      `.question-block[data-question-number="${questionNumber}"]`
+    );
     if (targetQuestionBlock) {
-        targetQuestionBlock.scrollIntoView({ behavior: "smooth", block: "center" });
-        // 移除所有高亮
-        document.querySelectorAll('.question-block.highlight-temp').forEach(el => el.classList.remove('highlight-temp'));
-        // 添加新的高亮
-        targetQuestionBlock.classList.add('highlight-temp');
-        setTimeout(() => {
-            targetQuestionBlock.classList.remove('highlight-temp');
-        }, 1500); // 1.5秒后移除高亮
-
-        // 更新当前题目高亮状态到网格
-        updateJumpGridStatus(questionNumber);
-
+      targetQuestionBlock.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+      document
+        .querySelectorAll(".question-block.highlight-temp")
+        .forEach((el) => el.classList.remove("highlight-temp"));
+      targetQuestionBlock.classList.add("highlight-temp");
+      setTimeout(() => {
+        targetQuestionBlock.classList.remove("highlight-temp");
+      }, 1500);
+      updateJumpGridStatus(questionNumber);
     } else {
-        alert(`未找到题号为 ${questionNumber} 的问题。`);
+      alert(`未找到题号为 ${questionNumber} 的问题。`);
     }
   };
 
-  /**
-   * 更新跳题网格的完成状态和当前题目状态
-   */
   const updateJumpGridStatus = (highlightQuestionNum = null) => {
     if (gridCells.length === 0) return;
-
     const formData = new FormData(form);
-
-    gridCells.forEach(cell => {
-        const qNum = parseInt(cell.dataset.questionNumber, 10);
-        const questionBlock = document.querySelector(`.question-block[data-question-number="${qNum}"]`);
-        
-        // 重置所有状态类
-        cell.classList.remove('filled', 'current', 'inactive');
-
-        if (qNum > totalQuestions) {
-            cell.classList.add('inactive'); // 未激活状态（超出总题数）
-        } else {
-            // 判断是否已填写
-            const questionId = questionBlock ? questionBlock.querySelector('label')?.getAttribute('for') : null;
-            let isFilled = false;
-            if (questionId) {
-                let value = formData.get(questionId);
-                if (value === 'other') {
-                    const otherValue = formData.get(`${questionId}_other`);
-                    if (otherValue && String(otherValue).trim() !== '') {
-                        isFilled = true;
-                    }
-                } else if (value && String(value).trim() !== '') {
-                    isFilled = true;
-                }
+    gridCells.forEach((cell) => {
+      const qNum = parseInt(cell.dataset.questionNumber, 10);
+      const questionBlock = document.querySelector(
+        `.question-block[data-question-number="${qNum}"]`
+      );
+      cell.classList.remove("filled", "current", "inactive");
+      if (qNum > totalQuestions) {
+        cell.classList.add("inactive");
+      } else {
+        const questionId = questionBlock
+          ? questionBlock.querySelector("label")?.getAttribute("for")
+          : null;
+        let isFilled = false;
+        if (questionId) {
+          let value = formData.get(questionId);
+          if (value === "other") {
+            const otherValue = formData.get(`${questionId}_other`);
+            if (otherValue && String(otherValue).trim() !== "") {
+              isFilled = true;
             }
-            if (isFilled) {
-                cell.classList.add('filled');
-            }
-
-            // 判断是否是当前题目
-            // 如果提供了 highlightQuestionNum，以它为准；否则，以 IntersectionObserver 的 currentQuestionNumber 为准
-            const isActiveQuestion = highlightQuestionNum ? (qNum === highlightQuestionNum) : (qNum === currentQuestionNumber);
-            if (isActiveQuestion) {
-                cell.classList.add('current');
-            }
+          } else if (value && String(value).trim() !== "") {
+            isFilled = true;
+          }
         }
+        if (isFilled) {
+          cell.classList.add("filled");
+        }
+        const isActiveQuestion = highlightQuestionNum
+          ? qNum === highlightQuestionNum
+          : qNum === currentQuestionNumber;
+        if (isActiveQuestion) {
+          cell.classList.add("current");
+        }
+      }
     });
   };
 
-  /**
-   * 设置每个问题的文本逐字动画，当问题进入视口时触发，离开视口时重置
-   */
   const setupQuestionTextAnimations = () => {
-    const questionTextElements = document.querySelectorAll('.question-block .question-text');
+    const questionTextElements = document.querySelectorAll(
+      ".question-block .question-text"
+    );
     if ("IntersectionObserver" in window) {
-        const textObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                const questionTextEl = entry.target;
-                const originalText = questionTextEl.getAttribute('data-original-text');
-
-                if (entry.isIntersecting) {
-                    if (originalText && questionTextEl.dataset.animated !== 'true') {
-                        animateText(questionTextEl, originalText);
-                    }
-                } else {
-                    if (questionTextEl.dataset.animated === 'true' && originalText) {
-                        questionTextEl.textContent = ''; // 清空文本
-                        questionTextEl.style.opacity = '0'; // 设为透明
-                        questionTextEl.dataset.animated = 'false'; // 重置动画状态
-                        questionTextEl.style.whiteSpace = 'pre-wrap'; // 确保重置后仍然正常换行
-                        questionTextEl.style.width = 'auto';
-                    }
-                }
-            });
-        }, { threshold: [0, 1] }); // 当元素完全进入 (1) 或完全离开 (0) 视口时触发
-
-        questionTextElements.forEach(el => textObserver.observe(el));
+      const textObserver = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            const questionTextEl = entry.target;
+            const originalText =
+              questionTextEl.getAttribute("data-original-text");
+            if (entry.isIntersecting) {
+              if (originalText && questionTextEl.dataset.animated !== "true") {
+                animateText(questionTextEl, originalText);
+              }
+            } else {
+              if (questionTextEl.dataset.animated === "true" && originalText) {
+                questionTextEl.textContent = "";
+                questionTextEl.style.opacity = "0";
+                questionTextEl.dataset.animated = "false";
+                questionTextEl.style.whiteSpace = "pre-wrap";
+                questionTextEl.style.width = "auto";
+              }
+            }
+          });
+        },
+        { threshold: [0, 1] }
+      );
+      questionTextElements.forEach((el) => textObserver.observe(el));
     } else {
-        // 不支持 IntersectionObserver 的浏览器，直接显示所有文本
-        questionTextElements.forEach(textEl => {
-            const originalText = textEl.getAttribute('data-original-text');
-            if (originalText) {
-                textEl.textContent = originalText;
-                textEl.style.opacity = '1';
-                textEl.style.whiteSpace = 'pre-wrap';
-            }
-        });
-    }
-  };
-
-  /**
-   * 监听问题块的可见性，更新当前题目高亮
-   */
-  const setupCurrentQuestionObserver = () => {
-    const questionBlocks = document.querySelectorAll('.question-block');
-    if ("IntersectionObserver" in window) {
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          const questionNumber = parseInt(entry.target.dataset.questionNumber, 10);
-          if (entry.isIntersecting) {
-            if (entry.intersectionRatio >= 0.5) { // 至少一半可见才算当前题
-                if (questionNumber !== currentQuestionNumber) {
-                    currentQuestionNumber = questionNumber;
-                    updateJumpGridStatus(); // 更新网格的当前题目状态
-                }
-            }
-          }
-        });
-      }, {
-        root: null, // 视口为根
-        rootMargin: '0px 0px -50% 0px', // 在视口中间触发
-        threshold: 0.5 // 50%可见时触发
+      questionTextElements.forEach((textEl) => {
+        const originalText = textEl.getAttribute("data-original-text");
+        if (originalText) {
+          textEl.textContent = originalText;
+          textEl.style.opacity = "1";
+          textEl.style.whiteSpace = "pre-wrap";
+        }
       });
-      questionBlocks.forEach(block => observer.observe(block));
     }
   };
 
-  /**
-   * 处理历史档案查找功能
-   */
+  const setupCurrentQuestionObserver = () => {
+    const questionBlocks = document.querySelectorAll(".question-block");
+    if ("IntersectionObserver" in window) {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            const questionNumber = parseInt(
+              entry.target.dataset.questionNumber,
+              10
+            );
+            if (entry.isIntersecting) {
+              if (entry.intersectionRatio >= 0.5) {
+                if (questionNumber !== currentQuestionNumber) {
+                  currentQuestionNumber = questionNumber;
+                  updateJumpGridStatus();
+                }
+              }
+            }
+          });
+        },
+        { root: null, rootMargin: "0px 0px -50% 0px", threshold: 0.5 }
+      );
+      questionBlocks.forEach((block) => observer.observe(block));
+    }
+  };
+
   const handleHistoryLookup = () => {
     if (!historyIdInput) return;
     const id = historyIdInput.value.trim();
@@ -617,9 +687,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
-  /**
-   * 更新范围滑块的显示值
-   */
   const handleRangeUpdate = (rangeInput) => {
     const displayId = `rangeValue_${rangeInput.id}`;
     const displayElement = document.getElementById(displayId);
@@ -628,41 +695,33 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
-  /**
-   * 初始化问卷页面
-   */
   const initializeApp = async () => {
     try {
       if (loadingMessage) {
-        loadingMessage.style.display = 'block';
+        loadingMessage.style.display = "block";
       }
-
       const response = await fetch("/questions.json");
       if (!response.ok) throw new Error("问卷配置文件(questions.json)加载失败");
       const sections = await response.json();
-      renderSurvey(sections); // 渲染问卷问题
-
-      initJumpGrid(); // 初始化跳题网格
-
+      renderSurvey(sections); // 使用安全的新版渲染函数
+      initJumpGrid();
       form.addEventListener("input", (event) => {
         saveProgress();
-        updateCompletionProgress(); // 这会同时更新跳题网格的完成状态
+        updateCompletionProgress();
         if (event.target.type === "range") {
           handleRangeUpdate(event.target);
         }
       });
-
       form.addEventListener("change", handleOtherOption);
       form.addEventListener("focusin", handleInputFocus);
       submitButton.addEventListener("click", handleFormSubmit);
-      form.addEventListener('keydown', (e) => {
-          if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA') {
-              e.preventDefault();
-          }
+      form.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" && e.target.tagName !== "TEXTAREA") {
+          e.preventDefault();
+        }
       });
       window.addEventListener("scroll", updateScrollProgress);
-      updateScrollProgress(); // 页面加载完成后立即调用一次更新，防止在没有滚动前进度条不显示
-
+      updateScrollProgress();
       if (confirmButton) confirmButton.addEventListener("click", performSubmit);
       if (cancelButton)
         cancelButton.addEventListener("click", () =>
@@ -672,35 +731,31 @@ document.addEventListener("DOMContentLoaded", () => {
         confirmModal.addEventListener("click", (e) => {
           if (e.target === confirmModal) confirmModal.classList.remove("show");
         });
-      
       if (lookupBtn) lookupBtn.addEventListener("click", handleHistoryLookup);
       if (historyIdInput)
         historyIdInput.addEventListener("keyup", (event) => {
           if (event.key === "Enter") handleHistoryLookup();
         });
-      
-      loadProgress(); // 加载草稿，这会更新完成计数器和跳题网格状态
-      updateCompletionProgress(); // 再次更新确保正确
-      animateFieldsets(); // 触发 fieldset 淡入动画
-      setupQuestionTextAnimations(); // 设置问题文本的逐字动画观察者
-      setupCurrentQuestionObserver(); // 设置当前题目高亮观察者
-
+      loadProgress();
+      updateCompletionProgress();
+      animateFieldsets();
+      setupQuestionTextAnimations();
+      setupCurrentQuestionObserver();
     } catch (error) {
       console.error(error);
       if (loadingMessage) {
-          loadingMessage.textContent = `加载问卷失败：${error.message}`;
-          loadingMessage.style.color = 'red';
+        loadingMessage.textContent = `加载问卷失败：${error.message}`;
+        loadingMessage.style.color = "red";
       } else {
-          form.innerHTML = `<p class="loading-message" style="color: red;">加载问卷失败：${error.message}</p>`;
+        form.innerHTML = `<p class="loading-message" style="color: red;">加载问卷失败：${error.message}</p>`;
       }
-      // 如果动画失败，确保所有文本都可见
-      document.querySelectorAll('.question-text').forEach(textEl => {
-        const originalText = textEl.getAttribute('data-original-text');
+      document.querySelectorAll(".question-text").forEach((textEl) => {
+        const originalText = textEl.getAttribute("data-original-text");
         if (originalText) {
           textEl.textContent = originalText;
-          textEl.style.opacity = '1';
-          textEl.style.whiteSpace = 'pre-wrap';
-          textEl.dataset.animated = 'true'; // 强制标记为已动画，避免再次触发
+          textEl.style.opacity = "1";
+          textEl.style.whiteSpace = "pre-wrap";
+          textEl.dataset.animated = "true";
         }
       });
     }

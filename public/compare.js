@@ -97,7 +97,9 @@ document.addEventListener('DOMContentLoaded', () => {
             requestAnimationFrame(animate);
         };
 
-
+        // ========================================================================
+        // =======================  XSS 漏洞修复区域  ===========================
+        // ========================================================================
         const renderResults = (data1, data2, finalScore) => {
             hideLoading();
 
@@ -106,7 +108,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 displayError("页面元素缺失，无法显示对比结果。");
                 return;
             }
-            resultsList.innerHTML = '';
+            // 使用 textContent 清空，更安全且高效
+            resultsList.textContent = '';
 
             let matchCount = 0;
             const totalQuestions = Object.keys(questionMap).length;
@@ -116,7 +119,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 const answer1 = String(data1[key] || '未回答').trim();
                 const answer2 = String(data2[key] || '未回答').trim();
 
-                // 对于“其他 (自定义内容: XXXXX)”格式的答案，提取实际内容进行对比
                 const extractCustomContent = (answer) => {
                     const match = answer.match(/^其他 \(自定义内容: (.+)\)$/);
                     return match ? match[1].trim() : answer;
@@ -125,21 +127,59 @@ document.addEventListener('DOMContentLoaded', () => {
                 const processedAnswer1 = extractCustomContent(answer1);
                 const processedAnswer2 = extractCustomContent(answer2);
                 
-                // 只有当双方都回答了问题（且答案不为“未回答”）时，才进行匹配判断
                 const isMatch = (processedAnswer1 !== '未回答' && processedAnswer2 !== '未回答' && 
                                  processedAnswer1.toLowerCase() === processedAnswer2.toLowerCase());
                                  
                 if (isMatch) matchCount++;
 
+                // --- 开始安全地创建 DOM 元素 ---
+                
+                // 1. 创建主容器 div.result-item
                 const item = document.createElement('div');
                 item.className = 'result-item';
-                if (isMatch) item.classList.add('is-match');
+                if (isMatch) {
+                    item.classList.add('is-match');
+                }
                 
-                item.innerHTML = `
-                    <div class="question-column"><p class="question">${questionText}</p></div>
-                    <div class="answer-column"><p class="answer ${answer1 === '未回答' ? 'no-answer' : ''}">${answer1}</p></div>
-                    <div class="answer-column"><p class="answer ${answer2 === '未回答' ? 'no-answer' : ''}">${answer2}</p></div>
-                `;
+                // 2. 创建问题列
+                const questionCol = document.createElement('div');
+                questionCol.className = 'question-column';
+                const questionP = document.createElement('p');
+                questionP.className = 'question';
+                // 使用 textContent 安全地设置问题文本
+                questionP.textContent = questionText;
+                questionCol.appendChild(questionP);
+
+                // 3. 创建第一个答案列
+                const answerCol1 = document.createElement('div');
+                answerCol1.className = 'answer-column';
+                const answerP1 = document.createElement('p');
+                answerP1.className = 'answer';
+                // 使用 textContent 安全地设置答案1
+                answerP1.textContent = answer1;
+                if (answer1 === '未回答') {
+                    answerP1.classList.add('no-answer');
+                }
+                answerCol1.appendChild(answerP1);
+
+                // 4. 创建第二个答案列
+                const answerCol2 = document.createElement('div');
+                answerCol2.className = 'answer-column';
+                const answerP2 = document.createElement('p');
+                answerP2.className = 'answer';
+                // 使用 textContent 安全地设置答案2
+                answerP2.textContent = answer2;
+                if (answer2 === '未回答') {
+                    answerP2.classList.add('no-answer');
+                }
+                answerCol2.appendChild(answerP2);
+
+                // 5. 将所有创建的列组装到主容器中
+                item.appendChild(questionCol);
+                item.appendChild(answerCol1);
+                item.appendChild(answerCol2);
+                
+                // 6. 将完全构建好的、安全的 item 添加到列表中
                 resultsList.appendChild(item);
             }
             
@@ -151,8 +191,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 scoreEl.textContent = '0';
                 countUp(scoreEl, 0, finalScore, 1500);
             }
-            if(summaryEl) summaryEl.textContent = `在你们共同回答的 ${totalQuestions} 个问题中，有 ${matchCount} 个答案完全一致！`;
+            if(summaryEl) {
+                // 这里的 summaryEl 也使用了 textContent，是安全的
+                summaryEl.textContent = `在你们共同回答的 ${totalQuestions} 个问题中，有 ${matchCount} 个答案完全一致！`;
+            }
         };
+        // ========================================================================
+        // =========================  修复区域结束  =============================
+        // ========================================================================
+
 
         // --- 核心执行函数 ---
         const performComparison = async (id1, id2) => {
@@ -196,10 +243,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     const answer1 = String(data1[key] || '').trim();
                     const answer2 = String(data2[key] || '').trim();
 
-                    // 仅当双方都回答了该问题（且答案不为空）时，才计入可对比问题总数
                     if (answer1 !== '' && answer2 !== '') {
                         comparableAnswersCount++;
-                        // 特殊处理“其他 (自定义内容: XXXXX)”格式的答案
                         const extractCustomContent = (ans) => {
                             const match = ans.match(/^其他 \(自定义内容: (.+)\)$/);
                             return match ? match[1].trim() : ans;
@@ -237,9 +282,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const id1 = params.get('id1');
             const id2 = params.get('id2');
 
-            // 检查URL参数，决定显示哪个界面
             if (id1 && id2) {
-                // 情况1：两个ID都有，直接开始对比
                 scoreContainer.style.display = 'none';
                 resultsContainer.style.display = 'none';
                 singleIdPrompt.style.display = 'none';
@@ -249,7 +292,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 await performComparison(id1, id2);
 
             } else if (id1 && !id2) {
-                // 情况2：只有id1，显示单ID输入界面让用户输入id2
                 scoreContainer.style.display = 'none';
                 resultsContainer.style.display = 'none';
                 doubleIdPrompt.style.display = 'none';
@@ -257,7 +299,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 errorMessageEl.style.display = 'none';
                 singleIdPrompt.style.display = 'block';
 
-                // 绑定揭晓结果按钮的事件
                 if(finalizeCompareBtn) {
                     finalizeCompareBtn.addEventListener('click', () => {
                         const id2_receiver = receiverIdInput.value.trim();
@@ -270,7 +311,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     });
                 }
                 
-                // 回车提交
                 receiverIdInput.addEventListener('keyup', (e) => {
                     if (e.key === 'Enter') {
                         finalizeCompareBtn.click();
@@ -278,7 +318,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
 
             } else {
-                // 情况3：没有任何ID，显示双ID输入界面让用户输入两个ID
                 scoreContainer.style.display = 'none';
                 resultsContainer.style.display = 'none';
                 singleIdPrompt.style.display = 'none';
@@ -286,7 +325,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 errorMessageEl.style.display = 'none';
                 doubleIdPrompt.style.display = 'block';
 
-                // 绑定双ID对比按钮事件 (新增)
                 if(compareTwoIdsBtn) {
                     compareTwoIdsBtn.addEventListener('click', () => {
                         const firstId = firstIdInput.value.trim();
@@ -303,7 +341,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     });
                 }
                 
-                // 回车提交
                 firstIdInput.addEventListener('keyup', (e) => {
                     if (e.key === 'Enter' && secondIdInput.value.trim()) {
                         compareTwoIdsBtn.click();

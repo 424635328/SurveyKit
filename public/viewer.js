@@ -51,11 +51,22 @@ document.addEventListener("DOMContentLoaded", () => {
       URL.revokeObjectURL(link.href);
     };
 
+    // ========================================================================
+    // =======================  XSS 漏洞修复点 #1  ============================
+    // ========================================================================
     const renderError = (message) => {
       if (allElements.resultsContainer) {
-        allElements.resultsContainer.innerHTML = `<p class="error-message">${message}</p>`;
+        // 先清空容器
+        allElements.resultsContainer.textContent = ''; 
+        // 创建一个 p 元素来安全地显示错误信息
+        const errorP = document.createElement('p');
+        errorP.className = 'error-message';
+        // 使用 textContent 来防止 XSS
+        errorP.textContent = message; 
+        allElements.resultsContainer.appendChild(errorP);
       }
     };
+    // ========================================================================
 
     const initAnimationObserver = () => {
       if (animationObserver) animationObserver.disconnect();
@@ -89,16 +100,9 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     // --- 4. 导出逻辑 ---
-    /**
-     * 准备用于 JSON 和 TXT 导出的、保留原始结构的嵌套数据，并注入答案。
-     * 这是所有导出功能的统一数据源。
-     * @returns {Array} 包含答案的、与 questions.json 结构相同的数组
-     */
     const prepareStructuredExportData = () => {
       if (!sections.length || !Object.keys(surveyData).length) return [];
-
       const structuredData = JSON.parse(JSON.stringify(sections));
-
       structuredData.forEach((section) => {
         if (section.questions && Array.isArray(section.questions)) {
           section.questions.forEach((question) => {
@@ -130,6 +134,7 @@ document.addEventListener("DOMContentLoaded", () => {
           txtContent += `[${section.legend}]\n`;
           txtContent += `========================================\n\n`;
           section.questions.forEach((q) => {
+            // q.text 和 q.answer 是用户生成内容，但这里是构建纯文本文件，不是HTML，所以是安全的。
             txtContent += `${q.text}\n  -> ${q.answer}\n\n`;
           });
         });
@@ -147,8 +152,6 @@ document.addEventListener("DOMContentLoaded", () => {
       const structuredData = prepareStructuredExportData();
       if (!structuredData.length)
         return showNotification("没有数据可导出", "error");
-
-      // 将结构化数据动态转换为扁平化格式
       const flatData = structuredData.flatMap((section) =>
         section.questions.map((q) => ({
           Section: section.legend,
@@ -157,7 +160,6 @@ document.addEventListener("DOMContentLoaded", () => {
           Answer: q.answer,
         }))
       );
-
       try {
         if (typeof XLSX === "undefined") {
           return showNotification("错误：导出库 (xlsx.js) 未加载。", "error");
@@ -174,38 +176,81 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     // --- 5. 核心渲染与数据获取 ---
+    // ========================================================================
+    // =======================  XSS 漏洞修复点 #2 & #3 ==========================
+    // ========================================================================
     const renderResults = (data) => {
       surveyData = data;
-      allElements.resultsContainer.innerHTML = "";
+      // 使用 textContent 清空，更安全
+      allElements.resultsContainer.textContent = ""; 
+      
       sections.forEach((section) => {
+        // --- 创建分区容器 ---
         const sectionDiv = document.createElement("div");
         sectionDiv.className = "result-section animated-line";
-        sectionDiv.innerHTML = `<h2 class="section-title">${section.legend}</h2>`;
+        
+        // --- 安全地创建和填充分区标题 (修复点 #2) ---
+        const titleH2 = document.createElement('h2');
+        titleH2.className = 'section-title';
+        // section.legend 可能来自用户创建的 questions.json，所以用 textContent
+        titleH2.textContent = section.legend; 
+        sectionDiv.appendChild(titleH2);
+
         section.questions.forEach((q) => {
           const answerText = data[q.id];
+
+          // --- 安全地创建和填充问答项 (修复点 #3) ---
+          // 1. 创建容器 div.result-item
           const item = document.createElement("div");
           item.className = "result-item animated-line";
-          item.innerHTML = `<p class="question">${q.text}</p><p class="answer ${
-            !answerText ? "no-answer" : ""
-          }">${answerText || "未回答"}</p>`;
+
+          // 2. 创建并填充问题 p.question
+          const questionP = document.createElement('p');
+          questionP.className = 'question';
+          // q.text 来自 questions.json，同样用 textContent 防护
+          questionP.textContent = q.text; 
+          item.appendChild(questionP);
+
+          // 3. 创建并填充答案 p.answer
+          const answerP = document.createElement('p');
+          answerP.className = 'answer';
+          if (!answerText) {
+            answerP.classList.add('no-answer');
+          }
+          // answerText 是用户在问卷中的输入，必须用 textContent
+          answerP.textContent = answerText || "未回答"; 
+          item.appendChild(answerP);
+          
+          // 4. 将安全的问答项添加到分区容器中
           sectionDiv.appendChild(item);
         });
+        
+        // 5. 将安全的分区容器添加到主结果容器中
         allElements.resultsContainer.appendChild(sectionDiv);
       });
       initAnimationObserver();
     };
+    // ========================================================================
+
 
     const fetchAndRenderSurvey = async (surveyId) => {
       if (isLoading) return;
       isLoading = true;
       currentSurveyId = surveyId;
       switchView("results");
-      allElements.resultsContainer.innerHTML =
-        '<p class="loading-placeholder">正在加载数据...</p>';
+      
+      // 安全地显示加载提示
+      const loadingP = document.createElement('p');
+      loadingP.className = 'loading-placeholder';
+      loadingP.textContent = '正在加载数据...';
+      allElements.resultsContainer.textContent = '';
+      allElements.resultsContainer.appendChild(loadingP);
+
       if (allElements.currentIdDisplaySpan)
         allElements.currentIdDisplaySpan.textContent = surveyId;
       if (allElements.submitIdBtn) {
         allElements.submitIdBtn.disabled = true;
+        // 这里使用 innerHTML 是安全的，因为内容是开发者定义的，不包含用户变量
         allElements.submitIdBtn.innerHTML =
           '<i class="fa fa-spinner fa-spin"></i> 正在查询...';
       }
@@ -218,7 +263,14 @@ document.addEventListener("DOMContentLoaded", () => {
           throw new Error("无法加载问卷结构 (questions.json)。");
         sections = await questionsRes.json();
         if (!surveyRes.ok) {
-          const errorData = await surveyRes.json();
+          let errorData;
+          try {
+             // 尝试解析JSON格式的错误信息
+             errorData = await surveyRes.json();
+          } catch(e) {
+             // 如果后端返回非JSON错误（如 502 Bad Gateway），则使用状态文本
+             errorData = { message: surveyRes.statusText || `服务器返回状态 ${surveyRes.status}` };
+          }
           throw new Error(
             errorData.message || `无法获取ID为 ${surveyId} 的数据。`
           );
@@ -236,17 +288,15 @@ document.addEventListener("DOMContentLoaded", () => {
         isLoading = false;
         if (allElements.submitIdBtn) {
           allElements.submitIdBtn.disabled = false;
+          // 这里使用 innerHTML 同样是安全的
           allElements.submitIdBtn.innerHTML =
             '<i class="fa fa-search"></i> 查看结果';
         }
       }
     };
 
-    /**
-     * 6. 页面初始化函数
-     */
     const init = () => {
-      // --- 全局事件监听 ---
+      // ... (事件监听部分代码无需修改) ...
       if (allElements.exportBtn) {
         allElements.exportBtn.addEventListener("click", (e) => {
           e.stopPropagation();
@@ -290,12 +340,10 @@ document.addEventListener("DOMContentLoaded", () => {
       if (allElements.searchNewBtn) {
         allElements.searchNewBtn.addEventListener("click", () => {
           switchView("input");
-          // 清理URL，以便刷新页面时返回输入界面
           window.history.pushState({}, "", window.location.pathname);
         });
       }
 
-      // --- 初始视图决定 ---
       const params = new URLSearchParams(window.location.search);
       const initialSurveyId = params.get("id");
       if (initialSurveyId) {
