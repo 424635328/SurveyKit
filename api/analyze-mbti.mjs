@@ -3,12 +3,12 @@ import { Ratelimit } from "@upstash/ratelimit";
 import { z } from "zod";
 
 const ARK_API_KEY = process.env.ARK_API_KEY;
-const MODEL_ID = "doubao-seed-1-6-flash-250615";
+const MODEL_ID = "doubao-seed-1-6-thinking-250615";
 const API_URL = "https://ark.cn-beijing.volces.com/api/v3/chat/completions";
 
 const ratelimit = new Ratelimit({
   redis: kv,
-  limiter: Ratelimit.slidingWindow(5, "1 m"),
+  limiter: Ratelimit.slidingWindow(1, "2 m"),
   prefix: "ratelimit:mbti_analysis",
 });
 
