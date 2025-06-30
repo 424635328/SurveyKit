@@ -1,34 +1,20 @@
-// api/recover-link.mjs (完整修改版 - 使用 Resend SDK，增强调试输出，优化邮件模板)
-
 import { kv } from "@vercel/kv";
 import { Ratelimit } from "@upstash/ratelimit";
 import { z } from "zod";
 import { Resend } from 'resend';
 
-// --- 环境变量 ---
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
 const SENDER_EMAIL = process.env.SENDER_EMAIL;
 const YOUR_APP_DOMAIN = "https://survey-kit.vercel.app";
 
-// DEBUG: 启动时打印环境变量状态
-console.log('--- recover-link.mjs Loaded ---');
-console.log(`RESEND_API_KEY available: ${!!RESEND_API_KEY}`);
-console.log(`SENDER_EMAIL: ${SENDER_EMAIL}`);
-console.log(`YOUR_APP_DOMAIN: ${YOUR_APP_DOMAIN}`);
-console.log('-------------------------------');
-
-
-// --- 初始化 Resend 客户端 ---
 const resend = new Resend(RESEND_API_KEY);
 
-// --- 初始化速率限制器 ---
 const emailRatelimit = new Ratelimit({
   redis: kv,
-  limiter: Ratelimit.slidingWindow(5, "10 m"), // 放宽一点限制，例如10分钟5次
+  limiter: Ratelimit.slidingWindow(5, "10 m"),
   prefix: "ratelimit:email_recovery",
 });
 
-// --- 输入参数校验 Schema ---
 const RequestSchema = z.object({
   email: z.string().email({ message: "无效的邮箱格式" }).optional(),
   surveyId: z.string().min(1, { message: "问卷ID不能为空" }).optional(),
@@ -36,8 +22,9 @@ const RequestSchema = z.object({
     message: "必须提供邮箱或问卷ID"
 });
 
-// --- 邮件模板生成函数 (新增) ---
 function createEmailTemplate(recoveryLink, surveyId) {
+    const preheaderText = "点击这里，安全访问您的专属问卷结果。";
+
     const emailHtml = `
     <!DOCTYPE html>
     <html lang="zh-CN">
@@ -55,13 +42,14 @@ function createEmailTemplate(recoveryLink, surveyId) {
             .button-wrapper { text-align: center; margin: 32px 0; }
             .button { display: inline-block; background-color: #6366f1; color: #ffffff; text-decoration: none; padding: 14px 28px; border-radius: 8px; font-size: 16px; font-weight: 500; transition: background-color 0.3s; }
             .button:hover { background-color: #4f46e5; }
-            .link-wrapper { word-break: break-all; background-color: #f1f5f9; padding: 12px; border-radius: 6px; font-size: 14px; text-align: center; }
-            .link-wrapper a { color: #4f46e5; text-decoration: none; }
+            .copy-info { text-align: center; font-size: 14px; color: #64748b; margin-top: 24px; }
             .footer { background-color: #f8fafc; padding: 24px; text-align: center; font-size: 12px; color: #64748b; }
             .footer p { margin: 0 0 8px; }
+            .preheader { display: none; max-height: 0; max-width: 0; opacity: 0; overflow: hidden; mso-hide: all; visibility: hidden; }
         </style>
     </head>
     <body>
+        <span class="preheader">${preheaderText}</span>
         <div class="container">
             <div class="header">
                 <h1>SurveyKit 问卷找回</h1>
@@ -72,10 +60,9 @@ function createEmailTemplate(recoveryLink, surveyId) {
                 <div class="button-wrapper">
                     <a href="${recoveryLink}" class="button">查看我的问卷结果</a>
                 </div>
-                <p>如果按钮无法点击，您也可以复制下方的完整链接并在浏览器中打开：</p>
-                <div class="link-wrapper">
-                    <a href="${recoveryLink}">${recoveryLink}</a>
-                </div>
+                <p class="copy-info">
+                    如果按钮无法点击，您可以返回问卷结果页，使用“复制链接”功能进行分享。<br>您的问卷ID是: <strong>${surveyId}</strong>
+                </p>
                 <p style="margin-top: 24px;">为了您的信息安全，<strong style="color: #be123c;">请不要将此链接分享给他人</strong>。此链接是访问您问卷结果的唯一凭证。</p>
                 <p>如果您没有请求找回问卷，请忽略此邮件，您的账户是安全的。</p>
             </div>
@@ -88,15 +75,13 @@ function createEmailTemplate(recoveryLink, surveyId) {
     </html>`;
 
     const emailText = `
+    ${preheaderText}
+
     您好！
-
     我们收到了一个找回您 SurveyKit 问卷结果的请求。请访问下方的链接查看您的专属问卷结果。
-
     访问链接: ${recoveryLink}
-
     为了您的信息安全，请不要将此链接分享给他人。
     如果您没有请求找回问卷，请忽略此邮件。
-
     ---
     此邮件由 SurveyKit 自动发送。
     © ${new Date().getFullYear()} SurveyKit.
@@ -105,34 +90,57 @@ function createEmailTemplate(recoveryLink, surveyId) {
     return { emailHtml, emailText };
 }
 
-
-// --- Serverless Function Handler ---
 export default async function handler(request, response) {
-  // ... (前面的1-4部分，包括请求方法检查、环境配置检查、速率限制检查等，保持不变) ...
+  if (request.method !== "POST") {
+    return response.status(405).json({ message: "仅允许 POST 请求" });
+  }
+
+  if (!RESEND_API_KEY || !SENDER_EMAIL) {
+    console.error("关键环境变量 RESEND_API_KEY 或 SENDER_EMAIL 未配置。");
+    return response.status(500).json({ message: "邮件服务未正确配置。" });
+  }
 
   try {
-    // 5. 校验请求参数
-    // ... (保持不变) ...
     const validationResult = RequestSchema.safeParse(request.body);
     if (!validationResult.success) {
         const firstError = validationResult.error.issues[0];
         return response.status(400).json({ message: `请求参数不合法: ${firstError.message}` });
     }
-    const { email: userEmailInput, surveyId: userSurveyIdInput } = validationResult.data;
-
     
-    // --- 6. 查找问卷记录 ---
-    // ... (保持不变) ...
+    const { email: userEmailInput, surveyId: userSurveyIdInput } = validationResult.data;
+    const ip = request.headers['x-forwarded-for'] || request.connection.remoteAddress || '127.0.0.1';
+    const identifier = userEmailInput?.toLowerCase() || userSurveyIdInput || ip;
+
+    const { success, limit, reset } = await emailRatelimit.limit(identifier);
+    if (!success) {
+      const secondsToWait = Math.ceil((reset - Date.now()) / 1000);
+      return response.status(429).json({ 
+          message: `请求过于频繁，请在 ${secondsToWait} 秒后重试。`,
+          retryAfter: secondsToWait
+      });
+    }
+    
     let targetSurveyId = null;
     let storedToken = null;
     let storedUserEmail = null;
+    let isMatch = false;
 
     if (userSurveyIdInput) {
         const surveyRecord = await kv.hgetall(`survey:${userSurveyIdInput}`);
         if (surveyRecord && surveyRecord.token && surveyRecord.userEmail) {
-            targetSurveyId = userSurveyIdInput;
-            storedToken = surveyRecord.token;
-            storedUserEmail = surveyRecord.userEmail; 
+            if (userEmailInput) {
+                if (surveyRecord.userEmail.toLowerCase() === userEmailInput.toLowerCase()) {
+                    isMatch = true;
+                }
+            } else {
+                isMatch = true;
+            }
+
+            if (isMatch) {
+                targetSurveyId = userSurveyIdInput;
+                storedToken = surveyRecord.token;
+                storedUserEmail = surveyRecord.userEmail;
+            }
         }
     } else if (userEmailInput) {
         const emailKey = `email_to_survey_ids:${userEmailInput.toLowerCase()}`;
@@ -144,51 +152,36 @@ export default async function handler(request, response) {
                 targetSurveyId = latestSurveyId;
                 storedToken = surveyRecord.token;
                 storedUserEmail = surveyRecord.userEmail;
+                isMatch = true;
             }
         }
     }
 
-    if (!targetSurveyId || !storedToken || !storedUserEmail) {
-        return response.status(404).json({ message: "未找到匹配的问卷，请检查您输入的ID或邮箱是否正确。" });
+    if (!isMatch) {
+        return response.status(404).json({ message: "无法找到匹配的记录。请仔细检查您输入的问卷ID或邮箱地址。" });
     }
 
-    if (userEmailInput && storedUserEmail.toLowerCase() !== userEmailInput.toLowerCase()) {
-        return response.status(400).json({ message: "输入的邮箱与问卷记录不符。" });
-    }
-
-
-    // --- 7. 生成恢复链接和邮件内容 ---
-    const recoveryLink = `${YOUR_APP_DOMAIN}/result.html?id=${targetSurveyId}&token=${storedToken}`;
-    const { emailHtml, emailText } = createEmailTemplate(recoveryLink, targetSurveyId); // 调用新函数
+    const recoveryLink = `${YOUR_APP_DOMAIN}/result.html?status=success&id=${targetSurveyId}&token=${storedToken}`;
+    const { emailHtml, emailText } = createEmailTemplate(recoveryLink, targetSurveyId);
     
-    // --- 8. 使用 Resend SDK 发送邮件 ---
-    try {
-        console.log(`DEBUG: Attempting to send email to: ${storedUserEmail} from: ${SENDER_EMAIL}`);
-        const { data, error } = await resend.emails.send({
-            from: SENDER_EMAIL, // 优化发件人显示名称
-            to: [storedUserEmail],
-            subject: `[SurveyKit] 您的问卷结果专属链接`, // 优化邮件标题
-            html: emailHtml, // 使用美化后的HTML
-            text: emailText, // 提供纯文本版本，提高送达率
-        });
+    const fromAddress = `SurveyKit <${SENDER_EMAIL}>`;
+    const { data, error } = await resend.emails.send({
+        from: fromAddress,
+        to: [storedUserEmail],
+        subject: `[SurveyKit]`,
+        html: emailHtml,
+        text: emailText,
+    });
 
-        if (error) {
-            console.error("DEBUG: Resend SDK email sending failed:", error);
-            return response.status(500).json({ message: "邮件发送失败，可能是服务暂时不可用，请稍后再试。" });
-        }
-
-        console.log(`DEBUG: Email sent successfully to ${storedUserEmail}. Resend ID: ${data.id}`);
-        return response.status(200).json({ success: true, message: `专属链接已成功发送至您的邮箱 (${storedUserEmail})！请注意查收。` });
-
-    } catch (emailError) {
-        console.error("DEBUG: 邮件发送过程捕获到错误:", emailError);
-        return response.status(500).json({ message: "发送邮件时发生内部错误，请稍后再试。" });
+    if (error) {
+        console.error("Resend SDK email sending failed:", error);
+        return response.status(500).json({ message: "邮件发送失败，可能是服务暂时不可用，请稍后再试。" });
     }
+
+    return response.status(200).json({ success: true, message: `专属链接已成功发送至您的邮箱 (${storedUserEmail})！请注意查收。` });
 
   } catch (error) {
-    console.error("DEBUG: 处理找回链接请求时发生未预期错误:", error);
-    return response.status(500).json({ message: "服务器内部错误，请稍后再试。" });
-  } finally {
-      console.log('--- Request processing finished ---');
+    console.error("处理找回链接请求时发生未预期错误:", error);
+    return response.status(500).json({ message: "服务器发生未知错误，请稍后重试。" });
   }
 }
