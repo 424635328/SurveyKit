@@ -1,4 +1,4 @@
-<!-- public/recover.html (完整修改版) -->
+<!-- public/recover.html (体验优化版) -->
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -10,67 +10,126 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
     <!-- 引入 Font Awesome 图标库 -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- 引入我们自定义的样式文件 -->
     <link rel="stylesheet" href="./recover.css"> 
 </head>
 <body>
     <div class="recover-container">
         <div class="recover-card">
-            <h1 class="card-title">找回问卷链接</h1>
-            <p class="card-subtitle">输入您提交问卷时留下的邮箱，或问卷ID，我们将为您发送专属链接。</p>
-            
+            <!-- 卡片头部，增加品牌感和清晰度 -->
+            <header class="card-header">
+                <div class="card-logo">
+                    <i class="fas fa-paper-plane"></i>
+                </div>
+                <h1 class="card-title">找回您的专属链接</h1>
+                <p class="card-subtitle">只需提供一项信息，我们会将链接安全地发送到您当初填写的邮箱中。</p>
+            </header>
+
+            <!-- 默认显示的表单 -->
             <form id="recoverForm" class="recover-form">
-                <div class="form-group">
-                    <label for="email" class="sr-only">邮箱地址</label>
-                    <input type="email" id="email" name="email" placeholder="您的邮箱地址"
-                           class="form-input">
+                <div class="form-group input-with-icon">
+                    <i class="fa-regular fa-envelope"></i>
+                    <input type="email" id="email" name="email" placeholder="您提交时填写的邮箱" class="form-input">
                 </div>
                 <div class="form-divider">或</div>
-                <div class="form-group">
-                    <label for="surveyId" class="sr-only">问卷ID</label>
-                    <input type="text" id="surveyId" name="surveyId" placeholder="您的问卷ID (可选)"
-                           class="form-input">
+                <div class="form-group input-with-icon">
+                    <i class="fa-solid fa-hashtag"></i>
+                    <input type="text" id="surveyId" name="surveyId" placeholder="您的问卷ID (例如: s_xxxxxx)" class="form-input">
                 </div>
-                <button type="submit" id="submitRecover" 
-                        class="submit-button">
-                    发送链接到邮箱
+                
+                <button type="submit" id="submitRecover" class="submit-button">
+                    <span id="button-text">发送找回邮件</span>
+                    <i id="button-spinner" class="fas fa-spinner fa-spin hidden"></i>
                 </button>
-                <p id="message" class="message-text"></p>
             </form>
-            <div class="back-home-section">
-                <a href="./index.html" class="back-home-link">返回首页</a>
+
+            <!-- 成功状态显示区 (默认隐藏) -->
+            <div id="successState" class="message-box message-box-success hidden">
+                <i class="fas fa-check-circle"></i>
+                <h2 class="message-title">邮件已发送！</h2>
+                <p id="successMessage" class="message-content"></p>
+                <div class="next-steps">
+                    <h4>接下来做什么？</h4>
+                    <ul>
+                        <li><i class="fa-solid fa-inbox"></i> 前往您的收件箱查收邮件。</li>
+                        <li><i class="fa-solid fa-folder-open"></i> 如果没找到，请检查**垃圾邮件**文件夹。</li>
+                        <li><i class="fa-solid fa-clock"></i> 邮件可能需要几分钟才能到达。</li>
+                    </ul>
+                </div>
             </div>
+
+            <!-- 错误状态显示区 (默认隐藏) -->
+            <div id="errorState" class="message-box message-box-error hidden">
+                <i class="fas fa-times-circle"></i>
+                <h2 class="message-title">哦豁，出错了</h2>
+                <p id="errorMessage" class="message-content"></p>
+            </div>
+
+            <!-- 底部帮助与返回链接 -->
+            <footer class="card-footer">
+                <p class="help-text">
+                    忘记了所有信息？ <a href="https://github.com/424635328/SurveyKit/issues" target="_blank" rel="noopener">联系我们</a>
+                </p>
+                <a href="./index.html" class="back-home-link"><i class="fas fa-arrow-left"></i> 返回首页</a>
+            </footer>
         </div>
     </div>
 
+    <!-- 优化后的 JS 逻辑 -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const recoverForm = document.getElementById('recoverForm');
             const surveyIdInput = document.getElementById('surveyId');
             const emailInput = document.getElementById('email'); 
-            const submitRecoverBtn = document.getElementById('submitRecover');
-            const messageEl = document.getElementById('message');
+            const submitBtn = document.getElementById('submitRecover');
+            const buttonText = document.getElementById('button-text');
+            const buttonSpinner = document.getElementById('button-spinner');
 
+            const successState = document.getElementById('successState');
+            const successMessage = document.getElementById('successMessage');
+            const errorState = document.getElementById('errorState');
+            const errorMessage = document.getElementById('errorMessage');
+
+            // 重置所有状态
+            const resetStates = () => {
+                successState.classList.add('hidden');
+                errorState.classList.add('hidden');
+                submitBtn.disabled = false;
+                buttonText.textContent = '发送找回邮件';
+                buttonSpinner.classList.add('hidden');
+            };
+
+            // 显示错误信息
+            const displayError = (message) => {
+                errorMessage.textContent = message;
+                errorState.classList.remove('hidden');
+                recoverForm.classList.remove('hidden'); // 错误时依然显示表单
+            };
+
+            // 显示成功信息
+            const displaySuccess = (message) => {
+                successMessage.textContent = message;
+                recoverForm.classList.add('hidden'); // 成功后隐藏表单
+                successState.classList.remove('hidden');
+            };
+            
             recoverForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
-                messageEl.textContent = '';
-                messageEl.className = 'message-text'; // 重置类名
+                resetStates();
 
                 const surveyId = surveyIdInput.value.trim();
                 const email = emailInput.value.trim(); 
 
                 if (!surveyId && !email) { 
-                    messageEl.textContent = '请至少输入邮箱或问卷ID！';
-                    messageEl.classList.add('message-error');
-                    submitRecoverBtn.disabled = false;
-                    submitRecoverBtn.textContent = '发送链接到邮箱';
+                    displayError('请至少输入您的邮箱或问卷ID。');
                     return;
                 }
                 
-                submitRecoverBtn.disabled = true;
-                submitRecoverBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 发送中...';
-
+                // 进入加载状态
+                submitBtn.disabled = true;
+                buttonText.textContent = '发送中...';
+                buttonSpinner.classList.remove('hidden');
 
                 try {
                     const payload = {};
@@ -84,19 +143,29 @@
                     });
 
                     const result = await response.json();
+
                     if (response.ok) {
-                        messageEl.textContent = result.message || '链接已发送！请检查您的邮箱。';
-                        messageEl.classList.add('message-success');
+                        displaySuccess(result.message);
                     } else {
-                        throw new Error(result.message || '找回链接失败，请重试。');
+                        // 根据不同的错误码给出更具体的提示
+                        if (response.status === 429) {
+                            throw new Error(`请求太频繁了！请在 ${result.retryAfter || 60} 秒后重试。`);
+                        }
+                        if (response.status === 404) {
+                            throw new Error("我们未能找到与该邮箱或ID匹配的问卷记录，请检查输入是否正确。");
+                        }
+                        throw new Error(result.message || '找回链接失败，请稍后再试。');
                     }
                 } catch (error) {
-                    messageEl.textContent = `错误: ${error.message}`;
-                    messageEl.classList.add('message-error');
+                    displayError(error.message);
                     console.error('Recover link error:', error);
                 } finally {
-                    submitRecoverBtn.disabled = false;
-                    submitRecoverBtn.textContent = '发送链接到邮箱';
+                    // 无论成功失败，最终都重置按钮状态（除非是成功情况）
+                    if (!successState.classList.contains('hidden')) {
+                        submitBtn.classList.add('hidden'); // 成功后，整个按钮也隐藏
+                    } else {
+                         resetStates();
+                    }
                 }
             });
         });
