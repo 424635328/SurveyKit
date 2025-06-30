@@ -340,3 +340,47 @@ body {
   filter: blur(0);
   transform: translateY(0);
 }
+/* --- 新增：输入反馈样式 --- */
+.input-feedback-container {
+  max-width: 500px;
+  margin: 0.75rem auto 0; /* 在表单下方留出空间 */
+  height: 0;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: height 0.3s ease, opacity 0.3s ease, transform 0.3s ease;
+  overflow: hidden;
+}
+
+.input-feedback-container.visible {
+  height: 24px; /* 根据字体大小调整 */
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.feedback-text {
+  font-size: 0.875rem; /* 14px */
+  text-align: center;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.375rem;
+  border-width: 1px;
+  border-style: solid;
+}
+
+/* 不同状态的样式 */
+.feedback-info {
+  color: #3b82f6; /* blue-600 */
+  background-color: #eff6ff; /* blue-50 */
+  border-color: #bfdbfe; /* blue-200 */
+}
+
+.feedback-warning {
+  color: #f97316; /* orange-500 */
+  background-color: #fff7ed; /* orange-50 */
+  border-color: #fed7aa; /* orange-200 */
+}
+
+.feedback-success {
+  color: #16a34a; /* green-600 */
+  background-color: #f0fdf4; /* green-50 */
+  border-color: #bbf7d0; /* green-200 */
+}

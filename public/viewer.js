@@ -1,7 +1,8 @@
-// viewer.js
+// viewer.js - 最终优化版
 
 document.addEventListener("DOMContentLoaded", () => {
   const resultsRenderer = (() => {
+    // 缓存所有需要操作的DOM元素
     const allElements = {
       searchNewBtn: document.getElementById("search-new-btn"),
       exportContainer: document.getElementById("export-container"),
@@ -11,17 +12,19 @@ document.addEventListener("DOMContentLoaded", () => {
       idInputForm: document.getElementById("id-input-form"),
       surveyIdInput: document.getElementById("survey-id-input"),
       submitIdBtn: document.getElementById("submit-id-btn"),
+      inputFeedbackContainer: document.getElementById("input-feedback-container"),
+      inputFeedback: document.getElementById("input-feedback"),
       resultsContainer: document.getElementById("results-container"),
       exportBtn: document.getElementById("exportBtn"),
       currentIdDisplaySpan: document.querySelector("#current-id-display span"),
       notification: document.getElementById("notification"),
       notificationIcon: document.getElementById("notification-icon"),
       notificationText: document.getElementById("notification-text"),
-      // 新增：滚动按钮的引用
       scrollToTopBtn: document.getElementById("scrollToTopBtn"),
       scrollToBottomBtn: document.getElementById("scrollToBottomBtn"),
     };
 
+    // 模块状态变量
     let sections = [];
     let surveyData = {};
     let currentSurveyId = null;
@@ -29,6 +32,11 @@ document.addEventListener("DOMContentLoaded", () => {
     let animationObserver;
     let currentSurveyToken = null;
 
+    /**
+     * 显示一个短暂的通知消息 (toast)
+     * @param {string} message - 要显示的消息
+     * @param {string} [type='success'] - 消息类型 ('success' 或 'error')
+     */
     const showNotification = (message, type = "success") => {
       if (!allElements.notification) return;
       allElements.notificationText.textContent = message;
@@ -42,6 +50,11 @@ document.addEventListener("DOMContentLoaded", () => {
       }, 3000);
     };
 
+    /**
+     * 触发文件下载
+     * @param {string} filename - 下载的文件名
+     * @param {Blob} blob - 包含文件内容的Blob对象
+     */
     const downloadFile = (filename, blob) => {
       const link = document.createElement("a");
       link.href = URL.createObjectURL(blob);
@@ -52,6 +65,10 @@ document.addEventListener("DOMContentLoaded", () => {
       URL.revokeObjectURL(link.href);
     };
 
+    /**
+     * 在结果区域显示错误消息
+     * @param {string} message - 错误消息文本
+     */
     const renderError = (message) => {
       if (allElements.resultsContainer) {
         allElements.resultsContainer.textContent = ''; 
@@ -62,6 +79,9 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     };
 
+    /**
+     * 初始化 IntersectionObserver 来实现元素的入场动画
+     */
     const initAnimationObserver = () => {
       if (animationObserver) animationObserver.disconnect();
       const animatedElements = document.querySelectorAll(".animated-line");
@@ -77,24 +97,75 @@ document.addEventListener("DOMContentLoaded", () => {
       animatedElements.forEach((el) => animationObserver.observe(el));
     };
 
+    /**
+     * 切换视图 (输入视图 vs. 结果视图)
+     * @param {string} viewName - 'input' 或 'results'
+     */
     const switchView = (viewName) => {
       if (!allElements.idInputView || !allElements.resultsView) return;
       allElements.idInputView.classList.toggle("hidden", viewName !== "input");
-      allElements.resultsView.classList.toggle(
-        "hidden",
-        viewName !== "results"
-      );
+      allElements.resultsView.classList.toggle("hidden", viewName !== "results");
 
       if (viewName === "input" && allElements.surveyIdInput) {
         allElements.surveyIdInput.value = "";
+        analyzeAndDisplayInputFeedback(); // 清空时也更新反馈
         allElements.surveyIdInput.focus();
       }
 
       initAnimationObserver();
-      // 切换视图时，也更新滚动按钮状态
-      updateScrollButtonsVisibility(); // 新增
+      updateScrollButtonsVisibility();
     };
 
+    /**
+     * 实时分析输入框内容并显示相应的反馈信息。
+     * 优化点：通过检查路径名（pathname）来识别链接，使其在开发和生产环境中都可靠。
+     */
+    const analyzeAndDisplayInputFeedback = () => {
+        const value = allElements.surveyIdInput.value.trim();
+        const { inputFeedbackContainer, inputFeedback } = allElements;
+
+        if (!value) {
+            inputFeedbackContainer.classList.remove('visible');
+            return;
+        }
+
+        let feedback = { message: '', type: '' };
+
+        try {
+            const url = new URL(value);
+
+            // 检查路径是否包含 '/viewer.html'，这是识别问卷链接的关键
+            if (url.pathname.includes('/viewer.html')) {
+                const hasId = url.searchParams.has('id');
+                const hasToken = url.searchParams.has('token');
+
+                if (hasId && hasToken) {
+                    feedback = { message: '✓ 链接完整，可直接查看', type: 'success' };
+                } else if (hasId && !hasToken) {
+                    feedback = { message: '检测到ID，但缺少密钥(token)，部分问卷可能需要', type: 'info' };
+                } else if (!hasId && hasToken) {
+                    feedback = { message: '警告：链接中检测到密钥(token)，但缺少问卷ID', type: 'warning' };
+                } else {
+                    feedback = { message: '警告：链接中未发现ID或密钥', type: 'warning' };
+                }
+            } else {
+                // 如果是合法的URL，但不是问卷查看链接（例如 https://google.com）
+                feedback = { message: '这似乎不是一个有效的问卷链接，请输入ID或正确的链接', type: 'warning' };
+            }
+        } catch (error) {
+            // 如果无法解析为URL，则假定它是一个纯ID
+            feedback = { message: '已识别为ID。如果需要密钥，请粘贴完整链接', type: 'info' };
+        }
+        
+        inputFeedback.textContent = feedback.message;
+        inputFeedback.className = `feedback-text feedback-${feedback.type}`;
+        inputFeedbackContainer.classList.add('visible');
+    };
+
+    /**
+     * 准备用于导出的结构化数据
+     * @returns {Array} - 包含问卷结构和答案的数组
+     */
     const prepareStructuredExportData = () => {
       if (!sections.length || !Object.keys(surveyData).length) return [];
       const structuredData = JSON.parse(JSON.stringify(sections));
@@ -108,33 +179,26 @@ document.addEventListener("DOMContentLoaded", () => {
       return structuredData;
     };
 
+    /**
+     * 包含所有导出操作的对象
+     */
     const exportActions = {
       json: () => {
         const exportData = prepareStructuredExportData();
-        if (!exportData.length)
-          return showNotification("没有数据可导出", "error");
-        const blob = new Blob([JSON.stringify(exportData, null, 2)], {
-          type: "application/json;charset=utf-8",
-        });
+        if (!exportData.length) return showNotification("没有数据可导出", "error");
+        const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: "application/json;charset=utf-8" });
         downloadFile(`问卷结果-${currentSurveyId}.json`, blob);
         showNotification("JSON 文件已导出");
       },
       txt: () => {
         const exportData = prepareStructuredExportData();
-        if (!exportData.length)
-          return showNotification("没有数据可导出", "error");
+        if (!exportData.length) return showNotification("没有数据可导出", "error");
         let txtContent = `问卷结果详情 - ID: ${currentSurveyId}\n\n`;
         exportData.forEach((section) => {
-          txtContent += `========================================\n`;
-          txtContent += `[${section.legend}]\n`;
-          txtContent += `========================================\n\n`;
-          section.questions.forEach((q) => {
-            txtContent += `${q.text}\n  -> ${q.answer}\n\n`;
-          });
+          txtContent += `========================================\n[${section.legend}]\n========================================\n\n`;
+          section.questions.forEach((q) => { txtContent += `${q.text}\n  -> ${q.answer}\n\n`; });
         });
-        const blob = new Blob([txtContent], {
-          type: "text/plain;charset=utf-8",
-        });
+        const blob = new Blob([txtContent], { type: "text/plain;charset=utf-8" });
         downloadFile(`问卷结果-${currentSurveyId}.txt`, blob);
         showNotification("TXT 文件已导出");
       },
@@ -142,22 +206,18 @@ document.addEventListener("DOMContentLoaded", () => {
       csv: () => exportToExcelOrCsv("csv"),
     };
 
+    /**
+     * 将数据导出为 Excel 或 CSV 文件
+     * @param {string} format - 'xlsx' 或 'csv'
+     */
     const exportToExcelOrCsv = (format) => {
       const structuredData = prepareStructuredExportData();
-      if (!structuredData.length)
-        return showNotification("没有数据可导出", "error");
+      if (!structuredData.length) return showNotification("没有数据可导出", "error");
       const flatData = structuredData.flatMap((section) =>
-        section.questions.map((q) => ({
-          Section: section.legend,
-          ID: q.id,
-          Question: q.text,
-          Answer: q.answer,
-        }))
+        section.questions.map((q) => ({ Section: section.legend, ID: q.id, Question: q.text, Answer: q.answer }))
       );
       try {
-        if (typeof XLSX === "undefined") {
-          return showNotification("错误：导出库 (xlsx.js) 未加载。", "error");
-        }
+        if (typeof XLSX === "undefined") return showNotification("错误：导出库 (xlsx.js) 未加载。", "error");
         const worksheet = XLSX.utils.json_to_sheet(flatData);
         const workbook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(workbook, worksheet, "问卷结果");
@@ -169,47 +229,47 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     };
 
+    /**
+     * 渲染问卷结果到页面
+     * @param {object} data - 从API获取的问卷答案数据
+     */
     const renderResults = (data) => {
       surveyData = data;
       allElements.resultsContainer.textContent = ""; 
       
       sections.forEach((section) => {
         const sectionDiv = document.createElement("div");
-        sectionDiv.className = "result-section animated-line"; // 添加 animated-line 类
-        
+        sectionDiv.className = "result-section animated-line";
         const titleH2 = document.createElement('h2');
         titleH2.className = 'section-title';
         titleH2.textContent = section.legend; 
         sectionDiv.appendChild(titleH2);
-
         section.questions.forEach((q) => {
           const answerText = data[q.id];
-
           const item = document.createElement("div");
-          item.className = "result-item animated-line"; // 添加 animated-line 类
-
+          item.className = "result-item animated-line";
           const questionP = document.createElement('p');
           questionP.className = 'question';
           questionP.textContent = q.text; 
           item.appendChild(questionP);
-
           const answerP = document.createElement('p');
           answerP.className = 'answer';
-          if (!answerText) {
-            answerP.classList.add('no-answer');
-          }
+          if (!answerText) answerP.classList.add('no-answer');
           answerP.textContent = answerText || "未回答"; 
           item.appendChild(answerP);
-          
           sectionDiv.appendChild(item);
         });
-        
         allElements.resultsContainer.appendChild(sectionDiv);
       });
-      initAnimationObserver(); // 重新初始化动画观察器以包含新渲染的元素
-      updateScrollButtonsVisibility(); // 渲染结果后更新按钮可见性
+      initAnimationObserver();
+      updateScrollButtonsVisibility();
     };
 
+    /**
+     * 获取并渲染问卷数据
+     * @param {string} surveyId - 问卷ID
+     * @param {string|null} surveyToken - 问卷密钥 (token)
+     */
     const fetchAndRenderSurvey = async (surveyId, surveyToken) => {
       if (isLoading) return;
       isLoading = true;
@@ -217,31 +277,27 @@ document.addEventListener("DOMContentLoaded", () => {
       currentSurveyToken = surveyToken;
       switchView("results");
       
-      const loadingP = document.createElement('p');
-      loadingP.className = 'loading-placeholder';
-      loadingP.textContent = '正在加载数据...';
-      allElements.resultsContainer.textContent = '';
-      allElements.resultsContainer.appendChild(loadingP);
-
-      if (allElements.currentIdDisplaySpan)
-        allElements.currentIdDisplaySpan.textContent = surveyId;
+      allElements.resultsContainer.innerHTML = '<p class="loading-placeholder">正在加载数据...</p>';
+      if (allElements.currentIdDisplaySpan) allElements.currentIdDisplaySpan.textContent = surveyId;
       if (allElements.submitIdBtn) {
         allElements.submitIdBtn.disabled = true;
         allElements.submitIdBtn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> 正在查询...';
       }
+
       try {
         const [questionsRes, surveyRes] = await Promise.all([
           fetch("./questions.json"),
           fetch(`./api/get-survey?id=${surveyId}${surveyToken ? `&token=${surveyToken}` : ''}`),
         ]);
-        if (!questionsRes.ok)
-          throw new Error("无法加载问卷结构 (questions.json)。");
+        if (!questionsRes.ok) throw new Error("无法加载问卷结构 (questions.json)。");
         sections = await questionsRes.json();
         
         if (!surveyRes.ok) {
           let specificMessage;
           if (surveyRes.status === 401 || surveyRes.status === 403) {
-            specificMessage = "访问被拒绝。该问卷可能需要专属链接才能访问，请尝试粘贴完整的链接地址。";
+            specificMessage = surveyToken
+              ? "访问被拒绝。提供的ID或密钥(token)无效，请检查链接是否正确。"
+              : `访问被拒绝。此问卷 (ID: ${surveyId}) 可能需要密钥(token)，请尝试粘贴完整的专属链接。`;
           } else {
              try {
                const errorData = await surveyRes.json();
@@ -262,18 +318,20 @@ document.addEventListener("DOMContentLoaded", () => {
       } catch (error) {
         console.error("获取问卷结果失败:", error);
         renderError(`加载失败: ${error.message}`);
-        setTimeout(() => switchView("input"), 3500); // 延长错误提示显示时间
+        setTimeout(() => switchView("input"), 3500);
       } finally {
         isLoading = false;
         if (allElements.submitIdBtn) {
           allElements.submitIdBtn.disabled = false;
           allElements.submitIdBtn.innerHTML = '<i class="fa fa-search"></i> 查看结果';
         }
-        updateScrollButtonsVisibility(); // 确保加载完成后更新按钮状态
+        updateScrollButtonsVisibility();
       }
     };
 
-    // 新增函数：更新滚动按钮的可见性
+    /**
+     * 根据页面滚动位置更新“滚动到顶部/底部”按钮的可见性
+     */
     const updateScrollButtonsVisibility = () => {
       const { scrollToTopBtn, scrollToBottomBtn } = allElements;
       if (!scrollToTopBtn || !scrollToBottomBtn) return;
@@ -281,100 +339,85 @@ document.addEventListener("DOMContentLoaded", () => {
       const scrollY = window.scrollY;
       const viewportHeight = window.innerHeight;
       const documentHeight = document.documentElement.scrollHeight;
+      const SCROLL_THRESHOLD = 200;
+      const isScrollable = documentHeight > viewportHeight + 50;
 
-      const SCROLL_THRESHOLD = 200; // 滚动超过此距离显示/隐藏按钮
-
-      // 判断页面是否可滚动（内容高度大于视口高度）
-      const isScrollable = documentHeight > viewportHeight + 50; // 额外50px容错
+      const toggleBtnVisibility = (btn, isVisible) => {
+        btn.classList.toggle('opacity-0', !isVisible);
+        btn.classList.toggle('pointer-events-none', !isVisible);
+        btn.classList.toggle('translate-y-4', !isVisible);
+      };
 
       if (!isScrollable) {
-        // 如果页面不可滚动，隐藏两个按钮
-        scrollToTopBtn.classList.add('opacity-0', 'pointer-events-none', 'translate-y-4');
-        scrollToBottomBtn.classList.add('opacity-0', 'pointer-events-none', 'translate-y-4');
+        toggleBtnVisibility(scrollToTopBtn, false);
+        toggleBtnVisibility(scrollToBottomBtn, false);
         return;
       }
 
-      // 控制滚动到顶部按钮的可见性
-      if (scrollY > SCROLL_THRESHOLD) {
-        scrollToTopBtn.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-4');
-        scrollToTopBtn.classList.add('opacity-100', 'pointer-events-auto', 'translate-y-0');
-      } else {
-        scrollToTopBtn.classList.remove('opacity-100', 'pointer-events-auto', 'translate-y-0');
-        scrollToTopBtn.classList.add('opacity-0', 'pointer-events-none', 'translate-y-4');
-      }
-
-      // 控制滚动到底部按钮的可见性
-      // 当当前滚动位置 + 视口高度 < 文档总高度 - 阈值时，说明未到底部
-      if ((scrollY + viewportHeight) < (documentHeight - SCROLL_THRESHOLD)) {
-        scrollToBottomBtn.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-4');
-        scrollToBottomBtn.classList.add('opacity-100', 'pointer-events-auto', 'translate-y-0');
-      } else {
-        scrollToBottomBtn.classList.remove('opacity-100', 'pointer-events-auto', 'translate-y-0');
-        scrollToBottomBtn.classList.add('opacity-0', 'pointer-events-none', 'translate-y-4');
-      }
+      toggleBtnVisibility(scrollToTopBtn, scrollY > SCROLL_THRESHOLD);
+      toggleBtnVisibility(scrollToBottomBtn, (scrollY + viewportHeight) < (documentHeight - SCROLL_THRESHOLD));
     };
 
 
+    /**
+     * 初始化应用，绑定所有事件监听器
+     */
     const init = () => {
+      // 导出菜单的交互
       if (allElements.exportBtn) {
         allElements.exportBtn.addEventListener("click", (e) => {
           e.stopPropagation();
-          const container = allElements.exportContainer;
-          if (container) {
-            container.classList.toggle("open");
-            if (container.classList.contains("open")) {
-              const menuItems = allElements.exportMenu.querySelectorAll("a");
-              menuItems.forEach((item, index) => {
-                item.style.setProperty("--i-delay", `${index * 60}ms`);
-              });
-            }
-          }
+          allElements.exportContainer.classList.toggle("open");
         });
       }
-
       if (allElements.exportMenu) {
         allElements.exportMenu.addEventListener("click", (e) => {
           e.stopPropagation();
           const target = e.target.closest("a");
           if (!target) return;
           e.preventDefault();
-          const format = target.dataset.format;
-          if (exportActions[format]) {
-            exportActions[format]();
+          if (exportActions[target.dataset.format]) {
+            exportActions[target.dataset.format]();
           }
-          if (allElements.exportContainer) {
-            allElements.exportContainer.classList.remove("open");
-          }
+          allElements.exportContainer.classList.remove("open");
         });
       }
 
+      // 实时输入监听
+      if (allElements.surveyIdInput) {
+          allElements.surveyIdInput.addEventListener('input', analyzeAndDisplayInputFeedback);
+      }
+
+      // 表单提交
       if (allElements.idInputForm) {
         allElements.idInputForm.addEventListener("submit", (e) => {
           e.preventDefault();
           const inputVal = allElements.surveyIdInput.value.trim();
-          if (inputVal) {
-            let idToFetch = inputVal;
-            let tokenToFetch = null;
+          if (!inputVal) return;
 
-            try {
-                const url = new URL(inputVal);
-                if (url.origin === window.location.origin && (url.pathname.includes('/viewer.html') || url.pathname.includes('/result.html'))) {
-                    idToFetch = url.searchParams.get('id');
-                    tokenToFetch = url.searchParams.get('token');
-                }
-            } catch (error) {
-                // Not a valid URL, treat as just an ID
-            }
-            
-            if (idToFetch) {
-                fetchAndRenderSurvey(idToFetch, tokenToFetch);
-            } else {
-                renderError("无法从输入中提取有效ID。请确保输入的是正确的问卷ID或专属链接。");
-            }
+          let idToFetch = null, tokenToFetch = null;
+          try {
+              const url = new URL(inputVal);
+              if (url.pathname.includes('/viewer.html')) {
+                  idToFetch = url.searchParams.get('id');
+                  tokenToFetch = url.searchParams.get('token');
+              } else {
+                  idToFetch = inputVal;
+              }
+          } catch (error) {
+              idToFetch = inputVal;
+          }
+          
+          if (idToFetch) {
+              fetchAndRenderSurvey(idToFetch, tokenToFetch);
+          } else {
+              renderError("无法从您的输入中提取有效ID。请检查链接是否正确。");
+              setTimeout(() => switchView("input"), 3500);
           }
         });
       }
 
+      // “查询其他ID”按钮
       if (allElements.searchNewBtn) {
         allElements.searchNewBtn.addEventListener("click", () => {
           switchView("input");
@@ -382,27 +425,18 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       }
 
-      // 新增：滚动按钮的事件监听
+      // 滚动按钮
       if (allElements.scrollToTopBtn) {
-        allElements.scrollToTopBtn.addEventListener('click', () => {
-          window.scrollTo({
-            top: 0,
-            behavior: 'smooth'
-          });
-        });
+        allElements.scrollToTopBtn.addEventListener('click', () => { window.scrollTo({ top: 0, behavior: 'smooth' }); });
       }
       if (allElements.scrollToBottomBtn) {
-        allElements.scrollToBottomBtn.addEventListener('click', () => {
-          window.scrollTo({
-            top: document.documentElement.scrollHeight, // 滚动到文档底部
-            behavior: 'smooth'
-          });
-        });
+        allElements.scrollToBottomBtn.addEventListener('click', () => { window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' }); });
       }
-      // 监听页面滚动，更新按钮可见性
+      
+      // 页面滚动监听
       window.addEventListener('scroll', updateScrollButtonsVisibility, { passive: true });
 
-
+      // 页面加载时检查URL参数
       const params = new URLSearchParams(window.location.search);
       const initialSurveyId = params.get("id");
       const initialSurveyToken = params.get("token");
@@ -411,8 +445,8 @@ document.addEventListener("DOMContentLoaded", () => {
       } else {
         switchView("input");
       }
-      // 首次加载和初始化时，检查并设置按钮状态
-      updateScrollButtonsVisibility(); // 确保加载完成后更新按钮状态
+      
+      updateScrollButtonsVisibility();
     };
 
     return { init };
