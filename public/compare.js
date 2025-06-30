@@ -1,3 +1,4 @@
+// Compare.js - 用于处理问卷对比页面的逻辑
 document.addEventListener('DOMContentLoaded', () => {
 
     // 获取所有必要的DOM元素

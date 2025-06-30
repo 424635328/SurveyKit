@@ -1,3 +1,4 @@
+// result.js - 用于处理问卷结果页面的逻辑
 document.addEventListener("DOMContentLoaded", () => {
     // 获取 DOM 元素
     const statusDisplay = document.getElementById("status-display"); // 状态显示区域
