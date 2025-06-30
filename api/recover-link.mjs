@@ -8,7 +8,7 @@ import { Resend } from 'resend';
 // --- 环境变量 ---
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
 const SENDER_EMAIL = process.env.SENDER_EMAIL;
-const YOUR_APP_DOMAIN = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://survey-kit.vercel.app";
+const YOUR_APP_DOMAIN = "https://survey-kit.vercel.app";
 
 // DEBUG: 启动时打印环境变量状态
 console.log('--- recover-link.mjs Loaded ---');
