@@ -1267,13 +1267,6 @@
           }
         ],
         "hasOther": true
-      },
-      {
-        "id": "q_email",
-        "text": "你的邮箱地址（用于找回问卷链接）：",
-        "type": "text",
-        "inputmode": "email",
-        "placeholder": "请输入你的邮箱"
       }
     ]
   }

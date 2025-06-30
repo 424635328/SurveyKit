@@ -1,5 +1,4 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // DOM 元素选择器
   const form = document.getElementById("surveyForm");
   const progressBarElement = document.getElementById("scrollProgress");
   const completionCounter = document.getElementById("completionCounter");
@@ -13,13 +12,14 @@ document.addEventListener("DOMContentLoaded", () => {
   const jumpGridElement = document.getElementById("jumpGrid");
   const jumpGridToggleButton = document.querySelector(".jump-grid-toggle");
 
-  // 全局状态变量
+  let emailInput;
+  let emailError;
+
   const formId = "deep-survey-draft";
   let totalQuestions = 0;
   let gridCells = [];
   let currentQuestionNumber = 0;
 
-  // 确保核心元素存在
   if (!form || !submitButton) {
     console.error("核心组件缺失：找不到问卷表单或提交按钮。");
     if (loadingMessage) {
@@ -29,9 +29,6 @@ document.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
-  /**
-   * 模块化功能：文本打字机动画
-   */
   const textAnimator = {
     animate: (element, text, delay = 35) => {
       return new Promise((resolve) => {
@@ -63,12 +60,44 @@ document.addEventListener("DOMContentLoaded", () => {
     },
   };
 
-  /**
-   * 模块化功能：问卷渲染
-   */
   const surveyRenderer = {
+    createEmailCaptureBlock: () => {
+      const container = document.createElement("div");
+      container.className = "email-capture-block";
+
+      const label = document.createElement("label");
+      label.htmlFor = "q_email";
+      label.className = "email-label";
+      label.innerHTML = "接收您的专属档案链接 📬";
+
+      const description = document.createElement("p");
+      description.className = "email-description";
+      description.textContent =
+        "请填写您的邮箱，这将是我们确定这份问卷归属的唯一方式。";
+
+      const input = document.createElement("input");
+      input.type = "email";
+      input.id = "q_email";
+      input.name = "q_email";
+      input.placeholder = "your-email@example.com";
+      input.required = true;
+
+      const errorP = document.createElement("p");
+      errorP.id = "emailError";
+      errorP.className = "error-message";
+
+      container.appendChild(label);
+      container.appendChild(description);
+      container.appendChild(input);
+      container.appendChild(errorP);
+
+      return container;
+    },
     render: (sections) => {
-      form.textContent = "";
+      form.innerHTML = "";
+      form.appendChild(loadingMessage);
+
+      const formContent = document.createDocumentFragment();
       let questionCount = 0;
       sections.forEach((section) => {
         const fieldset = document.createElement("fieldset");
@@ -128,8 +157,14 @@ document.addEventListener("DOMContentLoaded", () => {
           if (inputContainer) questionBlock.appendChild(inputContainer);
           fieldset.appendChild(questionBlock);
         });
-        form.appendChild(fieldset);
+        formContent.appendChild(fieldset);
       });
+
+      const emailBlock = surveyRenderer.createEmailCaptureBlock();
+      formContent.appendChild(emailBlock);
+
+      form.appendChild(formContent);
+
       totalQuestions = questionCount;
       if (loadingMessage) loadingMessage.style.display = "none";
     },
@@ -251,9 +286,6 @@ document.addEventListener("DOMContentLoaded", () => {
     },
   };
 
-  /**
-   * 模块化功能：进度保存与加载
-   */
   const progressManager = {
     save: () => {
       const formData = new FormData(form);
@@ -304,9 +336,6 @@ document.addEventListener("DOMContentLoaded", () => {
     },
   };
 
-  /**
-   * 模块化功能：UI 更新
-   */
   const uiUpdater = {
     updateScrollProgress: () => {
       if (!progressBarElement) return;
@@ -343,9 +372,6 @@ document.addEventListener("DOMContentLoaded", () => {
     },
   };
 
-  /**
-   * 模块化功能：题号导航格
-   */
   const jumpGrid = {
     init: () => {
       if (!jumpGridElement) return;
@@ -385,7 +411,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const formData = new FormData(form);
       gridCells.forEach((cell) => {
         const qNum = parseInt(cell.dataset.questionNumber, 10);
-        cell.className = "grid-cell"; // Reset classes
+        cell.className = "grid-cell";
         if (qNum > totalQuestions) {
           cell.classList.add("inactive");
         } else {
@@ -416,10 +442,40 @@ document.addEventListener("DOMContentLoaded", () => {
     },
   };
 
-  /**
-   * 模块化功能：提交逻辑与弹窗
-   */
   const submissionHandler = {
+    validateEmail: () => {
+      if (!emailInput || !emailError) {
+        console.error("邮箱验证失败：找不到输入框元素。");
+        return false;
+      }
+
+      const emailValue = emailInput.value.trim();
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+      emailInput.classList.remove("input-error");
+      emailError.style.display = "none";
+      emailError.textContent = "";
+
+      if (!emailValue) {
+        emailError.textContent = "请填写您的邮箱地址。";
+        emailError.style.display = "block";
+        emailInput.classList.add("input-error");
+        emailInput.focus();
+        emailInput.scrollIntoView({ behavior: "smooth", block: "center" });
+        return false;
+      }
+
+      if (!emailRegex.test(emailValue)) {
+        emailError.textContent = "请输入一个有效的邮箱地址。";
+        emailError.style.display = "block";
+        emailInput.classList.add("input-error");
+        emailInput.focus();
+        emailInput.scrollIntoView({ behavior: "smooth", block: "center" });
+        return false;
+      }
+
+      return true;
+    },
     perform: async () => {
       if (confirmModal) confirmModal.classList.remove("show");
       const formData = new FormData(form);
@@ -451,11 +507,18 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       } catch (error) {
         console.error("提交错误:", error);
-        window.location.href = `/result.html?status=error&message=${encodeURIComponent(error.message)}`;
+        submitButton.textContent = "封存我的答案";
+        submitButton.disabled = false;
+        alert(`提交失败：${error.message}`);
       }
     },
     initiate: (e) => {
       e.preventDefault();
+
+      if (!submissionHandler.validateEmail()) {
+        return;
+      }
+
       const filledCount = uiUpdater.getFilledCount();
       if (filledCount === totalQuestions || totalQuestions === 0) {
         submissionHandler.perform();
@@ -477,9 +540,6 @@ document.addEventListener("DOMContentLoaded", () => {
     },
   };
 
-  /**
-   * 模块化功能：历史档案查找 (已优化)
-   */
   const historyLookupModule = {
     init: () => {
       const inputEl = document.getElementById("historyLookupInput");
@@ -539,7 +599,7 @@ document.addEventListener("DOMContentLoaded", () => {
           messageEl.className = "lookup-message";
           lookupBtn.disabled = false;
         } else {
-          messageEl.innerHTML = " "; // 使用不间断空格占位
+          messageEl.innerHTML = " ";
           messageEl.className = "lookup-message";
           lookupBtn.disabled = true;
         }
@@ -574,9 +634,6 @@ document.addEventListener("DOMContentLoaded", () => {
     },
   };
 
-  /**
-   * 模块化功能：页面动效与交互观察器
-   */
   const effectsAndObservers = {
     init: () => {
       const questionTextElements = document.querySelectorAll(
@@ -651,9 +708,6 @@ document.addEventListener("DOMContentLoaded", () => {
     },
   };
 
-  /**
-   * 主初始化函数
-   */
   const initializeApp = async () => {
     try {
       if (loadingMessage) loadingMessage.style.display = "block";
@@ -662,6 +716,14 @@ document.addEventListener("DOMContentLoaded", () => {
       const sections = await response.json();
 
       surveyRenderer.render(sections);
+
+      emailInput = document.getElementById("q_email");
+      emailError = document.getElementById("emailError");
+
+      if (!emailInput || !emailError) {
+        throw new Error("初始化失败：无法找到动态创建的邮箱输入框。");
+      }
+
       jumpGrid.init();
 
       form.addEventListener("input", (event) => {
@@ -694,6 +756,14 @@ document.addEventListener("DOMContentLoaded", () => {
       form.addEventListener("keydown", (e) => {
         if (e.key === "Enter" && e.target.tagName !== "TEXTAREA")
           e.preventDefault();
+      });
+
+      emailInput.addEventListener("input", () => {
+        if (emailInput.classList.contains("input-error")) {
+          emailInput.classList.remove("input-error");
+          emailError.style.display = "none";
+          emailError.textContent = "";
+        }
       });
 
       submitButton.addEventListener("click", submissionHandler.initiate);
