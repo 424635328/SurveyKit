@@ -6,7 +6,6 @@
     <title>问卷答案预览器 - SurveyKit</title>
     <link rel="icon" href="./favicon.ico" type="image/x-icon">
     <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
-    <!-- Tailwind CSS (假设 viewer.css 没有完全覆盖tailwind) -->
     <script src="https://cdn.tailwindcss.com"></script> 
     <link rel="stylesheet" href="viewer.css">
     <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
@@ -21,7 +20,7 @@
 
         <main id="view-container">
             <div id="id-input-view" class="view-section">
-                <p class="prompt-text animated-line">请输入或粘贴完整的问卷链接（包含ID和密钥），或仅输入ID来尝试访问公开问卷（如果存在）。</p>
+                <p class="prompt-text animated-line">请输入或粘贴完整的问卷链接（包含ID和密钥）</p>
                 <form id="id-input-form" class="input-form animated-line">
                     <input type="text" id="survey-id-input" placeholder="例如: https://your.app/viewer.html?id=xxx&token=yyy 或 问卷ID" required>
                     <button type="submit" id="submit-id-btn"><i class="fa fa-search"></i> 查看结果</button>

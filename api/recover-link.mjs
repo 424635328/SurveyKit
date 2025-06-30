@@ -91,12 +91,15 @@ function createEmailTemplate(recoveryLink, surveyId) {
 }
 
 export default async function handler(request, response) {
+  console.log(`\n[${new Date().toISOString()}] --- New Request to recover-link ---`);
+  
   if (request.method !== "POST") {
+    console.log(`[REJECTED] Invalid method: ${request.method}`);
     return response.status(405).json({ message: "仅允许 POST 请求" });
   }
 
   if (!RESEND_API_KEY || !SENDER_EMAIL) {
-    console.error("关键环境变量 RESEND_API_KEY 或 SENDER_EMAIL 未配置。");
+    console.error("[FATAL] Critical environment variables RESEND_API_KEY or SENDER_EMAIL are not configured.");
     return response.status(500).json({ message: "邮件服务未正确配置。" });
   }
 
@@ -104,28 +107,36 @@ export default async function handler(request, response) {
     const validationResult = RequestSchema.safeParse(request.body);
     if (!validationResult.success) {
         const firstError = validationResult.error.issues[0];
+        console.warn(`[REJECTED] Invalid request body: ${firstError.message}`);
         return response.status(400).json({ message: `请求参数不合法: ${firstError.message}` });
     }
     
     const { email: userEmailInput, surveyId: userSurveyIdInput } = validationResult.data;
+    console.log(`[INFO] Request body validated. Email: ${userEmailInput || 'N/A'}, SurveyID: ${userSurveyIdInput || 'N/A'}`);
+
     const ip = request.headers['x-forwarded-for'] || request.connection.remoteAddress || '127.0.0.1';
     const identifier = userEmailInput?.toLowerCase() || userSurveyIdInput || ip;
+    console.log(`[INFO] Rate limit identifier: ${identifier}`);
 
-    const { success, limit, reset } = await emailRatelimit.limit(identifier);
+    const { success, limit, reset, remaining } = await emailRatelimit.limit(identifier);
     if (!success) {
       const secondsToWait = Math.ceil((reset - Date.now()) / 1000);
+      console.warn(`[REJECTED] Rate limit exceeded for identifier: ${identifier}. Retry after ${secondsToWait}s.`);
       return response.status(429).json({ 
           message: `请求过于频繁，请在 ${secondsToWait} 秒后重试。`,
           retryAfter: secondsToWait
       });
     }
+    console.log(`[INFO] Rate limit check passed for ${identifier}. Remaining: ${remaining}/${limit}`);
     
     let targetSurveyId = null;
     let storedToken = null;
     let storedUserEmail = null;
     let isMatch = false;
 
+    console.log(`[INFO] Starting record search...`);
     if (userSurveyIdInput) {
+        console.log(`[INFO] Searching by SurveyID: ${userSurveyIdInput}`);
         const surveyRecord = await kv.hgetall(`survey:${userSurveyIdInput}`);
         if (surveyRecord && surveyRecord.token && surveyRecord.userEmail) {
             if (userEmailInput) {
@@ -143,10 +154,12 @@ export default async function handler(request, response) {
             }
         }
     } else if (userEmailInput) {
+        console.log(`[INFO] Searching by Email: ${userEmailInput}`);
         const emailKey = `email_to_survey_ids:${userEmailInput.toLowerCase()}`;
         const surveyIds = await kv.lrange(emailKey, 0, 0);
         if (surveyIds && surveyIds.length > 0) {
             const latestSurveyId = surveyIds[0];
+            console.log(`[INFO] Found latest survey ID for email: ${latestSurveyId}`);
             const surveyRecord = await kv.hgetall(`survey:${latestSurveyId}`);
             if (surveyRecord && surveyRecord.token && surveyRecord.userEmail) {
                 targetSurveyId = latestSurveyId;
@@ -158,13 +171,16 @@ export default async function handler(request, response) {
     }
 
     if (!isMatch) {
+        console.warn(`[REJECTED] No matching record found for input. Email: ${userEmailInput || 'N/A'}, SurveyID: ${userSurveyIdInput || 'N/A'}`);
         return response.status(404).json({ message: "无法找到匹配的记录。请仔细检查您输入的问卷ID或邮箱地址。" });
     }
+    console.log(`[SUCCESS] Record found. Target SurveyID: ${targetSurveyId}, Email: ${storedUserEmail}`);
 
     const recoveryLink = `${YOUR_APP_DOMAIN}/result.html?status=success&id=${targetSurveyId}&token=${storedToken}`;
     const { emailHtml, emailText } = createEmailTemplate(recoveryLink, targetSurveyId);
     
-    const fromAddress = `SurveyKit <${SENDER_EMAIL}>`;
+    const fromAddress = SENDER_EMAIL;
+    console.log(`[INFO] Attempting to send email via Resend to: ${storedUserEmail}`);
     const { data, error } = await resend.emails.send({
         from: fromAddress,
         to: [storedUserEmail],
@@ -174,14 +190,17 @@ export default async function handler(request, response) {
     });
 
     if (error) {
-        console.error("Resend SDK email sending failed:", error);
+        console.error("[ERROR] Resend SDK email sending failed:", JSON.stringify(error, null, 2));
         return response.status(500).json({ message: "邮件发送失败，可能是服务暂时不可用，请稍后再试。" });
     }
 
+    console.log(`[SUCCESS] Email sent successfully. Resend ID: ${data.id}`);
     return response.status(200).json({ success: true, message: `专属链接已成功发送至您的邮箱 (${storedUserEmail})！请注意查收。` });
 
   } catch (error) {
-    console.error("处理找回链接请求时发生未预期错误:", error);
+    console.error("[FATAL] Unhandled error in recovery handler:", error);
     return response.status(500).json({ message: "服务器发生未知错误，请稍后重试。" });
+  } finally {
+      console.log(`[${new Date().toISOString()}] --- Request to recover-link finished ---`);
   }
 }

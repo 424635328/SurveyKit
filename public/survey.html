@@ -1,84 +1,107 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>深度问卷 - SurveyKit</title>
-    <link rel="icon" href="/favicon.ico" type="image/x-icon">
-    <link rel="stylesheet" href="survey.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap"
-        rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-</head>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>深度问卷 - SurveyKit</title>
+        <link rel="icon" href="/favicon.ico" type="image/x-icon">
+        <link rel="stylesheet" href="survey.css">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link
+            href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap"
+            rel="stylesheet">
+        <link rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    </head>
 
-<body>
-    <div class="survey-page-container">
-        <header class="survey-header-top">
-            <a href="/" class="home-button">🏠 项目首页</a>
-            <div class="progress-bar-container">
-                <progress id="scrollProgress" value="0" max="100"></progress>
-                <p class="counter" id="completionCounter">已完成 0 / 0 题</p>
-            </div>
-        </header>
-
-        <div class="jump-grid-container">
-            <div class="jump-grid-header">
-                <h3>🚀 题号导航</h3>
-                <span class="jump-grid-toggle">▲</span>
-            </div>
-            <div id="jumpGrid" class="jump-grid">
-            </div>
-        </div>
-
-        <div class="survey-main-content-wrapper">
-            <div class="survey-container section-card">
-                <div class="card-title-group">
-                    <h1>秘密档案 🤫</h1>
-                    <p class="subtitle">这是一个深度探索邀请，所有问题都是选填，随心回答。</p>
+    <body>
+        <div class="survey-page-container">
+            <header class="survey-header-top">
+                <a href="/" class="home-button">🏠 项目首页</a>
+                <div class="progress-bar-container">
+                    <progress id="scrollProgress" value="0"
+                        max="100"></progress>
+                    <p class="counter" id="completionCounter">已完成 0 / 0 题</p>
                 </div>
+            </header>
 
-                <form id="surveyForm">
-                    <p class="loading-message">正在为您生成问卷...</p>
-                </form>
-
-                <div class="form-actions">
-                    <button type="button" id="submitButton" class="submit-btn primary-btn">封存我的答案 💌</button>
+            <div class="jump-grid-container">
+                <div class="jump-grid-header">
+                    <h3>🚀 题号导航</h3>
+                    <span class="jump-grid-toggle">▲</span>
+                </div>
+                <div id="jumpGrid" class="jump-grid">
                 </div>
             </div>
 
-            <footer class="page-footer section-card">
-                <div class="bottom-actions-grid">
-                    <div class="history-lookup">
-                        <h3>🔍 查找历史档案</h3>
-                        <p class="mb-2">请输入完整的问卷链接（包含ID和密钥），或仅输入ID来尝试访问公开问卷（如果存在）。</p>
-                        <div class="history-input-group">
-                            <input type="text" id="historyIdInput" placeholder="在此粘贴问卷完整链接或ID">
-                            <button id="lookupBtn" title="查找">前往</button>
-                        </div>
-                        <p class="mt-2 text-sm text-gray-600">忘记专属链接？<a href="/recover.html" class="text-primary hover:underline">点此找回</a></p>
+            <div class="survey-main-content-wrapper">
+                <div class="survey-container section-card">
+                    <div class="card-title-group">
+                        <h1>秘密档案 🤫</h1>
+                        <p class="subtitle">这是一个深度探索邀请，所有问题都是选填，随心回答。</p>
+                    </div>
+
+                    <form id="surveyForm">
+                        <p class="loading-message">正在为您生成问卷...</p>
+                    </form>
+
+                    <div class="form-actions">
+                        <button type="button" id="submitButton"
+                            class="submit-btn primary-btn">封存我的答案 💌</button>
                     </div>
                 </div>
-                <p class="author-info">Author: Lemm0n YellOw</p>
-            </footer>
-        </div>
-    </div>
 
-    <div id="confirmModal" class="modal-overlay">
-        <div class="modal-content">
-            <h3 class="modal-title">确认提交</h3>
-            <p id="modalMessage" class="modal-text">你还有一些问题未回答，确定要现在封存这份档案吗？</p>
-            <div class="modal-actions">
-                <button id="cancelButton" class="modal-button secondary">再想想</button>
-                <button id="confirmButton" class="modal-button primary">确认提交</button>
+                <!-- public/survey.html (仅 footer 部分修改) -->
+
+                <footer class="page-footer section-card">
+                    <div class="bottom-actions-grid">
+                        <div class="history-lookup">
+                            <h3>🔍 查找历史档案</h3>
+                            <p class="mb-2">请粘贴问卷链接、或输入 "ID&Token"。</p>
+                            <div class="history-input-group">
+                                <!-- 输入框增加了 data-lookup-input 属性用于JS选择 -->
+                                <input type="text" id="historyLookupInput"
+                                    data-lookup-input placeholder="在此处粘贴内容...">
+                                <!-- 新增：清空按钮 -->
+                                <button id="clearLookupBtn"
+                                    class="clear-btn hidden" title="清空">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                                <!-- 查找按钮增加了 data-lookup-btn 属性 -->
+                                <button id="lookupBtn" data-lookup-btn
+                                    title="查找" disabled>前往</button>
+                            </div>
+                            <!-- 提示信息区域增加了 data-lookup-message 属性 -->
+                            <p class="lookup-message" data-lookup-message> </p>
+                        </div>
+                    </div>
+                    <div class="footer-links">
+                        <span>忘记专属链接？<a href="/recover.html"
+                                class="text-primary hover:underline">点此找回</a></span>
+                        <span class="author-info">Author: Lemm0n YellOw</span>
+                    </div>
+                </footer>
             </div>
         </div>
-    </div>
 
-    <script src="survey.js" type="module"></script>
+        <div id="confirmModal" class="modal-overlay">
+            <div class="modal-content">
+                <h3 class="modal-title">确认提交</h3>
+                <p id="modalMessage"
+                    class="modal-text">你还有一些问题未回答，确定要现在封存这份档案吗？</p>
+                <div class="modal-actions">
+                    <button id="cancelButton"
+                        class="modal-button secondary">再想想</button>
+                    <button id="confirmButton"
+                        class="modal-button primary">确认提交</button>
+                </div>
+            </div>
+        </div>
 
-</body>
+        <script src="survey.js" type="module"></script>
+
+    </body>
 
 </html>
