@@ -1,4 +1,4 @@
-<!-- public/recover.html (体验优化版) -->
+<!-- public/recover.html -->
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -12,12 +12,14 @@
     <!-- 引入 Font Awesome 图标库 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- 引入我们自定义的样式文件 -->
-    <link rel="stylesheet" href="./recover.css"> 
+    <link rel="stylesheet" href="./recover.css">
+    <!-- 引入 Cloudflare Turnstile 的脚本 -->
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 </head>
 <body>
     <div class="recover-container">
         <div class="recover-card">
-            <!-- 卡片头部，增加品牌感和清晰度 -->
+            <!-- 卡片头部 -->
             <header class="card-header">
                 <div class="card-logo">
                     <i class="fas fa-paper-plane"></i>
@@ -26,7 +28,7 @@
                 <p class="card-subtitle">只需提供一项信息，我们会将链接安全地发送到您当初填写的邮箱中。</p>
             </header>
 
-            <!-- 默认显示的表单 -->
+            <!-- 表单 -->
             <form id="recoverForm" class="recover-form">
                 <div class="form-group input-with-icon">
                     <i class="fa-regular fa-envelope"></i>
@@ -38,13 +40,16 @@
                     <input type="text" id="surveyId" name="surveyId" placeholder="您的问卷ID (例如: s_xxxxxx)" class="form-input">
                 </div>
                 
+                <!-- Cloudflare Turnstile 小组件 -->
+                <div class="cf-turnstile" data-sitekey="0x4AAAAAABi7YQoGhynrviis" data-callback="onCaptchaVerified"></div>
+                
                 <button type="submit" id="submitRecover" class="submit-button">
                     <span id="button-text">发送找回邮件</span>
                     <i id="button-spinner" class="fas fa-spinner fa-spin hidden"></i>
                 </button>
             </form>
 
-            <!-- 成功状态显示区 (默认隐藏) -->
+            <!-- 成功状态显示区 -->
             <div id="successState" class="message-box message-box-success hidden">
                 <i class="fas fa-check-circle"></i>
                 <h2 class="message-title">邮件已发送！</h2>
@@ -59,7 +64,7 @@
                 </div>
             </div>
 
-            <!-- 错误状态显示区 (默认隐藏) -->
+            <!-- 错误状态显示区 -->
             <div id="errorState" class="message-box message-box-error hidden">
                 <i class="fas fa-times-circle"></i>
                 <h2 class="message-title">哦豁，出错了</h2>
@@ -76,8 +81,16 @@
         </div>
     </div>
 
-    <!-- 优化后的 JS 逻辑 -->
     <script>
+        // 全局变量用于存储 Turnstile 令牌
+        let captchaToken = null;
+
+        // Turnstile 验证成功后的回调函数
+        function onCaptchaVerified(token) {
+            console.log('Turnstile verified, token:', token);
+            captchaToken = token;
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             const recoverForm = document.getElementById('recoverForm');
             const surveyIdInput = document.getElementById('surveyId');
@@ -91,32 +104,36 @@
             const errorState = document.getElementById('errorState');
             const errorMessage = document.getElementById('errorMessage');
 
-            // 重置所有状态
-            const resetStates = () => {
-                successState.classList.add('hidden');
-                errorState.classList.add('hidden');
+            const resetUi = (isError = false) => {
                 submitBtn.disabled = false;
                 buttonText.textContent = '发送找回邮件';
                 buttonSpinner.classList.add('hidden');
+                
+                if (isError) {
+                    // 如果是错误，重置验证码以便用户重试
+                    if (typeof turnstile !== 'undefined') {
+                        turnstile.reset();
+                    }
+                    captchaToken = null; // 清空令牌
+                }
             };
 
-            // 显示错误信息
             const displayError = (message) => {
                 errorMessage.textContent = message;
                 errorState.classList.remove('hidden');
-                recoverForm.classList.remove('hidden'); // 错误时依然显示表单
+                successState.classList.add('hidden');
             };
 
-            // 显示成功信息
             const displaySuccess = (message) => {
                 successMessage.textContent = message;
-                recoverForm.classList.add('hidden'); // 成功后隐藏表单
                 successState.classList.remove('hidden');
+                errorState.classList.add('hidden');
+                recoverForm.classList.add('hidden'); // 成功后隐藏表单
             };
             
             recoverForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
-                resetStates();
+                errorState.classList.add('hidden'); // 每次提交时先隐藏旧的错误信息
 
                 const surveyId = surveyIdInput.value.trim();
                 const email = emailInput.value.trim(); 
@@ -126,13 +143,17 @@
                     return;
                 }
                 
-                // 进入加载状态
+                if (!captchaToken) {
+                    displayError('请稍等，正在进行安全验证。如果长时间无响应，请刷新页面。');
+                    return;
+                }
+                
                 submitBtn.disabled = true;
                 buttonText.textContent = '发送中...';
                 buttonSpinner.classList.remove('hidden');
 
                 try {
-                    const payload = {};
+                    const payload = { captchaToken };
                     if (email) payload.email = email;
                     if (surveyId) payload.surveyId = surveyId;
 
@@ -147,7 +168,6 @@
                     if (response.ok) {
                         displaySuccess(result.message);
                     } else {
-                        // 根据不同的错误码给出更具体的提示
                         if (response.status === 429) {
                             throw new Error(`请求太频繁了！请在 ${result.retryAfter || 60} 秒后重试。`);
                         }
@@ -159,13 +179,7 @@
                 } catch (error) {
                     displayError(error.message);
                     console.error('Recover link error:', error);
-                } finally {
-                    // 无论成功失败，最终都重置按钮状态（除非是成功情况）
-                    if (!successState.classList.contains('hidden')) {
-                        submitBtn.classList.add('hidden'); // 成功后，整个按钮也隐藏
-                    } else {
-                         resetStates();
-                    }
+                    resetUi(true); // 发生错误时重置UI
                 }
             });
         });

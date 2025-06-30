@@ -1,30 +1,23 @@
-/*
- * public/recover.css - (最终完整版)
- *
- * 为 SurveyKit 的“找回链接”页面提供现代化、用户友好的样式。
- * 设计风格与项目主页 (home.css) 保持一致，注重细节和用户体验。
- */
+/* public/recover.css */
 
 /* ==========================================================================
    1. 基础设置与全局样式
-   - 设定基础字体、背景色和滚动行为。
    ========================================================================== */
 body, html {
     margin: 0;
     padding: 0;
     width: 100%;
     height: 100%;
-    background-color: #f8fafc; /* 使用柔和的浅灰色作为背景 (slate-50) */
+    background-color: #f8fafc; /* slate-50 */
     font-family: 'Noto Sans SC', sans-serif;
-    color: #334155; /* 默认文字颜色 (slate-700) */
-    overflow-x: hidden; /* 防止水平滚动 */
+    color: #334155; /* slate-700 */
+    overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
 
 /* ==========================================================================
    2. 背景辉光效果
-   - 复用主页的径向渐变背景，营造统一的品牌氛围。
    ========================================================================== */
 body::before {
     content: '';
@@ -35,15 +28,12 @@ body::before {
     height: 1200px;
     background-image: radial-gradient(circle, rgba(165, 180, 252, 0.25), transparent 60%);
     transform: translate(-50%, -50%);
-    pointer-events: none; /* 确保不影响鼠标事件 */
+    pointer-events: none;
     z-index: -1;
 }
 
 /* ==========================================================================
    3. 主容器与卡片布局
-   - 使用 flexbox 实现垂直居中对齐。
-   - 卡片采用圆角、边框和阴影，营造现代感。
-   - 入场动画提升页面加载的体验。
    ========================================================================== */
 .recover-container {
     display: flex;
@@ -99,7 +89,7 @@ body::before {
 }
 
 .card-title {
-    font-size: 1.875rem; /* 30px */
+    font-size: 1.875rem;
     font-weight: 700;
     color: #1e293b; /* slate-800 */
     margin: 0 0 0.5rem 0;
@@ -135,7 +125,7 @@ body::before {
 
 .form-input {
     width: 100%;
-    padding: 0.875rem 1rem 0.875rem 3rem; /* 左侧留出图标空间 */
+    padding: 0.875rem 1rem 0.875rem 3rem;
     border: 1px solid #cbd5e1; /* slate-300 */
     border-radius: 0.5rem;
     font-size: 1rem;
@@ -160,7 +150,7 @@ body::before {
 }
 
 .form-divider {
-    color: #94a3b8; /* slate-400 */
+    color: #94a3b8;
     font-size: 0.875rem;
     display: flex;
     align-items: center;
@@ -173,10 +163,17 @@ body::before {
     content: '';
     flex-grow: 1;
     height: 1px;
-    background-color: #e2e8f0; /* slate-200 */
+    background-color: #e2e8f0;
 }
 
-/* 4.3. 提交按钮 */
+/* 4.3. Turnstile 组件样式 */
+.cf-turnstile {
+    display: flex;
+    justify-content: center;
+    margin: 0.5rem 0;
+}
+
+/* 4.4. 提交按钮 */
 .submit-button {
     display: inline-flex;
     align-items: center;
@@ -184,7 +181,7 @@ body::before {
     padding: 0.875rem 1.75rem;
     font-weight: 500;
     font-size: 1rem;
-    border-radius: 9999px; /* Pill shape */
+    border-radius: 9999px;
     text-decoration: none;
     transition: all 0.3s ease;
     border: 1px solid transparent;
@@ -213,7 +210,7 @@ body::before {
     margin-left: 0.5rem;
 }
 
-/* 4.4. 消息提示盒子 (成功/失败) */
+/* 4.5. 消息提示盒子 (成功/失败) */
 .message-box {
     padding: 1.5rem;
     border-radius: 0.75rem;
@@ -243,37 +240,37 @@ body::before {
 }
 
 .message-box-success {
-    background-color: #f0fdf4; /* green-50 */
-    border-color: #bbf7d0; /* green-200 */
-    color: #15803d; /* green-700 */
+    background-color: #f0fdf4;
+    border-color: #bbf7d0;
+    color: #15803d;
 }
 
 .message-box-success .message-content {
-    color: #166534; /* green-800 */
+    color: #166534;
 }
 
 .message-box-error {
-    background-color: #fef2f2; /* red-50 */
-    border-color: #fecaca; /* red-200 */
-    color: #b91c1c; /* red-700 */
+    background-color: #fef2f2;
+    border-color: #fecaca;
+    color: #b91c1c;
 }
 
 .message-box-error .message-content {
-    color: #991b1b; /* red-800 */
+    color: #991b1b;
 }
 
-/* 4.5. "下一步" 指引 */
+/* 4.6. "下一步" 指引 */
 .next-steps {
     margin-top: 1.5rem;
     padding-top: 1rem;
-    border-top: 1px dashed #bbf7d0; /* green-200 */
+    border-top: 1px dashed #bbf7d0;
 }
 
 .next-steps h4 {
     margin: 0 0 0.75rem 0;
     font-size: 1rem;
     font-weight: 500;
-    color: #15803d; /* green-700 */
+    color: #15803d;
 }
 
 .next-steps ul {
@@ -287,33 +284,33 @@ body::before {
 
 .next-steps li {
     font-size: 0.9rem;
-    color: #166534; /* green-800 */
+    color: #166534;
     display: flex;
     align-items: center;
 }
 
 .next-steps li i {
     margin-right: 0.75rem;
-    width: 1.25em; /* 保证图标对齐 */
+    width: 1.25em;
     text-align: center;
-    color: #22c55e; /* green-500 */
+    color: #22c55e;
 }
 
-/* 4.6. 卡片底部 */
+/* 4.7. 卡片底部 */
 .card-footer {
     margin-top: 2rem;
     padding-top: 1.5rem;
-    border-top: 1px solid #f1f5f9; /* slate-100 */
+    border-top: 1px solid #f1f5f9;
 }
 
 .help-text {
     font-size: 0.875rem;
-    color: #64748b; /* slate-500 */
+    color: #64748b;
     margin-bottom: 1rem;
 }
 
 .help-text a {
-    color: #4f46e5; /* indigo-600 */
+    color: #4f46e5;
     text-decoration: none;
     font-weight: 500;
 }
@@ -326,34 +323,19 @@ body::before {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    color: #64748b; /* slate-500 */
+    color: #64748b;
     text-decoration: none;
     font-size: 0.9rem;
     transition: color 0.2s ease;
 }
 
 .back-home-link:hover {
-    color: #4f46e5; /* indigo-600 */
+    color: #4f46e5;
 }
 
 /* ==========================================================================
    5. 辅助工具类
    ========================================================================== */
-
-/* 彻底隐藏元素，用于JS控制 */
 .hidden {
     display: none !important;
-}
-
-/* 仅供屏幕阅读器访问，用于可访问性 */
-.sr-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border-width: 0;
 }

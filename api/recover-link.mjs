@@ -1,27 +1,44 @@
+// api/recover-link.mjs
+
 import { kv } from "@vercel/kv";
 import { Ratelimit } from "@upstash/ratelimit";
 import { z } from "zod";
 import { Resend } from 'resend';
 
+// --- 配置常量 ---
+// 从 Vercel 环境变量中获取密钥和配置
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
 const SENDER_EMAIL = process.env.SENDER_EMAIL;
 const YOUR_APP_DOMAIN = "https://survey-kit.vercel.app";
+const TURNSTILE_SECRET_KEY = process.env.TURNSTILE_SECRET_KEY;
 
+// --- 服务初始化 ---
+// 初始化 Resend 邮件服务客户端
 const resend = new Resend(RESEND_API_KEY);
 
+// 初始化速率限制器 (基于 Vercel KV)
 const emailRatelimit = new Ratelimit({
   redis: kv,
+  // 限制：每个标识符在 10 分钟内最多 5 次请求
   limiter: Ratelimit.slidingWindow(5, "10 m"),
   prefix: "ratelimit:email_recovery",
 });
 
+// --- 请求体结构验证 (使用 Zod) ---
 const RequestSchema = z.object({
   email: z.string().email({ message: "无效的邮箱格式" }).optional(),
   surveyId: z.string().min(1, { message: "问卷ID不能为空" }).optional(),
+  captchaToken: z.string().min(1, { message: "必须提供人机验证令牌" }),
 }).refine(data => data.email || data.surveyId, {
     message: "必须提供邮箱或问卷ID"
 });
 
+/**
+ * 创建用于找回链接的邮件模板 (HTML 和纯文本)
+ * @param {string} recoveryLink - 生成的专属找回链接
+ * @param {string} surveyId - 对应的问卷ID
+ * @returns {{emailHtml: string, emailText: string}}
+ */
 function createEmailTemplate(recoveryLink, surveyId) {
     const preheaderText = "点击这里，安全访问您的专属问卷结果。";
 
@@ -90,34 +107,106 @@ function createEmailTemplate(recoveryLink, surveyId) {
     return { emailHtml, emailText };
 }
 
+
+/**
+ * 验证 Cloudflare Turnstile 令牌
+ * @param {string} token - 从客户端获取的 'cf-turnstile-response' 令牌
+ * @param {string} ip - 用户的IP地址
+ * @returns {Promise<{success: boolean, errorCodes: string[]}>} - 返回包含成功状态和错误码的对象
+ */
+async function verifyTurnstile(token, ip) {
+    const secretKeyPreview = `${TURNSTILE_SECRET_KEY?.substring(0, 4)}...${TURNSTILE_SECRET_KEY?.slice(-4)}`;
+    console.log(`[DEBUG] verifyTurnstile: Verifying with secret key preview: ${secretKeyPreview}`);
+    
+    const verificationUrl = 'https://challenges.cloudflare.com/turnstile/v0/siteverify';
+    
+    const formData = new FormData();
+    formData.append('secret', TURNSTILE_SECRET_KEY);
+    formData.append('response', token);
+    formData.append('remoteip', ip);
+    
+    console.log(`[DEBUG] verifyTurnstile: Sending request to Cloudflare with remoteip: ${ip}`);
+
+    try {
+        const response = await fetch(verificationUrl, {
+            method: 'POST',
+            body: formData,
+        });
+
+        if (!response.ok) {
+            console.error(`[ERROR] verifyTurnstile: Cloudflare server responded with status ${response.status}.`);
+            const responseBody = await response.text();
+            console.error(`[ERROR] verifyTurnstile: Response body: ${responseBody}`);
+            return { success: false, errorCodes: [`http-status-${response.status}`] };
+        }
+
+        const data = await response.json();
+        console.log("[INFO] verifyTurnstile: Received verification response from Cloudflare:", JSON.stringify(data, null, 2));
+        
+        if (data.success) {
+            return { success: true, errorCodes: [] };
+        } else {
+            console.warn(`[WARN] verifyTurnstile: Verification failed with error codes: ${data['error-codes']?.join(', ')}`);
+            return { success: false, errorCodes: data['error-codes'] || [] };
+        }
+
+    } catch (error) {
+        console.error("[ERROR] verifyTurnstile: An exception occurred during fetch.", error);
+        return { success: false, errorCodes: ['fetch-exception'] };
+    }
+}
+
+
+/**
+ * Vercel Edge Function 的主处理函数
+ * @param {import('@vercel/node').VercelRequest} request
+ * @param {import('@vercel/node').VercelResponse} response
+ */
 export default async function handler(request, response) {
   console.log(`\n[${new Date().toISOString()}] --- New Request to recover-link ---`);
   
+  // --- 0. 初始检查 ---
   if (request.method !== "POST") {
     console.log(`[REJECTED] Invalid method: ${request.method}`);
     return response.status(405).json({ message: "仅允许 POST 请求" });
   }
 
-  if (!RESEND_API_KEY || !SENDER_EMAIL) {
-    console.error("[FATAL] Critical environment variables RESEND_API_KEY or SENDER_EMAIL are not configured.");
-    return response.status(500).json({ message: "邮件服务未正确配置。" });
+  if (!RESEND_API_KEY || !SENDER_EMAIL || !TURNSTILE_SECRET_KEY) {
+    console.error("[FATAL] Critical environment variables are not configured.");
+    console.error(`[DEBUG] RESEND_API_KEY exists: ${!!RESEND_API_KEY}`);
+    console.error(`[DEBUG] SENDER_EMAIL exists: ${!!SENDER_EMAIL}`);
+    console.error(`[DEBUG] TURNSTILE_SECRET_KEY exists: ${!!TURNSTILE_SECRET_KEY}`);
+    return response.status(500).json({ message: "服务未正确配置。" });
   }
 
   try {
+    const ip = request.headers['x-forwarded-for'] || request.connection.remoteAddress || '127.0.0.1';
+    console.log(`[INFO] Request received from IP: ${ip}`);
+    
+    // --- 1. 验证请求体 ---
+    console.log("[STEP 1/5] Validating request body...");
     const validationResult = RequestSchema.safeParse(request.body);
     if (!validationResult.success) {
         const firstError = validationResult.error.issues[0];
-        console.warn(`[REJECTED] Invalid request body: ${firstError.message}`);
+        console.warn(`[REJECTED] Invalid request body: ${firstError.message}. Full body:`, JSON.stringify(request.body));
         return response.status(400).json({ message: `请求参数不合法: ${firstError.message}` });
     }
     
-    const { email: userEmailInput, surveyId: userSurveyIdInput } = validationResult.data;
-    console.log(`[INFO] Request body validated. Email: ${userEmailInput || 'N/A'}, SurveyID: ${userSurveyIdInput || 'N/A'}`);
+    const { captchaToken, email: userEmailInput, surveyId: userSurveyIdInput } = validationResult.data;
+    console.log(`[SUCCESS] Request body is valid. Email: ${userEmailInput || 'N/A'}, SurveyID: ${userSurveyIdInput || 'N/A'}`);
 
-    const ip = request.headers['x-forwarded-for'] || request.connection.remoteAddress || '127.0.0.1';
+    // --- 2. 人机验证 ---
+    console.log("[STEP 2/5] Performing Turnstile verification...");
+    const verificationResult = await verifyTurnstile(captchaToken, ip);
+    if (!verificationResult.success) {
+        console.warn(`[REJECTED] Turnstile verification failed for IP: ${ip}. Error Codes: ${verificationResult.errorCodes.join(', ')}`);
+        return response.status(403).json({ message: "人机验证失败，请刷新重试。" });
+    }
+    console.log(`[SUCCESS] Turnstile verification passed.`);
+
+    // --- 3. 速率限制 ---
+    console.log("[STEP 3/5] Checking rate limit...");
     const identifier = userEmailInput?.toLowerCase() || userSurveyIdInput || ip;
-    console.log(`[INFO] Rate limit identifier: ${identifier}`);
-
     const { success, limit, reset, remaining } = await emailRatelimit.limit(identifier);
     if (!success) {
       const secondsToWait = Math.ceil((reset - Date.now()) / 1000);
@@ -127,14 +216,15 @@ export default async function handler(request, response) {
           retryAfter: secondsToWait
       });
     }
-    console.log(`[INFO] Rate limit check passed for ${identifier}. Remaining: ${remaining}/${limit}`);
+    console.log(`[SUCCESS] Rate limit check passed for identifier: ${identifier}. Remaining: ${remaining}/${limit}`);
     
+    // --- 4. 查找问卷记录 ---
+    console.log("[STEP 4/5] Searching for survey record in database...");
     let targetSurveyId = null;
     let storedToken = null;
     let storedUserEmail = null;
     let isMatch = false;
 
-    console.log(`[INFO] Starting record search...`);
     if (userSurveyIdInput) {
         console.log(`[INFO] Searching by SurveyID: ${userSurveyIdInput}`);
         const surveyRecord = await kv.hgetall(`survey:${userSurveyIdInput}`);
@@ -176,15 +266,17 @@ export default async function handler(request, response) {
     }
     console.log(`[SUCCESS] Record found. Target SurveyID: ${targetSurveyId}, Email: ${storedUserEmail}`);
 
+    // --- 5. 发送邮件 ---
+    console.log("[STEP 5/5] Sending recovery email...");
     const recoveryLink = `${YOUR_APP_DOMAIN}/result.html?status=success&id=${targetSurveyId}&token=${storedToken}`;
     const { emailHtml, emailText } = createEmailTemplate(recoveryLink, targetSurveyId);
     
-    const fromAddress = SENDER_EMAIL;
-    console.log(`[INFO] Attempting to send email via Resend to: ${storedUserEmail}`);
+    const fromAddress = `SurveyKit <${SENDER_EMAIL}>`;
+    console.log(`[INFO] Attempting to send email via Resend from "${fromAddress}" to "${storedUserEmail}"`);
     const { data, error } = await resend.emails.send({
         from: fromAddress,
         to: [storedUserEmail],
-        subject: `[SurveyKit]`,
+        subject: `[SurveyKit] 您的问卷结果找回链接`,
         html: emailHtml,
         text: emailText,
     });
