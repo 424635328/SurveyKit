@@ -1,116 +1,151 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>深度问卷 - SurveyKit</title>
-    <link rel="icon" href="/favicon.ico" type="image/x-icon">
-    <link rel="stylesheet" href="survey.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap"
-        rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" 
-        integrity="sha512-BNaRQnYJYiPSqHHDb58B0yaPfCu+Wgds8Gp/gU33kqBtgNS4tSPHuGibyoeqMV/TJlSKda6FXzoEyYGjTe+vXA==" 
-        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-        
-    <!-- 已修改: 将 docx 库更换为更稳定的 cdnjs 源，并添加了安全校验，以解决加载失败问题 -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/docx/8.5.0/docx.min.js" 
-        integrity="sha512-J/xKqE2y/4Ttrh7E+Iujy2oY5l43cWdD2Jq9yK1aI9tOZU7pA2e/4v2n+z2iuS4OBD/3uAHR/hQjw==" 
-        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-</head>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>深度问卷 - SurveyKit</title>
+        <link rel="icon" href="/favicon.ico" type="image/x-icon">
+        <link rel="stylesheet" href="survey.css">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link
+            href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap"
+            rel="stylesheet">
+        <link rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
-<body>
-    <div class="survey-page-container">
-        <header class="survey-header-top">
-            <a href="/" class="home-button secondary-btn">
-                <i class="fas fa-home"></i><span class="home-button-text">项目首页</span>
-            </a>
-            <div class="progress-bar-container">
-                <progress id="scrollProgress" value="0" max="100"></progress>
-                <p class="counter" id="completionCounter">已完成 0 / 0 题</p>
-            </div>
-        </header>
+        <script
+            src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"
+            integrity="sha512-BNaRQnYJYiPSqHHDb58B0yaPfCu+Wgds8Gp/gU33kqBtgNS4tSPHuGibyoeqMV/TJlSKda6FXzoEyYGjTe+vXA=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
-        <div class="jump-grid-container">
-            <div class="jump-grid-header">
-                <h3>🚀 题号导航</h3>
-                <span class="jump-grid-toggle">▲</span>
+        <!-- 已移除: 不再需要 docx 库 -->
+    </head>
+
+    <body>
+        <div class="survey-page-container">
+            <header class="survey-header-top">
+                <a href="/" class="home-button secondary-btn">
+                    <i class="fas fa-home"></i><span
+                        class="home-button-text">项目首页</span>
+                </a>
+                <div class="progress-bar-container">
+                    <progress id="scrollProgress" value="0"
+                        max="100"></progress>
+                    <p class="counter" id="completionCounter">已完成 0 / 0 题</p>
+                </div>
+            </header>
+
+            <div class="jump-grid-container">
+                <div class="jump-grid-header">
+                    <h3>🚀 题号导航</h3>
+                    <span class="jump-grid-toggle">▲</span>
+                </div>
+                <div id="jumpGrid" class="jump-grid">
+                </div>
             </div>
-            <div id="jumpGrid" class="jump-grid">
+
+            <div class="survey-main-content-wrapper">
+                <div class="survey-container section-card">
+                    <div class="card-title-group">
+                        <h1 class="section-title">秘密档案 🤫</h1>
+                        <p
+                            class="subtitle section-subtitle">这是一个深度探索邀请，所有问题都是选填，随心回答。</p>
+                    </div>
+
+                    <form id="surveyForm">
+                        <p class="loading-message">正在为您生成问卷...</p>
+                    </form>
+
+                    <div class="form-actions">
+                        <div class="export-button-container">
+                            <button type="button" id="exportButton"
+                                class="secondary-btn">
+                                导出草稿
+                                <i class="fas fa-download icon-right"></i>
+                            </button>
+                            <div id="exportOptions" class="export-options-menu">
+                                <a href="#" id="exportTxt"><i
+                                        class="fas fa-file-alt"></i> 导出为 TXT</a>
+                                <a href="#" id="exportJson"><i
+                                        class="fas fa-file-code"></i> 导出为
+                                    JSON</a>
+                                <a href="#" id="exportImage"><i
+                                        class="fas fa-file-image"></i> 导出为图片</a>
+                                <!-- 已修改: Word 导出已替换为 HTML 导出 -->
+                                <a href="#" id="exportHtml"><i
+                                        class="fas fa-code"></i> 导出为 HTML</a>
+                            </div>
+                        </div>
+                        <button type="button" id="submitButton"
+                            class="primary-btn">
+                            封存我的答案
+                            <i class="fas fa-paper-plane icon-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <footer class="page-footer section-card">
+                    <div class="history-lookup">
+                        <h3 class="section-title-small">🔍 查找历史档案</h3>
+                        <p class="section-subtitle-small">请粘贴问卷链接、或输入
+                            "ID&Token"。</p>
+                        <div class="history-input-group">
+                            <input type="text" id="historyLookupInput"
+                                placeholder="在此处粘贴内容...">
+                            <button id="clearLookupBtn" class="clear-btn hidden"
+                                title="清空">
+                                <i class="fas fa-times"></i>
+                            </button>
+                            <button id="lookupBtn" title="查找"
+                                disabled>前往</button>
+                        </div>
+                        <p class="lookup-message" data-lookup-message> </p>
+                    </div>
+                    <div class="footer-links">
+                        <span>忘记专属链接？<a href="/recover.html">点此找回</a></span>
+                        <span class="author-info">Author: Lemm0n YellOw</span>
+                    </div>
+                </footer>
             </div>
         </div>
 
-        <div class="survey-main-content-wrapper">
-            <div class="survey-container section-card">
-                <div class="card-title-group">
-                    <h1 class="section-title">秘密档案 🤫</h1>
-                    <p class="subtitle section-subtitle">这是一个深度探索邀请，所有问题都是选填，随心回答。</p>
-                </div>
-
-                <form id="surveyForm">
-                    <p class="loading-message">正在为您生成问卷...</p>
-                </form>
-
-                <div class="form-actions">
-                     <div class="export-button-container">
-                        <button type="button" id="exportButton" class="secondary-btn">
-                            导出草稿
-                            <i class="fas fa-download icon-right"></i>
-                        </button>
-                        <div id="exportOptions" class="export-options-menu">
-                            <a href="#" id="exportTxt"><i class="fas fa-file-alt"></i> 导出为 TXT</a>
-                            <a href="#" id="exportJson"><i class="fas fa-file-code"></i> 导出为 JSON</a>
-                            <a href="#" id="exportImage"><i class="fas fa-file-image"></i> 导出为图片</a>
-                            <a href="#" id="exportWord"><i class="fas fa-file-word"></i> 导出为 Word</a>
-                        </div>
-                    </div>
-                    <button type="button" id="submitButton" class="primary-btn">
-                        封存我的答案
-                        <i class="fas fa-paper-plane icon-right"></i>
+        <div id="confirmModal" class="modal-overlay">
+            <div class="modal-content">
+                <h3 class="modal-title">确认提交</h3>
+                <p id="modalMessage"
+                    class="modal-text">你还有一些问题未回答，确定要现在封存这份档案吗？</p>
+                <div class="modal-actions">
+                    <button id="cancelButton"
+                        class="modal-button secondary-btn">再想想</button>
+                    <button id="confirmButton" class="modal-button primary-btn">
+                        确认提交
+                        <i class="fas fa-check icon-right"></i>
                     </button>
                 </div>
             </div>
-
-            <footer class="page-footer section-card">
-                <div class="history-lookup">
-                    <h3 class="section-title-small">🔍 查找历史档案</h3>
-                    <p class="section-subtitle-small">请粘贴问卷链接、或输入 "ID&Token"。</p>
-                    <div class="history-input-group">
-                        <input type="text" id="historyLookupInput" placeholder="在此处粘贴内容...">
-                        <button id="clearLookupBtn" class="clear-btn hidden" title="清空">
-                            <i class="fas fa-times"></i>
-                        </button>
-                        <button id="lookupBtn" title="查找" disabled>前往</button>
-                    </div>
-                    <p class="lookup-message" data-lookup-message> </p>
-                </div>
-                <div class="footer-links">
-                    <span>忘记专属链接？<a href="/recover.html">点此找回</a></span>
-                    <span class="author-info">Author: Lemm0n YellOw</span>
-                </div>
-            </footer>
         </div>
-    </div>
-
-    <div id="confirmModal" class="modal-overlay">
-        <div class="modal-content">
-            <h3 class="modal-title">确认提交</h3>
-            <p id="modalMessage" class="modal-text">你还有一些问题未回答，确定要现在封存这份档案吗？</p>
-            <div class="modal-actions">
-                <button id="cancelButton" class="modal-button secondary-btn">再想想</button>
-                <button id="confirmButton" class="modal-button primary-btn">
-                    确认提交
-                    <i class="fas fa-check icon-right"></i>
-                </button>
+        <div id="imageExportModal" class="modal-overlay">
+            <div class="modal-content">
+                <h3 class="modal-title">导出为图片</h3>
+                <p class="modal-text">
+                    为确保图片内容完整，建议在导出前<b>缓慢地上下滚动</b>整个问卷页面，让所有题目都加载完毕。
+                    <br><br>
+                    准备好后，请点击“开始导出”。
+                </p>
+                <div class="modal-actions">
+                    <button id="cancelExportImageBtn"
+                        class="modal-button secondary-btn">取消</button>
+                    <button id="confirmExportImageBtn"
+                        class="modal-button primary-btn">
+                        开始导出
+                        <i class="fas fa-file-image icon-right"></i>
+                    </button>
+                </div>
             </div>
         </div>
-    </div>
+        <script src="survey.js" type="module"></script>
 
-    <script src="survey.js" type="module"></script>
-
-</body>
+    </body>
 </html>

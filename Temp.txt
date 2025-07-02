@@ -1,3 +1,5 @@
+// survey.js
+
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("surveyForm");
   const progressBarElement = document.getElementById("scrollProgress");
@@ -15,11 +17,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const exportButtonContainer = document.querySelector(".export-button-container");
   const exportButton = document.getElementById("exportButton");
   const exportOptions = document.getElementById("exportOptions");
-
-  // 新增：获取图片导出模态框的元素
-  const imageExportModal = document.getElementById('imageExportModal');
-  const confirmExportImageBtn = document.getElementById('confirmExportImageBtn');
-  const cancelExportImageBtn = document.getElementById('cancelExportImageBtn');
 
   let emailInput;
   let emailError;
@@ -39,7 +36,10 @@ document.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
-  const textAnimator = {
+  // ... (此前的所有函数 surveyRenderer, progressManager 等保持不变，这里省略)
+  // ... (textAnimator, surveyRenderer, progressManager, uiUpdater, jumpGrid, submissionHandler, historyLookupModule 等都保持原样)
+  // ... (为节省篇幅，此处省略了没有改动的函数)
+    const textAnimator = {
     animate: (element, text, delay = 35) => {
       return new Promise((resolve) => {
         if (!element || typeof text !== "string") return resolve();
@@ -644,309 +644,259 @@ document.addEventListener("DOMContentLoaded", () => {
     },
   };
     
-    /**
-     * @module exportManager
-     * @description
-     * Manages the export functionality for the survey draft.
-     * 
-     * @changelog
-     * - Replaced Word export with a styled HTML export.
-     * - Significantly improved the TXT export format for better readability.
-     * - (NEW) Added a confirmation/warning modal for Image export to improve reliability.
-     */
-    const exportManager = {
-        getAnsweredSurveyData: (forDisplay = false) => {
-            const formData = new FormData(form);
-            const answeredData = JSON.parse(JSON.stringify(originalSections));
+  const exportManager = {
+    getAnsweredSurveyData: (forDisplay = false) => {
+      const formData = new FormData(form);
+      const answeredData = JSON.parse(JSON.stringify(originalSections));
 
-            const finalData = answeredData.map(section => {
-                const answeredQuestions = section.questions.map(q => {
-                    const element = form.elements[q.id];
-                    let rawValue = formData.get(q.id)?.trim();
-                    let displayValue = null;
+      const finalData = answeredData.map(section => {
+          const answeredQuestions = section.questions.map(q => {
+              const element = form.elements[q.id];
+              let rawValue = formData.get(q.id)?.trim();
+              let displayValue = null;
 
-                    if (rawValue === undefined || rawValue === null || rawValue === '') return null;
+              if (!rawValue) return null;
 
-                    if (rawValue === 'other') {
-                        const otherValue = formData.get(`${q.id}_other`)?.trim();
-                        if (!otherValue) return null;
-                        rawValue = otherValue;
-                        displayValue = otherValue;
-                    }
+              if (rawValue === 'other') {
+                  const otherValue = formData.get(`${q.id}_other`)?.trim();
+                  if (!otherValue) return null;
+                  rawValue = otherValue;
+                  displayValue = otherValue;
+              }
 
-                    if (forDisplay && !displayValue) {
-                        if (element?.type === 'radio') {
-                            const checkedRadio = form.querySelector(`input[name="${q.id}"]:checked`);
-                            if(checkedRadio) {
-                               displayValue = form.querySelector(`label[for="${checkedRadio.id}"]`)?.textContent.trim() || rawValue;
-                            } else {
-                               displayValue = rawValue;
-                            }
-                        } else if (element?.tagName === 'SELECT') {
-                            displayValue = element.options[element.selectedIndex]?.text || rawValue;
-                        } else {
-                            displayValue = rawValue;
-                        }
-                    }
+              if (forDisplay && !displayValue) {
+                  if (element?.type === 'radio') {
+                      const checkedRadio = form.querySelector(`input[name="${q.id}"]:checked`);
+                      displayValue = form.querySelector(`label[for="${checkedRadio.id}"]`)?.textContent.trim() || rawValue;
+                  } else if (element?.tagName === 'SELECT') {
+                      displayValue = element.options[element.selectedIndex]?.text || rawValue;
+                  } else {
+                      displayValue = rawValue;
+                  }
+              }
 
-                    q.answer = forDisplay ? displayValue : rawValue;
-                    q.rawValue = rawValue; // Keep raw value for logic
-                    return q;
+              q.answer = forDisplay ? displayValue : rawValue;
+              return q;
 
-                }).filter(q => q !== null);
+          }).filter(q => q !== null);
 
-                section.questions = answeredQuestions;
-                return section;
+          section.questions = answeredQuestions;
+          return section;
 
-            }).filter(section => section.questions.length > 0);
+      }).filter(section => section.questions.length > 0);
 
-            return finalData;
-        },
+      return finalData;
+    },
 
-        downloadFile: (filename, blob) => {
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = filename;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-        },
+    downloadFile: (filename, blob) => {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    },
 
-        exportAsJson: () => {
-            const data = exportManager.getAnsweredSurveyData(false);
-            const content = JSON.stringify(data, null, 2);
-            const blob = new Blob([content], { type: 'application/json;charset=utf-8' });
-            exportManager.downloadFile('深度问卷草稿.json', blob);
-        },
+    exportAsJson: () => {
+      const data = exportManager.getAnsweredSurveyData(false);
+      const content = JSON.stringify(data, null, 2);
+      const blob = new Blob([content], { type: 'application/json;charset=utf-8' });
+      exportManager.downloadFile('深度问卷草稿.json', blob);
+    },
 
-        exportAsTxt: () => {
-            const answeredData = exportManager.getAnsweredSurveyData(true);
-            const surveyTitle = document.querySelector('.section-title').textContent;
-            const now = new Date();
-            const timestamp = `${now.toLocaleDateString()} ${now.toLocaleTimeString()}`;
-            
-            let content = `份卷: ${surveyTitle}\n`;
-            content += `导出时间: ${timestamp}\n`;
-            const emailValue = emailInput.value.trim();
-            if (emailValue) {
-                content += `档案关联邮箱: ${emailValue}\n`;
-            }
-            content += `========================================\n`;
+    exportAsTxt: () => {
+      const data = exportManager.getAnsweredSurveyData(true);
+      const surveyTitle = document.querySelector('.section-title').textContent;
+      const now = new Date();
+      const timestamp = `${now.toLocaleDateString()} ${now.toLocaleTimeString()}`;
+      
+      let content = `份卷: ${surveyTitle}\n`;
+      content += `导出时间: ${timestamp}\n`;
+      content += `========================================\n`;
+      
+      const emailValue = emailInput.value.trim();
+      if (emailValue) {
+            content += `档案关联邮箱: ${emailValue}\n`;
+            content += `----------------------------------------\n`;
+      }
 
-            if (answeredData.length === 0) {
-                content += "\n您尚未回答任何问题。\n";
-            } else {
-                const answeredQuestionMap = new Map();
-                answeredData.forEach(section => {
-                    section.questions.forEach(q => {
-                        answeredQuestionMap.set(q.id, { answer: q.answer, rawValue: q.rawValue });
-                    });
-                });
+      if (data.length === 0) {
+          content += "\n您尚未回答任何问题。\n";
+      } else {
+          data.forEach(section => {
+              content += `\n[ ${section.legend} ]\n\n`;
+              section.questions.forEach(q => {
+                  content += `${q.text}\n`;
+                  content += `  ↪ 您的答案: ${q.answer}\n\n`;
+              });
+          });
+      }
 
-                originalSections.forEach(section => {
-                    const answeredQuestionsInSection = section.questions.filter(q => answeredQuestionMap.has(q.id));
-                    if (answeredQuestionsInSection.length === 0) return;
+      content += `========================================\n`;
+      content += `由 SurveyKit 生成`;
 
-                    content += `\n[ ${section.legend} ]\n`;
-                    
-                    answeredQuestionsInSection.forEach(q => {
-                        const { answer, rawValue } = answeredQuestionMap.get(q.id);
-                        content += `\n--------------------\n`;
-                        content += `${q.text}\n`;
-                        content += `--------------------\n`;
+      const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+      exportManager.downloadFile('深度问卷草稿.txt', blob);
+    },
 
-                        if (q.type === 'radio' || q.type === 'select') {
-                            q.options.forEach(opt => {
-                                const isSelected = opt.value === rawValue;
-                                content += `${isSelected ? '[X]' : '[ ]'} ${opt.label}\n`;
-                            });
-                            if (q.hasOther) {
-                                const isOtherSelected = !q.options.some(opt => opt.value === rawValue);
-                                content += `${isOtherSelected ? '[X]' : '[ ]'} 其他...\n`;
-                            }
-                        }
-                        
-                        content += `▶ 您的答案: ${answer}\n`;
-                    });
-                });
-            }
-
-            content += `\n========================================\n`;
-            content += `由 SurveyKit 生成`;
-
-            const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
-            exportManager.downloadFile('深度问卷草稿.txt', blob);
-        },
-
-        // **已修改**：这个函数现在是执行实际截图的函数，它将被确认按钮调用
-        performImageExport: async () => {
-            if (typeof html2canvas === 'undefined') {
-                throw new Error('无法导出图片：所需组件 html2canvas 未能成功加载。请检查您的网络连接或浏览器插件。');
-            }
-            const surveyContainer = document.querySelector('.survey-container');
-            document.body.classList.add('is-exporting');
-            window.scrollTo(0, 0); 
-            
-            try {
-                // 短暂延迟确保滚动和样式生效
-                await new Promise(resolve => setTimeout(resolve, 200)); 
-                const canvas = await html2canvas(surveyContainer, {
-                    scale: 1.5,
-                    useCORS: true,
-                    backgroundColor: '#f8fafc'
-                });
-                const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
-                exportManager.downloadFile('深度问卷草稿.png', blob);
-            } catch (err) {
-                console.error("图片导出失败:", err);
-                // 抛出错误，让调用者处理UI提示
-                throw new Error("抱歉，导出图片时发生错误。详情请查看浏览器控制台。");
-            } finally {
-                document.body.classList.remove('is-exporting');
-            }
-        },
-
-        exportAsHtml: async () => {
-            const data = exportManager.getAnsweredSurveyData(true);
-            const surveyTitle = document.querySelector('.section-title').textContent;
-            const now = new Date();
-            const timestamp = `${now.toLocaleDateString()} ${now.toLocaleTimeString()}`;
-            const emailValue = emailInput.value.trim();
-
-            let questionsHtml = '';
-            if (data.length === 0) {
-                questionsHtml = '<p style="text-align:center; color:#64748b; padding: 40px 0;">您尚未回答任何问题。</p>';
-            } else {
-                data.forEach(section => {
-                    questionsHtml += `<div class="section-block">`;
-                    questionsHtml += `<h2 class="section-legend">${section.legend}</h2>`;
-                    section.questions.forEach(q => {
-                        const safeAnswer = q.answer.replace(/&/g, '&').replace(/</g, '<').replace(/>/g, '>');
-                        questionsHtml += `
-                            <div class="question-item">
-                                <p class="question-text">${q.text}</p>
-                                <div class="answer-block">
-                                    <p class="answer-value">${safeAnswer}</p>
-                                </div>
-                            </div>
-                        `;
-                    });
-                    questionsHtml += `</div>`;
-                });
-            }
-
-            const htmlContent = `
-                <!DOCTYPE html>
-                <html lang="zh-CN">
-                <head>
-                    <meta charset="UTF-8">
-                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                    <link rel="preconnect" href="https://fonts.googleapis.com">
-                    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-                    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
-                    <title>问卷草稿 - ${surveyTitle}</title>
-                    <style>
-                        * { box-sizing: border-box; margin: 0; padding: 0; }
-                        body { font-family: "Noto Sans SC", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; background-color: #f8fafc; color: #1e293b; padding: 40px 20px; font-size: 16px; line-height: 1.6; }
-                        .report-container { max-width: 800px; margin: 0 auto; background-color: #fff; border-radius: 1rem; border: 1px solid #e2e8f0; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05); padding: 40px 50px; }
-                        h1 { font-weight: 700; font-size: 2rem; margin-bottom: 0.5rem; background-image: linear-gradient(120deg, #6366f1, #8b5cf6); background-clip: text; -webkit-background-clip: text; color: transparent; text-align: center; }
-                        .meta-info { text-align: center; color: #64748b; margin-bottom: 30px; border-bottom: 1px solid #f1f5f9; padding-bottom: 20px; font-size: 0.9rem; }
-                        .section-block { margin-bottom: 30px; }
-                        .section-legend { font-size: 1.4rem; font-weight: 500; color: #4f46e5; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid #eef2ff; }
-                        .question-item { margin-bottom: 20px; }
-                        .question-text { font-weight: 500; color: #334155; margin-bottom: 8px; }
-                        .answer-block { background-color: #f8fafc; padding: 12px 15px; border-radius: 8px; border: 1px solid #e2e8f0; }
-                        .answer-value { color: #1e293b; white-space: pre-wrap; word-wrap: break-word; }
-                        .footer { text-align: center; margin-top: 40px; font-size: 0.9rem; color: #94a3b8; }
-                        @media (max-width: 768px) { .report-container { padding: 25px 20px; } h1 {font-size: 1.8rem;} .section-legend {font-size: 1.2rem;} }
-                    </style>
-                </head>
-                <body>
-                    <div class="report-container">
-                        <h1>${surveyTitle}</h1>
-                        <div class="meta-info">
-                            <p>导出时间: ${timestamp}</p>
-                            ${emailValue ? `<p>关联邮箱: ${emailValue}</p>` : ''}
-                        </div>
-                        ${questionsHtml}
-                        <p class="footer">由 SurveyKit 生成</p>
-                    </div>
-                </body>
-                </html>
-            `;
-            const blob = new Blob([htmlContent.trim()], { type: 'text/html;charset=utf-8' });
-            exportManager.downloadFile('深度问卷草稿.html', blob);
-        },
+    exportAsImage: async () => {
+      if (typeof html2canvas === 'undefined') {
+          alert('无法导出图片：所需组件 html2canvas 未能成功加载。');
+          return;
+      }
+      const surveyContainer = document.querySelector('.survey-container');
+      document.body.classList.add('is-exporting');
+      window.scrollTo(0, 0); 
+      
+      try {
+          await new Promise(resolve => setTimeout(resolve, 100));
+          const canvas = await html2canvas(surveyContainer, {
+              scale: 1.5,
+              useCORS: true,
+              backgroundColor: '#f8fafc'
+          });
+          exportManager.downloadFile('深度问卷草稿.png', await new Promise(resolve => canvas.toBlob(resolve)));
+      } catch (err) {
+          console.error("图片导出失败:", err);
+          alert("抱歉，导出图片时发生错误。");
+      } finally {
+          document.body.classList.remove('is-exporting');
+      }
+    },
+    
+    // ##################################################################
+    // ## 已修改: 重构 Word 导出逻辑，采用本地化动态加载，确保成功率   ##
+    // ##################################################################
+    exportAsWord: async () => {
+      let docx;
+      try {
+        // 步骤 1: 尝试从本地路径动态导入库
+        const docxModule = await import('/libs/docx.min.js');
+        // docx 库可能将主对象挂载在 window 或作为模块默认导出
+        docx = window.docx || docxModule.default;
         
-        // **已修改**：init 函数现在将图片导出与其他导出分开了
-        init: () => {
-             if (!exportButtonContainer || !exportOptions) return;
+        if (!docx) {
+            throw new Error("库文件已加载，但无法找到 docx 对象。");
+        }
 
-             exportButton.addEventListener('click', (e) => {
-                 e.stopPropagation();
-                 exportButtonContainer.classList.toggle('active');
-             });
+      } catch (error) {
+        console.error("加载 Word 导出组件失败:", error);
+        alert(
+          "无法导出 Word 文档：加载本地组件失败。\n\n" +
+          "请确认您已按操作说明，将 `docx.min.js` 文件正确放置在项目的 `libs` 文件夹下。\n\n" +
+          "错误详情: " + error.message
+        );
+        return; // 提前退出
+      }
+      
+      // 步骤 2: 如果库加载成功，则执行与之前相同的文档生成逻辑
+      const data = exportManager.getAnsweredSurveyData(true);
+      const { Document, Packer, Paragraph, TextRun, HeadingLevel } = docx;
 
-             document.addEventListener('click', () => {
-                 exportButtonContainer.classList.remove('active');
-             });
+      const children = [
+          new Paragraph({
+              heading: HeadingLevel.TITLE,
+              children: [new TextRun(document.querySelector('.section-title').textContent)],
+              alignment: 'center'
+          }),
+      ];
+        const emailValue = emailInput.value.trim();
+      if (emailValue) {
+            children.push(new Paragraph({
+              children: [
+                  new TextRun({ text: "邮箱: ", bold: true }),
+                  new TextRun(emailValue)
+              ]
+          }));
+      }
+      children.push(new Paragraph(" "));
 
-             exportOptions.addEventListener('click', e => e.stopPropagation());
+      data.forEach(section => {
+          children.push(new Paragraph({
+              heading: HeadingLevel.HEADING_2,
+              children: [new TextRun(section.legend)],
+              border: { bottom: { color: "auto", space: 1, value: "single", size: 6 } },
+              spacing: { after: 200 }
+          }));
+          
+          section.questions.forEach(q => {
+              children.push(new Paragraph({
+                  children: [new TextRun({ text: q.text, bold: true })],
+                  spacing: { after: 100 }
+              }));
+              children.push(new Paragraph({
+                  children: [new TextRun({ text: `答案: ${q.answer}`})],
+                  indent: { left: 720 },
+                  spacing: { after: 200 }
+              }));
+          });
+            children.push(new Paragraph(" "));
+      });
 
-             // 通用导出处理器（不包括图片）
-             const setupExportHandler = (id, handler) => {
-                const link = document.getElementById(id);
-                if (link) {
-                    link.addEventListener('click', async (e) => {
-                        e.preventDefault();
-                        exportButtonContainer.classList.remove('active');
+      const doc = new Document({
+            styles: {
+              paragraphStyles: [
+                  { id: "Normal", name: "Normal", run: { font: "Microsoft YaHei" } }
+              ]
+          },
+          sections: [{ children }]
+      });
 
-                        const originalText = exportButton.innerHTML;
-                        exportButton.innerHTML = `正在生成... <i class="fas fa-spinner fa-spin icon-right"></i>`;
-                        exportButton.disabled = true;
-                        exportButton.classList.add('is-loading');
+      // 步骤 3: 打包并下载文件
+      Packer.toBlob(doc).then(blob => {
+          exportManager.downloadFile('深度问卷草稿.docx', blob);
+      });
+    },
+    
+    init: () => {
+          if (!exportButtonContainer || !exportOptions) return;
 
-                        try {
-                            // 短暂延迟让UI更新
-                            await new Promise(resolve => setTimeout(resolve, 50));
-                            await handler();
-                        } catch (error) {
-                            console.error(`导出 ${id} 失败:`, error);
-                            alert(`导出失败: ${error.message}`);
-                        } finally {
-                           exportButton.innerHTML = originalText;
-                           exportButton.disabled = false;
-                           exportButton.classList.remove('is-loading');
-                        }
-                    });
-                }
-             };
+          exportButton.addEventListener('click', (e) => {
+              e.stopPropagation();
+              exportButtonContainer.classList.toggle('active');
+          });
 
-             // 为 TXT, JSON, HTML 设置常规处理器
-             setupExportHandler('exportTxt', exportManager.exportAsTxt);
-             setupExportHandler('exportJson', exportManager.exportAsJson);
-             setupExportHandler('exportHtml', exportManager.exportAsHtml);
-             
-             // **新增**：为图片导出设置特殊的点击事件，只用于打开模态框
-             const exportImageLink = document.getElementById('exportImage');
-             if (exportImageLink) {
-                exportImageLink.addEventListener('click', (e) => {
+          document.addEventListener('click', () => {
+              exportButtonContainer.classList.remove('active');
+          });
+
+          exportOptions.addEventListener('click', e => e.stopPropagation());
+
+          const setupExportHandler = (id, handler) => {
+            const link = document.getElementById(id);
+            if (link) {
+                link.addEventListener('click', async (e) => {
                     e.preventDefault();
-                    exportButtonContainer.classList.remove('active'); // 关闭导出菜单
-                    if (imageExportModal) {
-                        imageExportModal.style.display = 'flex'; // 显示提示模态框
-                    } else {
-                        console.error('图片导出模态框未找到，将直接导出。');
-                        // 这是一个备用方案，如果模态框HTML缺失，则直接触发导出
-                        // (但用户体验不如有提示的好)
-                        confirmExportImageBtn.click();
+                    exportButtonContainer.classList.remove('active');
+
+                    const originalText = exportButton.innerHTML;
+                    exportButton.innerHTML = `正在生成... <i class="fas fa-spinner fa-spin icon-right"></i>`;
+                    exportButton.disabled = true;
+                    exportButton.classList.add('is-loading');
+
+                    try {
+                        await new Promise(resolve => setTimeout(resolve, 50));
+                        await handler();
+                    } catch (error) {
+                        console.error(`导出 ${id} 失败:`, error);
+                        // 错误已在各自的导出函数中处理，这里可以留空或做通用处理
+                    } finally {
+                        exportButton.innerHTML = originalText;
+                        exportButton.disabled = false;
+                        exportButton.classList.remove('is-loading');
                     }
                 });
-             }
-        }
-    };
+            }
+          };
+
+          setupExportHandler('exportTxt', exportManager.exportAsTxt);
+          setupExportHandler('exportJson', exportManager.exportAsJson);
+          setupExportHandler('exportImage', exportManager.exportAsImage);
+          setupExportHandler('exportWord', exportManager.exportAsWord);
+    }
+  };
 
 
   const effectsAndObservers = {
@@ -1030,7 +980,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!response.ok) throw new Error("问卷配置文件(questions.json)加载失败");
       const sections = await response.json();
       
-      originalSections = JSON.parse(JSON.stringify(sections));
+      originalSections = sections; 
 
       surveyRenderer.render(sections);
 
@@ -1087,46 +1037,6 @@ document.addEventListener("DOMContentLoaded", () => {
       submissionHandler.initModal();
       historyLookupModule.init();
       exportManager.init();
-
-      // **新增**：为图片导出模态框设置事件监听器
-      if (imageExportModal) {
-        // 点击“取消”按钮
-        cancelExportImageBtn.addEventListener('click', () => {
-            imageExportModal.style.display = 'none';
-        });
-
-        // 点击模态框背景关闭
-        imageExportModal.addEventListener('click', (e) => {
-            if (e.target === imageExportModal) {
-                imageExportModal.style.display = 'none';
-            }
-        });
-
-        // 点击“开始导出”按钮
-        confirmExportImageBtn.addEventListener('click', async () => {
-            imageExportModal.style.display = 'none'; // 先关闭模态框
-            
-            // 手动触发主导出按钮的加载状态
-            const originalText = exportButton.innerHTML;
-            exportButton.innerHTML = `正在生成... <i class="fas fa-spinner fa-spin icon-right"></i>`;
-            exportButton.disabled = true;
-            exportButton.classList.add('is-loading');
-
-            try {
-                // 等待真正的图片导出函数完成
-                await exportManager.performImageExport();
-            } catch (error) {
-                console.error('图片导出流程失败:', error);
-                alert(error.message); // 向用户显示错误
-            } finally {
-                // 无论成功或失败，都恢复主导出按钮的状态
-                exportButton.innerHTML = originalText;
-                exportButton.disabled = false;
-                exportButton.classList.remove('is-loading');
-            }
-        });
-      }
-
 
       window.addEventListener("scroll", uiUpdater.updateScrollProgress);
       uiUpdater.updateScrollProgress();

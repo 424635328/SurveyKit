@@ -16,6 +16,8 @@
   "dependencies": {
     "@upstash/ratelimit": "^1.0.1",
     "@vercel/kv": "^1.0.1",
+    "docx": "^8.5.0",
+    "html2canvas": "^1.4.1",
     "openai": "^5.8.2",
     "resend": "^4.6.0",
     "tencentcloud-sdk-nodejs": "^4.1.67",
