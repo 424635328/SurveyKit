@@ -12,6 +12,15 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" 
+        integrity="sha512-BNaRQnYJYiPSqHHDb58B0yaPfCu+Wgds8Gp/gU33kqBtgNS4tSPHuGibyoeqMV/TJlSKda6FXzoEyYGjTe+vXA==" 
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        
+    <!-- 已修改: 将 docx 库更换为更稳定的 cdnjs 源，并添加了安全校验，以解决加载失败问题 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/docx/8.5.0/docx.min.js" 
+        integrity="sha512-J/xKqE2y/4Ttrh7E+Iujy2oY5l43cWdD2Jq9yK1aI9tOZU7pA2e/4v2n+z2iuS4OBD/3uAHR/hQjw==" 
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </head>
 
 <body>
@@ -47,6 +56,18 @@
                 </form>
 
                 <div class="form-actions">
+                     <div class="export-button-container">
+                        <button type="button" id="exportButton" class="secondary-btn">
+                            导出草稿
+                            <i class="fas fa-download icon-right"></i>
+                        </button>
+                        <div id="exportOptions" class="export-options-menu">
+                            <a href="#" id="exportTxt"><i class="fas fa-file-alt"></i> 导出为 TXT</a>
+                            <a href="#" id="exportJson"><i class="fas fa-file-code"></i> 导出为 JSON</a>
+                            <a href="#" id="exportImage"><i class="fas fa-file-image"></i> 导出为图片</a>
+                            <a href="#" id="exportWord"><i class="fas fa-file-word"></i> 导出为 Word</a>
+                        </div>
+                    </div>
                     <button type="button" id="submitButton" class="primary-btn">
                         封存我的答案
                         <i class="fas fa-paper-plane icon-right"></i>

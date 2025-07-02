@@ -11,6 +11,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const jumpGridContainer = document.querySelector(".jump-grid-container");
   const jumpGridElement = document.getElementById("jumpGrid");
   const jumpGridToggleButton = document.querySelector(".jump-grid-toggle");
+  
+  const exportButtonContainer = document.querySelector(".export-button-container");
+  const exportButton = document.getElementById("exportButton");
+  const exportOptions = document.getElementById("exportOptions");
 
   let emailInput;
   let emailError;
@@ -19,6 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let totalQuestions = 0;
   let gridCells = [];
   let currentQuestionNumber = 0;
+  let originalSections = []; 
 
   if (!form || !submitButton) {
     console.error("核心组件缺失：找不到问卷表单或提交按钮。");
@@ -633,6 +638,245 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     },
   };
+    
+    /* 
+     * 已修改: 优化 exportManager
+     * - 优化 TXT 导出格式，使其更清晰、信息更丰富。
+     * - 改进了当外部库加载失败时的错误提示。
+     */
+    const exportManager = {
+        getAnsweredSurveyData: (forDisplay = false) => {
+            const formData = new FormData(form);
+            const answeredData = JSON.parse(JSON.stringify(originalSections));
+
+            const finalData = answeredData.map(section => {
+                const answeredQuestions = section.questions.map(q => {
+                    const element = form.elements[q.id];
+                    let rawValue = formData.get(q.id)?.trim();
+                    let displayValue = null;
+
+                    if (!rawValue) return null;
+
+                    if (rawValue === 'other') {
+                        const otherValue = formData.get(`${q.id}_other`)?.trim();
+                        if (!otherValue) return null;
+                        rawValue = otherValue;
+                        displayValue = otherValue;
+                    }
+
+                    if (forDisplay && !displayValue) {
+                        if (element?.type === 'radio') {
+                            const checkedRadio = form.querySelector(`input[name="${q.id}"]:checked`);
+                            displayValue = form.querySelector(`label[for="${checkedRadio.id}"]`)?.textContent.trim() || rawValue;
+                        } else if (element?.tagName === 'SELECT') {
+                            displayValue = element.options[element.selectedIndex]?.text || rawValue;
+                        } else {
+                            displayValue = rawValue;
+                        }
+                    }
+
+                    q.answer = forDisplay ? displayValue : rawValue;
+                    return q;
+
+                }).filter(q => q !== null);
+
+                section.questions = answeredQuestions;
+                return section;
+
+            }).filter(section => section.questions.length > 0);
+
+            return finalData;
+        },
+
+        downloadFile: (filename, blob) => {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        },
+
+        exportAsJson: () => {
+            const data = exportManager.getAnsweredSurveyData(false);
+            const content = JSON.stringify(data, null, 2);
+            const blob = new Blob([content], { type: 'application/json;charset=utf-8' });
+            exportManager.downloadFile('深度问卷草稿.json', blob);
+        },
+
+        exportAsTxt: () => {
+            const data = exportManager.getAnsweredSurveyData(true);
+            const surveyTitle = document.querySelector('.section-title').textContent;
+            const now = new Date();
+            const timestamp = `${now.toLocaleDateString()} ${now.toLocaleTimeString()}`;
+            
+            let content = `份卷: ${surveyTitle}\n`;
+            content += `导出时间: ${timestamp}\n`;
+            content += `========================================\n`;
+            
+            const emailValue = emailInput.value.trim();
+            if (emailValue) {
+                 content += `档案关联邮箱: ${emailValue}\n`;
+                 content += `----------------------------------------\n`;
+            }
+
+            if (data.length === 0) {
+                content += "\n您尚未回答任何问题。\n";
+            } else {
+                data.forEach(section => {
+                    content += `\n[ ${section.legend} ]\n\n`;
+                    section.questions.forEach(q => {
+                        content += `${q.text}\n`;
+                        content += `  ↪ 您的答案: ${q.answer}\n\n`;
+                    });
+                });
+            }
+
+            content += `========================================\n`;
+            content += `由 SurveyKit 生成`;
+
+            const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+            exportManager.downloadFile('深度问卷草稿.txt', blob);
+        },
+
+        exportAsImage: async () => {
+            if (typeof html2canvas === 'undefined') {
+                alert('无法导出图片：所需组件 html2canvas 未能成功加载。请检查您的网络连接或浏览器插件（如广告拦截器）设置。');
+                return;
+            }
+            const surveyContainer = document.querySelector('.survey-container');
+            document.body.classList.add('is-exporting');
+            window.scrollTo(0, 0); 
+            
+            try {
+                await new Promise(resolve => setTimeout(resolve, 100));
+                const canvas = await html2canvas(surveyContainer, {
+                    scale: 1.5,
+                    useCORS: true,
+                    backgroundColor: '#f8fafc'
+                });
+                exportManager.downloadFile('深度问卷草稿.png', await new Promise(resolve => canvas.toBlob(resolve)));
+            } catch (err) {
+                console.error("图片导出失败:", err);
+                alert("抱歉，导出图片时发生错误。详情请查看浏览器控制台。");
+            } finally {
+                document.body.classList.remove('is-exporting');
+            }
+        },
+
+        exportAsWord: () => {
+            if (typeof docx === 'undefined') {
+                alert('无法导出Word文档：所需组件 docx 未能成功加载。请检查您的网络连接或浏览器插件（如广告拦截器）设置。');
+                return;
+            }
+            const data = exportManager.getAnsweredSurveyData(true);
+            const { Document, Packer, Paragraph, TextRun, HeadingLevel } = docx;
+
+            const children = [
+                new Paragraph({
+                    heading: HeadingLevel.TITLE,
+                    children: [new TextRun(document.querySelector('.section-title').textContent)],
+                    alignment: 'center'
+                }),
+            ];
+             const emailValue = emailInput.value.trim();
+            if (emailValue) {
+                 children.push(new Paragraph({
+                    children: [
+                        new TextRun({ text: "邮箱: ", bold: true }),
+                        new TextRun(emailValue)
+                    ]
+                }));
+            }
+            children.push(new Paragraph(" "));
+
+            data.forEach(section => {
+                children.push(new Paragraph({
+                    heading: HeadingLevel.HEADING_2,
+                    children: [new TextRun(section.legend)],
+                    border: { bottom: { color: "auto", space: 1, value: "single", size: 6 } },
+                    spacing: { after: 200 }
+                }));
+                
+                section.questions.forEach(q => {
+                    children.push(new Paragraph({
+                        children: [new TextRun({ text: q.text, bold: true })],
+                        spacing: { after: 100 }
+                    }));
+                    children.push(new Paragraph({
+                        children: [new TextRun({ text: `答案: ${q.answer}`})],
+                        indent: { left: 720 },
+                        spacing: { after: 200 }
+                    }));
+                });
+                 children.push(new Paragraph(" "));
+            });
+
+            const doc = new Document({
+                 styles: {
+                    paragraphStyles: [
+                        { id: "Normal", name: "Normal", run: { font: "Microsoft YaHei" } }
+                    ]
+                },
+                sections: [{ children }]
+            });
+
+            Packer.toBlob(doc).then(blob => {
+                exportManager.downloadFile('深度问卷草稿.docx', blob);
+            });
+        },
+        
+        init: () => {
+             if (!exportButtonContainer || !exportOptions) return;
+
+             exportButton.addEventListener('click', (e) => {
+                 e.stopPropagation();
+                 exportButtonContainer.classList.toggle('active');
+             });
+
+             document.addEventListener('click', () => {
+                 exportButtonContainer.classList.remove('active');
+             });
+
+             exportOptions.addEventListener('click', e => e.stopPropagation());
+
+             const setupExportHandler = (id, handler) => {
+                const link = document.getElementById(id);
+                if (link) {
+                    link.addEventListener('click', async (e) => {
+                        e.preventDefault();
+                        exportButtonContainer.classList.remove('active');
+
+                        const originalText = exportButton.innerHTML;
+                        exportButton.innerHTML = `正在生成... <i class="fas fa-spinner fa-spin icon-right"></i>`;
+                        exportButton.disabled = true;
+                        exportButton.classList.add('is-loading');
+
+                        try {
+                            // 使用 setTimeout 确保UI更新后再执行耗时操作
+                            await new Promise(resolve => setTimeout(resolve, 50));
+                            await handler();
+                        } catch (error) {
+                            console.error(`导出 ${id} 失败:`, error);
+                            alert(`导出失败: ${error.message}`);
+                        } finally {
+                           exportButton.innerHTML = originalText;
+                           exportButton.disabled = false;
+                           exportButton.classList.remove('is-loading');
+                        }
+                    });
+                }
+             };
+
+             setupExportHandler('exportTxt', exportManager.exportAsTxt);
+             setupExportHandler('exportJson', exportManager.exportAsJson);
+             setupExportHandler('exportImage', exportManager.exportAsImage);
+             setupExportHandler('exportWord', exportManager.exportAsWord);
+        }
+    };
+
 
   const effectsAndObservers = {
     init: () => {
@@ -714,6 +958,8 @@ document.addEventListener("DOMContentLoaded", () => {
       const response = await fetch("/questions.json");
       if (!response.ok) throw new Error("问卷配置文件(questions.json)加载失败");
       const sections = await response.json();
+      
+      originalSections = sections; 
 
       surveyRenderer.render(sections);
 
@@ -769,6 +1015,7 @@ document.addEventListener("DOMContentLoaded", () => {
       submitButton.addEventListener("click", submissionHandler.initiate);
       submissionHandler.initModal();
       historyLookupModule.init();
+      exportManager.init();
 
       window.addEventListener("scroll", uiUpdater.updateScrollProgress);
       uiUpdater.updateScrollProgress();
