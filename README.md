@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="https://github.com/user-attachments/assets/1ffb6e4e-09c3-4d40-9a3c-1b6a1824b025" alt="SurveyKit Demo" width="800" />
+<img src="./public/favicon.ico" alt="SurveyKit Demo" width="800" />
 
 <h1 align="center">SurveyKit - 一份为你定制的深度问卷</h1>
 <p align="center">
