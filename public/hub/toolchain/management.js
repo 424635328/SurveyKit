@@ -57,7 +57,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="survey-actions">
                     <button class="action-btn share-btn"><i class="fa fa-share-alt"></i> 分享</button>
                     <a href="./results.html?id=${survey.id}" class="action-btn"><i class="fa fa-bar-chart"></i> 查看结果</a>
-                    <a href="../../survey.html?sid=${survey.id}" target="_blank" class="action-btn"><i class="fa fa-eye"></i> 预览问卷</a>
                     <button class="action-btn delete-btn delete"><i class="fa fa-trash-o"></i> 删除</button>
                 </div>
             `;
