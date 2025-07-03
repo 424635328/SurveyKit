@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SurveyKit 安全中心</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="security.css">
+</head>
+<body class="font-sans text-gray-800 min-h-screen flex flex-col">
+
+  <!-- 复用与 hub.html 一致的页头 -->
+  <header class="sticky top-0 z-50">
+    <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+      <div class="flex items-center space-x-2">
+        <span class="text-indigo-500 text-2xl"><i class="fa fa-wpforms"></i></span>
+        <a href="../index.html" class="text-xl font-bold bg-gradient-to-r from-indigo-500 to-purple-600 bg-clip-text text-transparent">SurveyKit</a>
+      </div>
+      <nav class="hidden md:flex items-center space-x-8">
+        <a href="../index.html" class="text-gray-600 hover:text-indigo-500 transition-colors duration-200 flex items-center">
+          <i class="fa fa-home mr-2"></i> 首页
+        </a>
+        <a href="../hub/hub.html" class="text-gray-600 hover:text-indigo-500 transition-colors duration-200 flex items-center">
+          <i class="fa fa-wrench mr-2"></i> 工具中心
+        </a>
+        <a href="../docs/help.html" class="text-gray-600 hover:text-indigo-500 transition-colors duration-200 flex items-center">
+          <i class="fa fa-book mr-2"></i> 帮助文档
+        </a>
+        <a href="#" class="text-indigo-500 font-medium flex items-center">
+          <i class="fa fa-shield mr-2"></i> 安全中心
+        </a>
+        <a href="https://github.com/424635328/SurveyKit" target="_blank" rel="noopener" class="text-gray-600 hover:text-indigo-500 transition-colors duration-200 flex items-center">
+          <i class="fa fa-github mr-2"></i> GitHub
+        </a>
+      </nav>
+      <button class="md:hidden text-gray-600 focus:outline-none" id="menu-toggle" aria-label="Toggle mobile menu">
+        <i class="fa fa-bars text-xl"></i>
+      </button>
+    </div>
+    <div class="md:hidden hidden bg-white border-t border-gray-100 shadow-md" id="mobile-menu">
+      <div class="container mx-auto px-4 py-3 flex flex-col space-y-3">
+        <a href="../index.html" class="text-gray-600 hover:text-indigo-500 py-2 transition-colors duration-200 flex items-center"><i class="fa fa-home mr-2"></i> 首页</a>
+        <a href="../hub/hub.html" class="text-gray-600 hover:text-indigo-500 py-2 transition-colors duration-200 flex items-center"><i class="fa fa-wrench mr-2"></i> 工具中心</a>
+        <a href="../docs/help.html" class="text-gray-600 hover:text-indigo-500 py-2 transition-colors duration-200 flex items-center"><i class="fa fa-book mr-2"></i> 帮助文档</a>
+        <a href="#" class="text-indigo-500 font-medium py-2 flex items-center"><i class="fa fa-shield mr-2"></i> 安全中心</a>
+        <a href="https://github.com/424635328/SurveyKit" rel="noopener" target="_blank" class="text-gray-600 hover:text-indigo-500 py-2 transition-colors duration-200 flex items-center"><i class="fa fa-github mr-2"></i> GitHub</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="flex-grow container mx-auto px-4 py-12 md:py-20">
+    <div class="text-center mb-20 max-w-3xl mx-auto" data-animate="reveal-up">
+      <h2 class="text-[clamp(2rem,5vw,3.2rem)] font-bold mb-4 leading-tight text-shadow flex items-center justify-center">
+        <i class="fa fa-shield-alt mr-4 text-indigo-400"></i>SurveyKit <span class="text-white">安全中心</span>
+      </h2>
+      <p class="text-slate-300 text-lg">我们致力于通过设计和技术保障您的数据隐私与安全。了解 SurveyKit 采用的多层安全措施。</p>
+    </div>
+
+    <section class="mb-20">
+      <h3 class="section-title" data-animate="reveal-up">核心安全实践</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+        <div data-animate="reveal-up">
+          <div class="card-base card-hover">
+            <div class="card-banner banner-gradient-1 h-36"><i class="fa fa-server text-white text-5xl card-icon"></i></div>
+            <div class="card-content">
+              <h4 class="card-title" data-reveal-text>Serverless 架构</h4>
+              <p class="card-description" data-reveal-text>部署于 Vercel Serverless 环境，自动处理基础设施安全更新，免受传统服务器漏洞的困扰。</p>
+            </div>
+          </div>
+        </div>
+        
+        <div data-animate="reveal-up">
+          <div class="card-base card-hover">
+            <div class="card-banner banner-gradient-2 h-36"><i class="fa fa-key text-white text-5xl card-icon"></i></div>
+            <div class="card-content">
+              <h4 class="card-title" data-reveal-text>API 访问授权</h4>
+              <p class="card-description" data-reveal-text>所有答案读取接口均基于独有令牌 (Token) 授权，防止通过猜测ID批量访问他人数据。</p>
+            </div>
+          </div>
+        </div>
+
+        <div data-animate="reveal-up">
+          <div class="card-base card-hover">
+            <div class="card-banner banner-gradient-3 h-36"><i class="fa fa-lock text-white text-5xl card-icon"></i></div>
+            <div class="card-content">
+              <h4 class="card-title" data-reveal-text>凭证安全管理</h4>
+              <p class="card-description" data-reveal-text>敏感密钥（如AI、邮件服务）通过 Vercel 环境变量安全存储，绝不硬编码或暴露在前端代码中。</p>
+            </div>
+          </div>
+        </div>
+
+        <div data-animate="reveal-up">
+          <div class="card-base card-hover">
+            <div class="card-banner banner-gradient-4 h-36"><i class="fa fa-shield text-white text-5xl card-icon"></i></div>
+            <div class="card-content">
+              <h4 class="card-title" data-reveal-text>XSS 跨站攻击防护</h4>
+              <p class="card-description" data-reveal-text>所有用户输入的内容在前端渲染时都经过严格的HTML转义处理，从根本上杜绝跨站脚本攻击的风险。</p>
+            </div>
+          </div>
+        </div>
+
+        <div data-animate="reveal-up">
+          <div class="card-base card-hover">
+            <div class="card-banner banner-gradient-5 h-36"><i class="fa fa-filter text-white text-5xl card-icon"></i></div>
+            <div class="card-content">
+              <h4 class="card-title" data-reveal-text>严格输入校验</h4>
+              <p class="card-description" data-reveal-text>前后端均采用 Zod 库对所有传入数据进行严格的格式与类型校验，防止恶意数据注入和程序异常。</p>
+            </div>
+          </div>
+        </div>
+
+        <div data-animate="reveal-up">
+          <div class="card-base card-hover">
+            <div class="card-banner banner-gradient-6 h-36"><i class="fa fa-hourglass-half text-white text-5xl card-icon"></i></div>
+            <div class="card-content">
+              <h4 class="card-title" data-reveal-text>API 速率限制</h4>
+              <p class="card-description" data-reveal-text>对所有关键后端API接口实施了速率限制，有效抵御DDoS、暴力破解等自动化攻击，保障服务稳定。</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <section>
+      <h3 class="section-title" data-animate="reveal-up">参与和反馈</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div data-animate="reveal-up">
+              <div class="card-base card-hover">
+                <div class="card-banner banner-gradient-7 h-36"><i class="fa fa-bug text-white text-5xl card-icon"></i></div>
+                <div class="card-content">
+                  <h4 class="card-title" data-reveal-text>报告安全漏洞</h4>
+                  <p class="card-description" data-reveal-text>如果您发现了任何潜在的安全问题，我们鼓励您负责任地向我们报告。您的帮助对我们至关重要。</p>
+                  <a href="https://github.com/424635328/SurveyKit/issues" target="_blank" rel="noopener" class="card-action-link text-lime-600">通过 GitHub Issue 报告 <i class="fa fa-arrow-right ml-2"></i></a>
+                </div>
+              </div>
+          </div>
+          <div data-animate="reveal-up">
+              <div class="card-base card-hover">
+                <div class="card-banner banner-gradient-10 h-36"><i class="fa fa-code-fork text-white text-5xl card-icon"></i></div>
+                <div class="card-content">
+                  <h4 class="card-title" data-reveal-text>浏览源代码</h4>
+                  <p class="card-description" data-reveal-text>我们相信透明是建立信任的基石。欢迎随时审查我们在 GitHub 上的源代码，了解安全措施的具体实现。</p>
+                  <a href="https://github.com/424635328/SurveyKit" target="_blank" rel="noopener" class="card-action-link text-blue-600">前往 GitHub 仓库 <i class="fa fa-arrow-right ml-2"></i></a>
+                </div>
+              </div>
+          </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- 复用与 hub.html 一致的页脚 -->
+  <footer class="bg-slate-800 text-white py-10">
+    <div class="container mx-auto px-4">
+      <div class="flex flex-col md:flex-row justify-between items-center text-center md:text-left space-y-6 md:space-y-0">
+        <div class="flex items-center">
+          <span class="text-indigo-500 text-2xl mr-2"><i class="fa fa-wpforms"></i></span>
+          <h2 class="text-xl font-bold">SurveyKit</h2>
+        </div>
+        <div class="text-slate-400 text-sm">© <span id="current-year-footer"></span> SurveyKit. 保留所有权利。</div>
+        <div class="flex space-x-6">
+          <a href="https://github.com/424635328/SurveyKit" target="_blank" rel="noopener" class="text-slate-400 hover:text-white transition-colors duration-200" aria-label="GitHub">
+            <i class="fa fa-github text-xl"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- 复用与 hub.html 一致的返回顶部按钮 -->
+  <button id="scrollToTopBtn" class="fixed bottom-6 right-6 bg-indigo-600 text-white p-3 rounded-full shadow-lg opacity-0 pointer-events-none transition-all duration-300 transform translate-y-4 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 z-50" aria-label="Scroll to top">
+    <i class="fa fa-arrow-up text-lg"></i>
+  </button>
+  
+  <script src="security.js"></script>
+</body>
+</html>

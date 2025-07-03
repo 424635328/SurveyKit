@@ -1,53 +1,137 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>跳转中...</title>
-  <!-- 引入Font Awesome，用于加载图标 -->
-  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
-  <style>
-    /* 极简样式，确保在跳转前的短暂瞬间不出现空白或错乱 */
-    body {
-      background-color: #f8f9fa; /* 轻微的灰色背景，避免纯白闪烁 */
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh; /* 撑满视口高度 */
-      margin: 0;
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-      color: #6c757d; /* 柔和的文字颜色 */
-      font-size: 1.1em;
-      text-align: center;
-    }
-    .redirect-message {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 20px;
-      border-radius: 8px;
-      background-color: #ffffff;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-      animation: pulse 1.5s infinite ease-in-out; /* 添加微弱的呼吸动画 */
-    }
-    .redirect-message i {
-      font-size: 1.5em;
-      color: #007bff; /* 蓝色加载图标 */
-    }
-    @keyframes pulse {
-      0% { transform: scale(1); opacity: 0.9; }
-      50% { transform: scale(1.02); opacity: 1; }
-      100% { transform: scale(1); opacity: 0.9; }
-    }
-  </style>
-  <script>
-    // 使用绝对路径进行跳转，确保无论 validator.html 被如何访问，都能正确跳转到网站根目录下的 status 文件夹
-    window.location.replace("/status/status.html?code=blank");
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智能 JSON 校验与修正器 - SurveyKit</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css"
+      rel="stylesheet">
+    <script
+      src="https://unpkg.com/json5@2.2.3/dist/index.min.js"
+      onerror="this.onerror=null;this.src='./lib/json5.min.js';"
+      defer>
   </script>
-</head>
-<body>
-  <div class="redirect-message">
-    <i class="fa fa-spinner fa-spin"></i> 页面正在跳转，请稍候...
-  </div>
-</body>
+
+    <link rel="stylesheet" href="validator.css">
+  </head>
+  <body class="font-sans text-gray-800 min-h-screen flex flex-col">
+
+    <header class="sticky top-0 z-50">
+      <div
+        class="container mx-auto px-4 py-4 flex justify-between items-center"><div
+          class="flex items-center space-x-2"><span
+            class="text-indigo-500 text-2xl"><i
+              class="fa fa-wpforms"></i></span><a href="../../index.html"
+            class="text-xl font-bold bg-gradient-to-r from-indigo-500 to-purple-600 bg-clip-text text-transparent">SurveyKit</a></div><nav
+          class="hidden md:flex items-center space-x-8"><a
+            href="../../index.html"
+            class="text-gray-600 hover:text-indigo-500 transition-colors duration-200 flex items-center"><i
+              class="fa fa-home mr-2"></i> 首页</a><a href="../hub.html"
+            class="text-indigo-500 font-medium flex items-center"><i
+              class="fa fa-wrench mr-2"></i> 工具中心</a><a
+            href="../../docs/help.html"
+            class="text-gray-600 hover:text-indigo-500 transition-colors duration-200 flex items-center"><i
+              class="fa fa-book mr-2"></i> 帮助文档</a><a
+            href="https://github.com/424635328/SurveyKit" target="_blank"
+            rel="noopener"
+            class="text-gray-600 hover:text-indigo-500 transition-colors duration-200 flex items-center"><i
+              class="fa fa-github mr-2"></i> GitHub</a></nav><button
+          class="md:hidden text-gray-600 focus:outline-none" id="menu-toggle"
+          aria-label="Toggle mobile menu"><i
+            class="fa fa-bars text-xl"></i></button></div>
+      <div class="md:hidden hidden bg-white border-t border-gray-100 shadow-md"
+        id="mobile-menu"><div
+          class="container mx-auto px-4 py-3 flex flex-col space-y-3"><a
+            href="../../index.html"
+            class="text-gray-600 hover:text-indigo-500 py-2 flex items-center"><i
+              class="fa fa-home mr-2"></i> 首页</a><a href="../hub.html"
+            class="text-indigo-500 font-medium py-2 flex items-center"><i
+              class="fa fa-wrench mr-2"></i> 工具中心</a><a
+            href="../../docs/help.html"
+            class="text-gray-600 hover:text-indigo-500 py-2 flex items-center"><i
+              class="fa fa-book mr-2"></i> 帮助文档</a><a
+            href="https://github.com/424635328/SurveyKit" rel="noopener"
+            target="_blank"
+            class="text-gray-600 hover:text-indigo-500 py-2 flex items-center"><i
+              class="fa fa-github mr-2"></i> GitHub</a></div></div>
+    </header>
+
+    <main class="flex-grow container mx-auto px-4 py-12 md:py-20">
+      <div class="text-center mb-12 max-w-3xl mx-auto"
+        data-animate="reveal-up"><h2
+          class="text-[clamp(2rem,5vw,3.2rem)] font-bold mb-4 leading-tight text-shadow flex items-center justify-center"><i
+            class="fa fa-magic mr-4 text-indigo-400"></i>智能 JSON <span
+            class="text-white">校验与修正器</span></h2><p
+          class="text-slate-300 text-lg">自动修复常见的 JSON
+          错误，如注释、缺引号的键、末尾逗号等，让您的工作流更顺畅。</p></div>
+      <div class="max-w-4xl mx-auto" data-animate="reveal-up"><div
+          class="card-base p-6 sm:p-8"><div
+            class="flex flex-col space-y-4"><label for="json-input"
+              class="text-slate-200 font-semibold">JSON 内容输入区</label><textarea
+              id="json-input" rows="15" class="validator-textarea"
+              placeholder='在此处粘贴您的 JSON 内容，即使包含错误...
+
+// 这是一个支持注释、无引号键和尾部逗号的例子
+{
+  legend: "Part 1: 直觉与本能",
+  questions: [
+    {
+      id: "q1_beverage",
+      text: "当你需要提神时，第一选择是？",
+      type: "radio",
+      options: [
+        { value: "咖啡", label: "☕ 咖啡" },
+        { value: "奶茶", label: "🥤 奶茶" }, // 允许尾部逗号
+      ],
+    },
+  ],
+}'></textarea><div id="auto-fix-container"
+              class="flex items-center justify-end mt-2"><label
+                for="auto-fix-toggle"
+                class="flex items-center cursor-pointer"><span
+                  id="auto-fix-label"
+                  class="text-slate-300 mr-3 text-sm">智能修正错误</span><div
+                  class="relative"><input type="checkbox" id="auto-fix-toggle"
+                    class="sr-only" checked><div
+                    class="toggle-bg bg-slate-700 w-12 h-6 rounded-full"></div><div
+                    class="toggle-dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform"></div></div></label></div><div
+              id="result-message"
+              class="hidden mt-2 p-4 rounded-md text-sm font-medium"></div><div
+              class="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-3 sm:space-y-0 sm:space-x-4 pt-4"><button
+                id="validate-btn"
+                class="action-btn bg-indigo-600 hover:bg-indigo-700"><i
+                  class="fa fa-cogs mr-2"></i>校验 & 格式化</button><div
+                class="flex items-center space-x-4"><button id="copy-btn"
+                  class="action-btn bg-teal-600 hover:bg-teal-700 hidden"><i
+                    class="fa fa-copy mr-2"></i>复制结果</button><button
+                  id="clear-btn"
+                  class="action-btn bg-slate-600 hover:bg-slate-700"><i
+                    class="fa fa-trash-o mr-2"></i>清空内容</button></div></div></div></div></div>
+    </main>
+
+    <footer class="bg-slate-800 text-white py-10 mt-20">
+      <div class="container mx-auto px-4"><div
+          class="flex flex-col md:flex-row justify-between items-center text-center md:text-left space-y-6 md:space-y-0"><div
+            class="flex items-center"><span
+              class="text-indigo-500 text-2xl mr-2"><i
+                class="fa fa-wpforms"></i></span><h2
+              class="text-xl font-bold">SurveyKit</h2></div><div
+            class="text-slate-400 text-sm">© <span
+              id="current-year-footer"></span> SurveyKit. 保留所有权利。</div><div
+            class="flex space-x-6"><a
+              href="https://github.com/424635328/SurveyKit" target="_blank"
+              rel="noopener"
+              class="text-slate-400 hover:text-white transition-colors duration-200"
+              aria-label="GitHub"><i
+                class="fa fa-github text-xl"></i></a></div></div></div>
+    </footer>
+
+    <button id="scrollToTopBtn"
+      class="fixed bottom-6 right-6 bg-indigo-600 text-white p-3 rounded-full shadow-lg opacity-0 pointer-events-none transition-all duration-300 transform translate-y-4 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 z-50"
+      aria-label="Scroll to top"><i class="fa fa-arrow-up text-lg"></i></button>
+
+    <script src="validator.js" defer></script>
+  </body>
 </html>

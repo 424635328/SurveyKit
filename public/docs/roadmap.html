@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SurveyKit 更新与路线图</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <!-- 引用同级目录下的 roadmap.css -->
+  <link rel="stylesheet" href="roadmap.css"> 
+</head>
+<body class="font-sans text-gray-800 min-h-screen flex flex-col">
+
+  <header class="sticky top-0 z-50">
+    <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+      <div class="flex items-center space-x-2">
+        <span class="text-indigo-500 text-2xl"><i class="fa fa-wpforms"></i></span>
+        <a href="../index.html" class="text-xl font-bold bg-gradient-to-r from-indigo-500 to-purple-600 bg-clip-text text-transparent">SurveyKit</a>
+      </div>
+      <nav class="hidden md:flex items-center space-x-8">
+        <a href="../index.html" class="text-gray-600 hover:text-indigo-500 transition-colors duration-200 flex items-center">
+          <i class="fa fa-home mr-2"></i> 首页
+        </a>
+        <a href="../hub/hub.html" class="text-gray-600 hover:text-indigo-500 transition-colors duration-200 flex items-center">
+          <i class="fa fa-wrench mr-2"></i> 工具中心
+        </a>
+        <a href="../docs/help.html" class="text-gray-600 hover:text-indigo-500 transition-colors duration-200 flex items-center">
+          <i class="fa fa-book mr-2"></i> 帮助文档
+        </a>
+        <a href="#" class="text-indigo-500 font-medium flex items-center">
+          <i class="fa fa-rocket mr-2"></i> 更新路线图
+        </a>
+        <a href="https://github.com/424635328/SurveyKit" target="_blank" rel="noopener" class="text-gray-600 hover:text-indigo-500 transition-colors duration-200 flex items-center">
+          <i class="fa fa-github mr-2"></i> GitHub
+        </a>
+      </nav>
+      <button class="md:hidden text-gray-600 focus:outline-none" id="menu-toggle" aria-label="Toggle mobile menu">
+        <i class="fa fa-bars text-xl"></i>
+      </button>
+    </div>
+    <div class="md:hidden hidden bg-white border-t border-gray-100 shadow-md" id="mobile-menu">
+      <div class="container mx-auto px-4 py-3 flex flex-col space-y-3">
+        <a href="../index.html" class="text-gray-600 hover:text-indigo-500 py-2 transition-colors duration-200 flex items-center"><i class="fa fa-home mr-2"></i> 首页</a>
+        <a href="../hub/hub.html" class="text-gray-600 hover:text-indigo-500 py-2 transition-colors duration-200 flex items-center"><i class="fa fa-wrench mr-2"></i> 工具中心</a>
+        <a href="../docs/help.html" class="text-gray-600 hover:text-indigo-500 py-2 transition-colors duration-200 flex items-center"><i class="fa fa-book mr-2"></i> 帮助文档</a>
+        <a href="#" class="text-indigo-500 font-medium py-2 flex items-center"><i class="fa fa-rocket mr-2"></i> 更新路线图</a>
+        <a href="https://github.com/424635328/SurveyKit" rel="noopener" target="_blank" class="text-gray-600 hover:text-indigo-500 py-2 transition-colors duration-200 flex items-center"><i class="fa fa-github mr-2"></i> GitHub</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="flex-grow container mx-auto px-4 py-12 md:py-20">
+    <div class="text-center mb-20 max-w-3xl mx-auto" data-animate="reveal-up">
+      <h2 class="text-[clamp(2rem,5vw,3.2rem)] font-bold mb-4 leading-tight text-shadow flex items-center justify-center">
+        <i class="fa fa-rocket mr-4 text-indigo-400"></i>SurveyKit <span class="text-white">发展路线图</span>
+      </h2>
+      <p class="text-slate-300 text-lg">我们正不断为 SurveyKit 添加新功能并优化体验。在这里查看我们的最新进展和未来计划。</p>
+    </div>
+
+    <section class="mb-20">
+      <h3 class="section-title" data-animate="reveal-up">✅ 最近更新 (Recent Updates)</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div data-animate="reveal-up">
+          <div class="card-base">
+            <div class="card-banner banner-gradient-3 h-36"><i class="fa fa-robot text-white text-5xl card-icon"></i></div>
+            <div class="card-content">
+              <h4 class="card-title" data-reveal-text>AI 人格分析</h4>
+              <p class="card-description" data-reveal-text>集成火山方舟大模型，用户提交问卷后可一键生成专属、详细的MBTI风格人格报告。</p>
+            </div>
+          </div>
+        </div>
+        <div data-animate="reveal-up">
+          <div class="card-base">
+            <div class="card-banner banner-gradient-5 h-36"><i class="fa fa-edit text-white text-5xl card-icon"></i></div>
+            <div class="card-content">
+              <h4 class="card-title" data-reveal-text>一站式工具中心</h4>
+              <p class="card-description" data-reveal-text>推出集可视化编辑器、答案预览器、JSON校验器于一体的工具中心，提升创作效率。</p>
+            </div>
+          </div>
+        </div>
+        <div data-animate="reveal-up">
+          <div class="card-base">
+            <div class="card-banner banner-gradient-11 h-36"><i class="fa fa-terminal text-white text-5xl card-icon"></i></div>
+            <div class="card-content">
+              <h4 class="card-title" data-reveal-text>全局命令面板</h4>
+              <p class="card-description" data-reveal-text>在任何页面按下 <code class="inline-code">⌘K</code> 即可唤出命令面板，实现全站功能的快速搜索与导航。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="mb-20">
+      <h3 class="section-title" data-animate="reveal-up">🚀 近期计划 (Next Up)</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div data-animate="reveal-up">
+          <div class="card-base card-hover">
+            <div class="card-banner banner-gradient-10 h-36"><i class="fa fa-cubes text-white text-5xl card-icon"></i></div>
+            <div class="card-content">
+              <h4 class="card-title" data-reveal-text>多问卷管理系统</h4>
+              <p class="card-description" data-reveal-text>开发管理后台，允许用户创建、保存并管理多套问卷，每套问卷生成唯一的分享链接。</p>
+            </div>
+          </div>
+        </div>
+        <div data-animate="reveal-up">
+          <div class="card-base card-hover">
+            <div class="card-banner banner-gradient-8 h-36"><i class="fa fa-palette text-white text-5xl card-icon"></i></div>
+            <div class="card-content">
+              <h4 class="card-title" data-reveal-text>主题与个性化</h4>
+              <p class="card-description" data-reveal-text>实现一键暗色模式切换，并提供主题定制器，允许用户为问卷选择主色调与字体。</p>
+            </div>
+          </div>
+        </div>
+        <div data-animate="reveal-up">
+          <div class="card-base card-hover">
+            <div class="card-banner banner-gradient-7 h-36"><i class="fa fa-vial text-white text-5xl card-icon"></i></div>
+            <div class="card-content">
+              <h4 class="card-title" data-reveal-text>自动化测试</h4>
+              <p class="card-description" data-reveal-text>引入 Vitest 或 Cypress，为核心功能添加单元测试和端到端测试，确保代码质量和项目稳定性。</p>
+            </div>
+          </div>
+        </div>
+        <div data-animate="reveal-up">
+          <div class="card-base card-hover">
+            <div class="card-banner banner-gradient-12 h-36"><i class="fa fa-trash-o text-white text-5xl card-icon"></i></div>
+            <div class="card-content">
+              <h4 class="card-title" data-reveal-text>数据生命周期管理</h4>
+              <p class="card-description" data-reveal-text>为问卷数据设置自动过期时间 (TTL)，并提供用户通过专属链接自行删除数据的功能。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h3 class="section-title" data-animate="reveal-up">🔮 未来构想 (Future Ideas)</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div data-animate="reveal-up">
+          <div class="card-base">
+            <div class="card-banner banner-gradient-4 h-36"><i class="fa fa-chart-bar text-white text-5xl card-icon"></i></div>
+            <div class="card-content">
+              <h4 class="card-title" data-reveal-text>高级数据分析</h4>
+              <p class="card-description" data-reveal-text>在后台为问卷创建者提供可视化的数据统计报告，包括图表、交叉分析等。</p>
+            </div>
+          </div>
+        </div>
+        <div data-animate="reveal-up">
+          <div class="card-base">
+            <div class="card-banner banner-gradient-6 h-36"><i class="fa fa-plug text-white text-5xl card-icon"></i></div>
+            <div class="card-content">
+              <h4 class="card-title" data-reveal-text>第三方集成</h4>
+              <p class="card-description" data-reveal-text>探索与 Notion, Google Sheets, Zapier 等工具的集成，实现数据自动化流转。</p>
+            </div>
+          </div>
+        </div>
+        <div data-animate="reveal-up">
+          <div class="card-base">
+            <div class="card-banner banner-gradient-1 h-36"><i class="fa fa-users text-white text-5xl card-icon"></i></div>
+            <div class="card-content">
+              <h4 class="card-title" data-reveal-text>团队协作功能</h4>
+              <p class="card-description" data-reveal-text>允许多个用户协作编辑和管理同一份问卷，并设置不同的访问权限。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="bg-slate-800 text-white py-10">
+    <div class="container mx-auto px-4">
+      <div class="flex flex-col md:flex-row justify-between items-center text-center md:text-left space-y-6 md:space-y-0">
+        <div class="flex items-center">
+          <span class="text-indigo-500 text-2xl mr-2"><i class="fa fa-wpforms"></i></span>
+          <h2 class="text-xl font-bold">SurveyKit</h2>
+        </div>
+        <div class="text-slate-400 text-sm">© <span id="current-year-footer"></span> SurveyKit. 保留所有权利。</div>
+        <div class="flex space-x-6">
+          <a href="https://github.com/424635328/SurveyKit" target="_blank" rel="noopener" class="text-slate-400 hover:text-white transition-colors duration-200" aria-label="GitHub">
+            <i class="fa fa-github text-xl"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <button id="scrollToTopBtn" class="fixed bottom-6 right-6 bg-indigo-600 text-white p-3 rounded-full shadow-lg opacity-0 pointer-events-none transition-all duration-300 transform translate-y-4 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 z-50" aria-label="Scroll to top">
+    <i class="fa fa-arrow-up text-lg"></i>
+  </button>
+  
+  <!-- 引用同级目录下的 roadmap.js -->
+  <script src="roadmap.js"></script>
+</body>
+</html>
