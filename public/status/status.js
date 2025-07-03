@@ -1,3 +1,4 @@
+// public/status/status.js
 document.addEventListener('DOMContentLoaded', () => {
     // 处理页脚年份更新 (适用于所有使用此脚本的状态页面)
     const currentYearSpan = document.getElementById('current-year');

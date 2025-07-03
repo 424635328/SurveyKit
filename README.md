@@ -1,26 +1,27 @@
 <div align="center">
-  <img src="https://user-images.githubusercontent.com/107765106/220531518-e34920e5-7b56-4c9b-8a7e-976a2e4d0c9f.png" alt="SurveyKit Logo" width="150" style="border-radius: 50%;" />
-  <h1 align="center">SurveyKit - 一份为你定制的深度问卷</h1>
-  <p align="center">
-    一个高度可定制、充满温情与趣味的网页版深度问卷平台，现已集成AI人格分析与一站式可视化工具集。
-    <br />
-    它不仅仅是一个表单，更是一次探索和分享思想的仪式。
-  </p>
-  <p align="center">
-    <a href="https://survey-kit.vercel.app/"><strong>🚀 立即体验项目 ➔</strong></a>
-    ·
-    <a href="https://github.com/424635328/SurveyKit/issues">报告Bug</a>
-    ·
-    <a href="https://github.com/424635328/SurveyKit/issues">提出新功能</a>
-  </p>
 
-  <p align="center">
-    <a href="https://survey-kit.vercel.app/hub/hub.html"><strong>🛠️ 访问工具中心 ➔</strong></a>
-    ·
-    <a href="https://survey-kit.vercel.app/docs/help.html"><strong>📖 阅读帮助文档 ➔</strong></a>
-  </p>
+<img src="https://github.com/user-attachments/assets/1ffb6e4e-09c3-4d40-9a3c-1b6a1824b025" alt="SurveyKit Demo" width="800" />
 
-</div>
+<h1 align="center">SurveyKit - 一份为你定制的深度问卷</h1>
+<p align="center">
+  一个高度可定制、设计驱动的网页版深度问卷平台，现已集成AI人格分析与一站式可视化工具集。
+  <br />
+  它不仅仅是一个表单，更是一次探索和分享思想的仪式。
+</p>
+
+<p align="center">
+  <a href="https://survey-kit.vercel.app/" target="_blank"><strong>🚀 立即体验</strong></a>
+  ·
+  <a href="https://github.com/424635328/SurveyKit/issues" target="_blank">报告Bug</a>
+  ·
+  <a href="https://github.com/424635328/SurveyKit/issues" target="_blank">提出新功能</a>
+</p>
+
+<p align="center">
+  <a href="https://survey-kit.vercel.app/hub/hub.html" target="_blank"><strong>🛠️ 访问工具中心</strong></a>
+  ·
+  <a href="https://survey-kit.vercel.app/docs/help.html" target="_blank"><strong>📖 阅读帮助文档</strong></a>
+</p>
 
 <div align="center">
 
@@ -31,49 +32,37 @@
 
 </div>
 
+</div>
+
 ---
 
 ## ✨ 项目亮点 (Highlights)
 
 SurveyKit 的诞生源于一个简单的想法：**提问，是深入了解一个人的最佳方式**。我们致力于打造一个不仅功能强大，更充满人文关怀的问卷工具。
 
-- **🎨 极致的用户体验 (UX First)**:
+- ### 🎨 极致的用户体验 (UX First)
+  - **全局命令面板搜索**: 在任何页面按下 `⌘K` (`Ctrl+K`) 即可唤出高效的命令面板，快速导航至任何功能、工具或文档。
   - **优雅动效**: 全站采用基于 `IntersectionObserver` 的**循环流式浮现动画**，内容随滚动反复优雅呈现，交互体验如丝般顺滑。
-  - **玻璃拟态设计 (Glassmorphism)**: 工具中心等核心页面采用现代化的玻璃拟态设计，搭配流动的**极光背景**，视觉效果出众。
   - **沉浸式填写**: 所有题目一次性加载，自由滚动填写。右上角固定的 10x10 **智能题号导航**，支持平滑跳转、高亮当前题目并区分答题状态。
   - **无忧的自动草稿**: 使用 `localStorage` 实时保存填写进度，意外关闭也不怕丢失。
   - **专业帮助文档**: 配备**带粘性侧边栏目录**的帮助中心，自动高亮当前章节，查阅体验极佳。
 
-- **🛠️ 一站式工具中心 (Tool Hub)**:
+- ### 🛠️ 一站式工具中心 (Tool Hub)
   - **可视化问卷编辑器**: 通过直观的图形界面创建和编辑问卷，支持实时预览，并一键导出/导入多种格式（JSON, Excel, CSV, TXT）。
   - **答案预览器**: 无需跳转，直接在工具箱中输入问卷ID，即可查看完整的问卷答案，并支持多种格式导出。
   - **JSON 校验与格式化器**: 粘贴您的 `questions.json` 内容，一键检查语法错误并美化格式，确保部署万无一失。
-  - **清晰的功能导航**: 所有核心功能、体验入口和项目资源都集中在工具中心，方便用户在体验、创作和查阅之间无缝切换。
+  - **玻璃拟态设计 (Glassmorphism)**: 工具中心等核心页面采用现代化的玻璃拟态设计，搭配流动的**极光背景**，视觉效果出众。
 
-- **🤖 AI 驱动的人格分析**:
-  - 提交问卷后，用户可一键跳转，由**火山方舟大模型**驱动的 AI 将为其生成一份专属、详细的 MBTI 风格人格报告。
+- ### 🤖 AI 驱动的人格分析
+  - **即时生成报告**: 提交问卷后，用户可一键跳转，由**火山方舟大模型**驱动的 AI 将为其生成一份专属、详细的 MBTI 风格人格报告。
   - **沉浸式等待体验**: AI 分析过程采用流式提示，报告生成后也支持逐段打字机效果呈现，有效降低用户等待焦虑。
 
-- **📊 优雅的结果呈现与分享**:
+- ### 📊 优雅的结果呈现与分享
   - **访谈式结果页**: 将数据渲染成一篇排版精美的访谈录，告别枯燥的数据罗列。
   - **专属链接与安全**: 提交问卷后生成**独一无二的专属链接（包含密钥）**，确保只有持有链接的用户才能访问自己的结果。
   - **安全找回机制**: 用户可凭提交时留下的邮箱或问卷ID，通过邮件**安全找回**专属链接。
   - **默契度大挑战**: 支持与朋友对比答案，动态计算并展示默契度分数。
   - **多种导出格式**: 问卷结果支持导出为结构化的 **JSON**, **TXT**, 以及扁平化的 **Excel** 和 **CSV** 文件。
-
----
-
-## 🔒 安全性 (Security)
-
-SurveyKit 致力于保障用户数据的隐私与安全，在设计和实现中融入了多项安全实践：
-
--   **Serverless 架构**: 部署在 Vercel Serverless 环境，自动处理基础设施安全更新和补丁，减少传统服务器风险。
--   **API 授权**: 所有问卷答案的读取接口都实现了基于**独有令牌 (Access Token)** 的授权机制。没有正确令牌无法访问数据，防止任意用户通过猜测 ID 批量访问。
--   **管理员后门**: 为项目管理员提供了基于**环境变量**的独立超级令牌，可在必要时合法访问所有数据，不影响普通用户安全模型。
--   **API 速率限制**: 对所有关键后端 API (提交、读取、AI 分析、找回链接) 均实施了速率限制，有效抵御自动化攻击和资源耗尽（DoS）风险。
--   **输入校验**: 前后端均采用 `Zod` 进行严格的数据输入校验，防止注入攻击、恶意数据格式和程序崩溃。
--   **XSS 防护**: 前端所有渲染用户生成内容的区域都进行了严格的 HTML 转义或使用安全的 DOM API (`textContent`, `createElement`)，彻底杜绝跨站脚本攻击 (XSS) 风险。
--   **凭证安全**: 敏感 API 密钥（如 AI 服务、邮件服务密钥）通过 Vercel 环境变量安全管理，不暴露在代码库中。
 
 ---
 
@@ -90,47 +79,6 @@ SurveyKit 致力于保障用户数据的隐私与安全，在设计和实现中�
 
 ---
 
-## 📁 项目结构 (Project Structure)
-
-项目结构清晰，所有前端静态文件均位于 `public` 目录下，后端 API 位于独立的 `api` 目录。
-
-```
-/ (项目根目录)
-├── public/                 # (Vercel 部署的根目录)
-│   ├── index.html          # 项目首页
-│   ├── survey.html         # 问卷填写页
-│   ├── result.html         # 提交结果页
-│   ├── viewer.html         # 问卷答案预览器
-│   ├── compare.html        # 默契度对比页
-│   ├── mbti.html           # AI人格分析页
-│   ├── recover.html        # 找回问卷链接页
-│   │
-│   ├── hub/                # 🛠️ 工具中心模块
-│   │   ├── hub.html
-│   │   ├── custom-questions/ # 可视化问卷编辑器
-│   │   └── toolchain/        # 工具集 (JSON校验器等)
-│   │
-│   ├── docs/               # 📖 帮助文档模块
-│   │   └── help.html
-│   │
-│   ├── status/             # 🎨 状态页模块 (404, 403, 建设中, 成功)
-│   │   └── status.html     # 状态页路由中心
-│   │
-│   ├── ... (其他页面的JS/CSS)
-│   └── questions.json      # 核心：默认问卷结构定义文件
-│
-├── api/                    # Vercel Serverless Functions
-│   ├── save.mjs
-│   ├── get-survey.mjs
-│   ├── analyze-mbti.mjs
-│   └── recover-link.mjs
-│
-├── package.json            # 项目依赖与配置
-└── README.md               # 项目说明文档
-```
-
----
-
 ## 🚀 快速开始 (Getting Started)
 
 想在自己的 Vercel 账号上部署这个项目吗？非常简单！
@@ -138,6 +86,11 @@ SurveyKit 致力于保障用户数据的隐私与安全，在设计和实现中�
 ### 1. Fork & Clone
 
 将仓库 Fork 到你的 GitHub，然后 Clone 到本地。
+
+```bash
+git clone https://github.com/YOUR_USERNAME/SurveyKit.git
+cd SurveyKit
+```
 
 ### 2. 安装依赖
 
@@ -161,7 +114,7 @@ npm install
 3.  **将根目录修改为 `public`**。这是最关键的一步，它告诉 Vercel 你的所有网站内容都在 `public` 文件夹下。
 4.  返回部署页面，**框架预设 (Framework Preset)** 应自动识别为 **"Other"**。
 5.  在 **"Storage"** 标签页创建一个新的 KV 数据库并连接到项目。
-6.  点击 "Deploy"。
+6.  点击 **"Deploy"**。
 
 部署完成后，Vercel 会将 `public` 目录作为网站根目录来提供服务，所有链接都将正常工作！
 
@@ -196,6 +149,60 @@ npm install
 | `rangeRight`| String  | (可选, for `range`) 滑块右侧的文本描述。                                                                   | `"随时派对"`                                                    |
 
 **注意**：如果你修改了用于人格分析的问题 ID 或选项，需要同步更新 `api/analyze-mbti.mjs` 中相关的分析逻辑。
+
+---
+
+## 🔐 安全性 (Security)
+
+SurveyKit 致力于保障用户数据的隐私与安全，在设计和实现中融入了多项安全实践：
+
+-   **Serverless 架构**: 部署在 Vercel Serverless 环境，自动处理基础设施安全更新和补丁，减少传统服务器风险。
+-   **API 授权**: 所有问卷答案的读取接口都实现了基于**独有令牌 (Access Token)** 的授权机制。没有正确令牌无法访问数据，防止任意用户通过猜测 ID 批量访问。
+-   **管理员后门**: 为项目管理员提供了基于**环境变量**的独立超级令牌，可在必要时合法访问所有数据，不影响普通用户安全模型。
+-   **API 速率限制**: 对所有关键后端 API (提交、读取、AI 分析、找回链接) 均实施了速率限制，有效抵御自动化攻击和资源耗尽（DoS）风险。
+-   **输入校验**: 前后端均采用 `Zod` 进行严格的数据输入校验，防止注入攻击、恶意数据格式和程序崩溃。
+-   **XSS 防护**: 前端所有渲染用户生成内容的区域都进行了严格的 HTML 转义或使用安全的 DOM API (`textContent`, `createElement`)，彻底杜绝跨站脚本攻击 (XSS) 风险。
+-   **凭证安全**: 敏感 API 密钥（如 AI 服务、邮件服务密钥）通过 Vercel 环境变量安全管理，不暴露在代码库中。
+
+---
+
+## 📁 项目结构 (Project Structure)
+
+项目结构清晰，所有前端静态文件均位于 `public` 目录下，后端 API 位于独立的 `api` 目录。
+
+```
+/ (项目根目录)
+├── public/                 # (Vercel 部署的根目录)
+│   ├── index.html          # 项目首页
+│   ├── survey.html         # 问卷填写页
+│   ├── result.html         # 提交结果页
+│   ├── viewer.html         # 问卷答案预览器
+│   ├── compare.html        # 默契度对比页
+│   ├── mbti.html           # AI人格分析页
+│   ├── recover.html        # 找回问卷链接页
+│   │
+│   ├── hub/                # 🛠️ 工具中心模块
+│   │   ├── hub.html
+│   │   ├── custom-questions/ # 可视化问卷编辑器
+│   │   └── toolchain/        # 工具集 (JSON校验器等)
+│   │
+│   ├── docs/               # 📖 帮助文档模块
+│   │   └── help.html
+│   │
+│   ├── status/             # 🎨 状态页模块 (404, 403, 建设中, 成功)
+│   │
+│   ├── ... (其他页面的JS/CSS)
+│   └── questions.json      # 核心：默认问卷结构定义文件
+│
+├── api/                    # Vercel Serverless Functions
+│   ├── save.mjs
+│   ├── get-survey.mjs
+│   ├── analyze-mbti.mjs
+│   └── recover-link.mjs
+│
+├── package.json            # 项目依赖与配置
+└── README.md               # 项目说明文档
+```
 
 ---
 

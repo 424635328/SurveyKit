@@ -6,7 +6,7 @@ body {
 }
 
 .aurora-background {
-  background: linear-gradient(135deg, #7a7ab0, #305ea7, #2444ae, #2f1e9e, #7719bf);
+  background: linear-gradient(135deg, #7a7ab0, #486fae, #425cb3, #5241bc, #873cc1);
   background-size: 400% 400%;
   animation: aurora-flow 20s ease infinite;
 }

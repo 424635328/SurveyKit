@@ -1,5 +1,3 @@
-<!-- public/index.html -->
- 
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -14,22 +12,35 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
 
-    <!-- 专属样式与动画定义 -->
     <link rel="stylesheet" href="home.css">
+    
+    <style>
+        #search-modal { transition: opacity 0.2s ease-in-out; }
+        #search-modal-panel { transition: transform 0.2s ease-in-out, opacity 0.2s ease-in-out; }
+        body.search-open { overflow: hidden; }
+        .search-result-item {
+            transition: background-color 0.15s ease-in-out;
+        }
+        .search-result-item.active {
+            background-color: #eef2ff;
+            color: #4338ca;
+        }
+        .search-result-item.active .result-item-desc,
+        .search-result-item.active .result-item-icon {
+            color: #4f46e5;
+        }
+    </style>
 </head>
 <body class="font-sans bg-slate-50 text-slate-800">
 
-    <!-- 导航栏 -->
-    <header class="sticky top-0 z-50 bg-white/80 backdrop-blur-md shadow-sm">
+    <header class="sticky top-0 z-40 bg-white/80 backdrop-blur-md shadow-sm">
         <div class="container mx-auto px-4">
             <div class="flex h-16 items-center justify-between">
-                <!-- Logo -->
                 <a href="index.html" class="flex items-center space-x-2">
                     <span class="text-indigo-600 text-2xl"><i class="fa fa-wpforms"></i></span>
                     <span class="text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">SurveyKit</span>
                 </a>
 
-                <!-- 桌面端导航 -->
                 <nav class="hidden md:flex items-center space-x-8">
                     <a href="index.html" class="text-indigo-600 font-medium flex items-center space-x-2">
                         <i class="fa fa-home"></i> <span>首页</span>
@@ -45,19 +56,25 @@
                     </a>
                 </nav>
 
-                <!-- 移动端菜单按钮 -->
-                <div class="md:hidden">
-                    <button id="menu-toggle" type="button" class="inline-flex items-center justify-center rounded-md p-2 text-slate-600 hover:bg-slate-100 hover:text-indigo-600 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500" aria-controls="mobile-menu" aria-expanded="false">
-                        <span class="sr-only">打开主菜单</span>
-                        <i id="menu-icon" class="fa fa-bars text-2xl"></i>
+                <div class="flex items-center space-x-2">
+                    <button id="search-toggle-button" type="button" class="hidden md:flex items-center space-x-2 rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-500 hover:border-slate-400 hover:text-slate-800 transition-colors">
+                        <i class="fa fa-search"></i>
+                        <span>搜索...</span>
+                        <kbd class="ml-2 rounded bg-slate-100 px-1.5 py-0.5 text-xs font-mono">⌘K</kbd>
                     </button>
+                    <div class="md:hidden">
+                        <button id="menu-toggle" type="button" class="inline-flex items-center justify-center rounded-md p-2 text-slate-600 hover:bg-slate-100 hover:text-indigo-600 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500" aria-controls="mobile-menu" aria-expanded="false">
+                            <span class="sr-only">打开主菜单</span>
+                            <i id="menu-icon" class="fa fa-bars text-2xl"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
-        <!-- 移动端菜单内容 -->
         <div id="mobile-menu" class="hidden md:hidden border-t border-slate-200">
             <div class="space-y-1 px-2 pb-3 pt-2">
                 <a href="index.html" class="nav-link-mobile active">首页</a>
+                <a href="#" id="search-toggle-mobile" class="nav-link-mobile">搜索</a>
                 <a href="hub/hub.html" class="nav-link-mobile">工具中心</a>
                 <a href="docs/help.html" class="nav-link-mobile">帮助文档</a>
                 <a href="https://github.com/424635328/SurveyKit" target="_blank" rel="noopener" class="nav-link-mobile">GitHub</a>
@@ -65,7 +82,6 @@
         </div>
     </header>
     
-    <!-- 主内容区 -->
     <main>
         <section class="animated-section relative text-center pt-16 pb-20 md:pt-24 md:pb-28 overflow-hidden">
             <div class="hero-background"></div>
@@ -136,7 +152,6 @@
         </section>
     </main>
 
-    <!-- 页脚 -->
     <footer class="bg-slate-800 text-white py-10">
         <div class="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center text-center md:text-left">
             <div class="mb-6 md:mb-0">
@@ -154,6 +169,39 @@
         </div>
     </footer>
 
+    <div id="search-modal" class="hidden fixed inset-0 z-50 opacity-0" aria-labelledby="search-modal-title" role="dialog" aria-modal="true">
+        <div id="search-backdrop" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm"></div>
+        <div class="flex items-start justify-center min-h-full p-4 text-center sm:p-6 md:pt-[10vh]">
+            <div id="search-modal-panel" class="relative w-full max-w-xl transform-gpu overflow-hidden rounded-2xl bg-white shadow-2xl scale-95 opacity-0">
+                <div class="p-2">
+                    <div class="relative">
+                        <span class="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
+                            <i class="fa fa-search text-xl"></i>
+                        </span>
+                        <input type="search" id="search-input" placeholder="搜索功能、文档... (⌘K)" class="w-full rounded-lg border-0 bg-slate-100 py-3.5 pl-12 pr-4 text-lg text-slate-800 placeholder-slate-400 focus:bg-white focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                </div>
+                
+                <div id="search-results-list" class="max-h-[50vh] overflow-y-auto border-t border-slate-200">
+                    <div id="search-placeholder" class="p-10 text-center text-slate-400">
+                        <i class="fa fa-compass fa-2x mb-3"></i>
+                        <p class="font-medium text-slate-500">开始探索 SurveyKit</p>
+                        <p class="text-sm">输入关键词查找您需要的功能</p>
+                    </div>
+                </div>
+
+                <div class="border-t border-slate-100 bg-slate-50 p-2 text-xs text-slate-500 flex justify-between items-center">
+                    <span class="text-indigo-600 font-semibold flex items-center">
+                        <i class="fa fa-wpforms mr-1.5"></i> SurveyKit Search
+                    </span>
+                    <span>
+                        <kbd class="font-mono rounded bg-white px-1.5 py-1 shadow-sm">Esc</kbd> 关闭
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
     <script src="home.js"></script>
 </body>
 </html>

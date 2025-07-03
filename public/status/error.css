@@ -3,27 +3,26 @@
 
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  margin: 0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* 渐变背景样式：神秘的紫粉色调 */
 .gradient-background {
-  background: linear-gradient(135deg, #f0e6f7 0%, #e3c1e8 100%); /* 柔和的薰衣草紫到浅粉紫渐变 */
+  background: linear-gradient(135deg, #f0e6f7 0%, #e3c1e8 100%);
 }
 
-/* 主容器样式 */
 .status-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 100vh;
+  min-height: calc(100vh - 100px); /* 减去页脚大致高度，避免内容挤压 */
   padding: 2rem;
   text-align: center;
+  box-sizing: border-box;
 }
 
-/* 插图样式 */
 .status-illustration {
   max-width: 320px;
   width: 100%;
@@ -33,30 +32,97 @@ body {
   animation: fadeIn 0.8s 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
 }
 
-/* 标题样式 */
 .status-title {
-  font-size: clamp(2rem, 5vw, 3rem); /* 响应式字体大小 */
+  font-size: clamp(2rem, 5vw, 3rem);
   font-weight: 700;
-  color: #8A2BE2; /* 蓝紫色 */
+  color: #8A2BE2;
   margin-bottom: 1rem;
   opacity: 0;
   transform: translateY(20px);
   animation: fadeIn 0.8s 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
 }
 
-/* 描述文本样式 */
 .status-description {
-  max-width: 500px;
-  color: #6A1A6A; /* 深洋红色 */
+  max-width: 550px;
+  color: #6A1A6A;
   font-size: 1.125rem;
   line-height: 1.75;
-  margin-bottom: 2.5rem;
+  margin-top: 0;
+  margin-bottom: 1.5rem;
   opacity: 0;
   transform: translateY(20px);
   animation: fadeIn 0.8s 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
 }
 
-/* 行动按钮样式 */
+/* 优化: 动态消息样式，与主题更协调 */
+.dynamic-message {
+  font-weight: 600;
+  color: #8A2BE2; /* 改为主题色 */
+  margin-top: 15px;
+  margin-bottom: 20px;
+  padding: 12px 18px;
+  border: 1px solid #BA55D3; /* 改为主题色系 */
+  border-radius: 8px;
+  background-color: rgba(138, 43, 226, 0.08); /* 使用更柔和的背景 */
+  max-width: 500px;
+  width: 90%;
+}
+
+/* 新增: 用于JS控制元素显隐的工具类 */
+.hidden {
+  display: none;
+}
+
+/* 新增: 搜索框容器样式 */
+.search-container {
+  margin-bottom: 2.5rem;
+  width: 100%;
+  max-width: 480px;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeIn 0.8s 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+.search-container form {
+  display: flex;
+  width: 100%;
+  border-radius: 9999px;
+  background-color: #fff;
+  box-shadow: 0 4px 15px rgba(138, 43, 226, 0.15);
+  transition: box-shadow 0.3s ease;
+}
+
+.search-container form:focus-within {
+  box-shadow: 0 6px 20px rgba(138, 43, 226, 0.25);
+}
+
+.search-input {
+  flex-grow: 1;
+  border: none;
+  background: transparent;
+  padding: 0.8rem 1.5rem;
+  font-size: 1rem;
+  color: #6A1A6A;
+  outline: none;
+  border-radius: 9999px 0 0 9999px;
+}
+
+.search-button {
+  border: none;
+  background-color: #8A2BE2;
+  color: white;
+  padding: 0 1.5rem;
+  border-radius: 0 9999px 9999px 0;
+  cursor: pointer;
+  font-size: 1.1rem;
+  transition: background-color 0.3s ease;
+}
+
+.search-button:hover {
+  background-color: #7B1FA2;
+}
+
+
 .status-button {
   display: inline-flex;
   align-items: center;
@@ -64,14 +130,12 @@ body {
   font-size: 1rem;
   font-weight: 600;
   color: #fff;
-  /* 按钮渐变：紫罗兰色到浅紫红色 */
   background-image: linear-gradient(to right, #8A2BE2 0%, #BA55D3 51%, #8A2BE2 100%);
   background-size: 200% auto;
   border: none;
   border-radius: 9999px; 
   text-decoration: none;
   cursor: pointer;
-  /* 按钮阴影：与紫色调匹配 */
   box-shadow: 0 4px 15px 0 rgba(138, 43, 226, 0.3);
   transition: all 0.4s ease;
   opacity: 0;
@@ -81,7 +145,6 @@ body {
 
 .status-button:hover {
   background-position: right center; 
-  /* 按钮悬停阴影：与紫色调匹配 */
   box-shadow: 0 6px 20px 0 rgba(138, 43, 226, 0.4);
   transform: translateY(-2px);
 }
@@ -95,49 +158,11 @@ body {
   transform: translateX(-3px);
 }
 
-/* 动画效果 */
-@keyframes fadeIn {
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* 404页面特定的动画：悬浮效果 */
-.float-animation {
-  animation: float 6s ease-in-out infinite;
-}
-
-@keyframes float {
-  0% { transform: translateY(0px); }
-  50% { transform: translateY(-20px); }
-  100% { transform: translateY(0px); }
-}
-
-/* 未完成页面特定的动画：施工效果（不用于404，但保留以便复用） */
-.build-animation {
-  animation: build 2s ease-in-out infinite alternate;
-}
-
-@keyframes build {
-  from { transform: rotate(-3deg) scale(1); }
-  to { transform: rotate(3deg) scale(1.02); }
-}
-
-
-/* 继续优化后的新内容，颜色调整以匹配紫粉色主题 */
-
 .status-additional-info {
   margin-top: 25px;
-  color: #6A1A6A; /* 调整为与描述文本一致的深洋红色，在浅背景上更易读 */
+  color: #6A1A6A;
   font-size: 0.95em;
   line-height: 1.6;
-  text-align: left;
-}
-
-.status-additional-info p {
-  margin-bottom: 10px;
-  font-weight: 500;
 }
 
 .status-additional-info ul {
@@ -147,37 +172,27 @@ body {
 }
 
 .status-additional-info li {
-  position: relative;
   margin-bottom: 8px;
-  padding-left: 25px;
-}
-
-.status-additional-info li::before {
-  content: "→";
-  position: absolute;
-  left: 0;
-  color: #BA55D3; /* 浅紫红色箭头，与主按钮色调一致 */
-  font-weight: bold;
-  font-size: 1.1em;
 }
 
 .status-additional-info a {
-  color: #8A2BE2; /* 调整为与标题一致的蓝紫色 */
+  color: #8A2BE2;
   text-decoration: none;
   transition: color 0.2s ease-in-out;
+  font-weight: 500;
+  border-bottom: 1px solid transparent;
 }
 
 .status-additional-info a:hover {
-  color: #BA55D3; /* 悬停时更亮的紫红色，与主按钮悬停色一致 */
-  text-decoration: underline;
+  color: #BA55D3;
+  border-bottom-color: #BA55D3;
 }
 
 .status-explore-more {
   margin-top: 35px;
   padding-top: 25px;
-  border-top: 1px dashed rgba(138, 43, 226, 0.2); /* 虚线分隔符，使用紫色透明版本 */
-  text-align: center;
-  color: #6A1A6A; /* 调整为与描述文本一致的深洋红色 */
+  border-top: 1px dashed rgba(138, 43, 226, 0.2);
+  color: #6A1A6A;
 }
 
 .status-explore-more p {
@@ -198,22 +213,21 @@ body {
   display: inline-flex;
   align-items: center;
   padding: 10px 22px;
-  /* 小按钮背景：更透明的紫色 */
   background-color: rgba(138, 43, 226, 0.05); 
-  color: #8A2BE2; /* 小按钮文字：紫色 */
+  color: #8A2BE2;
   text-decoration: none;
   border-radius: 25px;
   font-size: 0.9em;
   font-weight: 600;
   transition: all 0.3s ease;
-  -webkit-backdrop-filter: blur(8px); /* Safari support */
   backdrop-filter: blur(8px);
-  border: 1px solid rgba(138, 43, 226, 0.15); /* 边框：透明的紫色 */
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(138, 43, 226, 0.15);
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 }
 
 .status-small-button:hover {
-  background-color: rgba(138, 43, 226, 0.1); /* 悬停背景：更明显的透明紫色 */
+  background-color: rgba(138, 43, 226, 0.1);
   transform: translateY(-3px);
   box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
 }
@@ -223,24 +237,12 @@ body {
   font-size: 1.1em;
 }
 
-@media (max-width: 600px) {
-  .explore-buttons {
-    flex-direction: column;
-    align-items: stretch;
-  }
-  .status-small-button {
-    width: auto;
-    max-width: 250px;
-    margin: 0 auto;
-  }
-}
-
 .status-footer {
-  margin-top: 50px;
+  margin-top: auto; /* 让页脚在内容不足时也能贴近底部 */
   text-align: center;
-  color: #9370DB; /* 调整为柔和的浅紫色 */
+  color: #9370DB;
   font-size: 0.85em;
-  padding: 30px 0 20px;
+  padding: 20px;
   line-height: 1.8;
 }
 
@@ -249,7 +251,7 @@ body {
 }
 
 .status-footer a {
-  color: #8A2BE2; /* 调整为与标题一致的蓝紫色 */
+  color: #8A2BE2;
   text-decoration: none;
   font-weight: bold;
   transition: color 0.2s ease-in-out;
@@ -257,5 +259,30 @@ body {
 
 .status-footer a:hover {
   text-decoration: underline;
-  color: #BA55D3; /* 悬停颜色：更亮的紫红色 */
+  color: #BA55D3;
+}
+
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-20px); }
+  100% { transform: translateY(0px); }
+}
+
+@media (max-width: 600px) {
+  .explore-buttons {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .status-small-button {
+    width: auto;
+    max-width: 280px;
+    margin: 0 auto;
+  }
 }
