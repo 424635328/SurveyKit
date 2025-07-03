@@ -1,4 +1,26 @@
 // public/survey.js
+
+// 主题加载器：在DOM加载前应用自定义主题，防止闪烁
+(() => {
+    const THEME_STORAGE_KEY = 'surveyKitUserTheme';
+    try {
+        const savedTheme = localStorage.getItem(THEME_STORAGE_KEY);
+        if (savedTheme) {
+            const theme = JSON.parse(savedTheme);
+            const root = document.documentElement;
+            // 直接在HTML上设置style，这是最快应用的方式
+            root.style.setProperty('--survey-primary', theme.primary);
+            root.style.setProperty('--survey-background', theme.background);
+            root.style.setProperty('--survey-card-bg', theme.card);
+            root.style.setProperty('--survey-text-color', theme.text);
+            root.style.setProperty('--survey-secondary-text-color', theme.secondaryText);
+        }
+    } catch (e) {
+        console.error("加载自定义主题失败:", e);
+        localStorage.removeItem(THEME_STORAGE_KEY);
+    }
+})();
+
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("surveyForm");
   const progressBarElement = document.getElementById("scrollProgress");
