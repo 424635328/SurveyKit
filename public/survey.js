@@ -1014,16 +1014,29 @@ document.addEventListener("DOMContentLoaded", () => {
     },
   };
 
-  const initializeApp = async () => {
-    try {
-      if (loadingMessage) loadingMessage.style.display = "block";
-      const response = await fetch("/questions.json");
-      if (!response.ok) throw new Error("问卷配置文件(questions.json)加载失败");
-      const sections = await response.json();
-      
-      originalSections = JSON.parse(JSON.stringify(sections));
+const initializeApp = async () => {
+  try {
+    if (loadingMessage) loadingMessage.style.display = "block";
 
-      surveyRenderer.render(sections);
+    let sections;
+
+    // 检查 sessionStorage 中是否有由 loader.js 注入的动态问卷数据
+    const dynamicSurveyDataJSON = sessionStorage.getItem('dynamicSurveyData');
+
+    if (dynamicSurveyDataJSON) {
+        console.log("检测到动态问卷数据，正在使用...");
+        sections = JSON.parse(dynamicSurveyDataJSON);
+        sessionStorage.removeItem('dynamicSurveyData');
+    } else {
+        console.log("未检测到动态数据，加载本地默认问卷 questions.json");
+        const response = await fetch("/questions.json");
+        if (!response.ok) throw new Error("问卷配置文件(questions.json)加载失败");
+        sections = await response.json();
+    }
+
+    originalSections = JSON.parse(JSON.stringify(sections));
+
+    surveyRenderer.render(sections);
 
       emailInput = document.getElementById("q_email");
       emailError = document.getElementById("emailError");

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>查看结果 - SurveyKit</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="toolchain.css">
+    <style>.results-table th, .results-table td { padding: 0.75rem 1rem; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.1); } .results-table thead th { position: sticky; top: 0; background-color: #1e293b; } .results-table tbody tr:nth-child(even) { background-color: rgba(255,255,255,0.05); }</style>
+</head>
+<body class="aurora-background min-h-screen flex flex-col">
+    <header class="sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center"><div class="flex items-center space-x-2"><span class="text-indigo-500 text-2xl"><i class="fa fa-wpforms"></i></span><a href="../../index.html" class="text-xl font-bold bg-gradient-to-r from-indigo-500 to-purple-600 bg-clip-text text-transparent">SurveyKit</a></div><nav class="hidden md:flex items-center space-x-8"><a href="../../index.html" class="text-gray-600 hover:text-indigo-500">首页</a><a href="../hub.html" class="text-indigo-500 font-medium">工具中心</a><a href="../../docs/help.html" class="text-gray-600 hover:text-indigo-500">帮助文档</a></nav><button class="md:hidden text-gray-600 focus:outline-none" id="menu-toggle" title="Toggle menu" aria-label="Toggle menu"><i class="fa fa-bars text-xl"></i></button></div>
+    </header>
+
+    <main class="flex-grow container mx-auto px-4 py-12 md:py-20">
+        <div class="text-center mb-8" data-animate="reveal-up">
+            <h2 class="page-title text-white">问卷结果分析</h2>
+            <p id="survey-title" class="page-subtitle text-lg mt-2"> </p>
+        </div>
+        <div id="results-container" class="content-card overflow-x-auto" data-animate="reveal-up" data-delay="0.2">
+            <div id="loading-state" class="loading-state"><i class="fa fa-spinner fa-spin mr-3"></i>正在加载结果数据...</div>
+            <div id="error-state" class="error-state hidden"></div>
+            <div id="results-content" class="hidden">
+                <div class="mb-6 flex justify-between items-center">
+                    <h3 class="text-xl font-bold">共 <span id="submission-count">0</span> 份回答</h3>
+                    <button id="download-csv-btn" class="text-sm bg-teal-600 text-white py-2 px-4 rounded-lg hover:bg-teal-700 transition-colors"><i class="fa fa-download mr-2"></i>导出为 CSV</button>
+                </div>
+                <div class="max-h-[60vh] overflow-y-auto"><table id="results-table" class="results-table w-full text-sm"></table></div>
+            </div>
+        </div>
+    </main>
+    <footer class="bg-slate-800 text-white py-10 mt-20">
+        <div class="container mx-auto px-4"><div class="flex justify-center"><p>© <span id="current-year-footer"></span> SurveyKit</p></div></div>
+    </footer>
+    <script src="results.js"></script>
+</body>
+</html>

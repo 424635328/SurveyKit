@@ -1,0 +1,114 @@
+/* /public/hub/toolchain/toolchain.css */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap");
+body {
+  font-family: "Inter", sans-serif;
+  color: #e2e8f0;
+}
+.aurora-background {
+  background: linear-gradient(
+    135deg,
+    #1b3a8e,
+    #33862e,
+    #483081,
+    #943c91,
+    #9c5930
+  );
+  background-size: 400% 400%;
+  animation: aurora-flow 20s ease infinite;
+}
+@keyframes aurora-flow {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+.text-shadow {
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+header {
+  transition: all 0.3s ease-in-out;
+  background-color: rgba(15, 23, 42, 0.6);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+.header-scrolled {
+  background-color: rgba(15, 23, 42, 0.8);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+nav a {
+  color: #cbd5e1;
+}
+nav a:hover {
+  color: white;
+}
+nav a.text-indigo-500 {
+  color: #a5b4fc !important;
+  font-weight: 600;
+}
+[data-animate="reveal-up"] {
+  opacity: 0;
+  transform: translateY(30px);
+  transition:
+    opacity 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition-delay: var(--animation-delay, 0s);
+}
+[data-animate="reveal-up"].is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.hidden {
+  display: none !important;
+}
+.page-title {
+  font-size: clamp(2rem, 5vw, 2.8rem);
+  font-weight: 800;
+}
+.page-subtitle {
+  color: #94a3b8;
+}
+.content-card {
+  background-color: rgba(30, 41, 59, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  border-radius: 1rem;
+  padding: 2rem;
+}
+.loading-state,
+.error-state {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: #94a3b8;
+}
+footer.bg-slate-800 {
+  background-color: #1e293b;
+}
+#scrollToTopBtn {
+  background-color: #818cf8;
+}
+#scrollToTopBtn:hover {
+  background-color: #6366f1;
+}
+#mobile-menu {
+  background-color: #1e293b;
+  border-top-color: rgba(255, 255, 255, 0.1);
+}
+#mobile-menu a {
+  color: #cbd5e1;
+}
+#mobile-menu a:hover {
+  color: white;
+}
+#mobile-menu a.text-indigo-500 {
+  color: #a5b4fc !important;
+}
+main > div > p {
+  color: #e2e8f0;
+}
