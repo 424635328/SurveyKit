@@ -1,4 +1,4 @@
-// Compare.js - 用于处理问卷对比页面的逻辑
+// public/Compare.js - 用于处理问卷对比页面的逻辑
 document.addEventListener('DOMContentLoaded', () => {
 
     // 获取所有必要的DOM元素
@@ -301,7 +301,6 @@ document.addEventListener('DOMContentLoaded', () => {
         let id2Param = params.get('id2');
         let token2Param = params.get('token2');
 
-        // ★ 核心修改：统一解析URL参数中的ID和Token ★
         // 优化解析逻辑，优先使用独立参数，如果独立参数不存在且看起来像链接，再尝试解析链接
         
         let finalId1 = null;
@@ -340,7 +339,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 finalToken2 = token2Param;
             }
         }
-        // ★ 核心修改结束 ★
 
         if (finalId1 && finalId2) {
             // 情况1: URL中包含两个有效ID（可能已通过上述解析），直接进行对比

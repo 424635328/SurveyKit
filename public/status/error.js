@@ -1,3 +1,4 @@
+// public/status/error.js
 document.addEventListener('DOMContentLoaded', () => {
     const errorContainer = document.querySelector('.error-container');
     const searchInput = document.getElementById('searchInput');
@@ -23,7 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
             alert(`正在搜索: "${query}"`);
             console.log(`Searching for: ${query}`);
             // 实际项目中，你会重定向到搜索结果页
-            // window.location.href = `/search?q=${encodeURIComponent(query)}`;
+            window.location.href = `/search?q=${encodeURIComponent(query)}`;
         } else {
             alert('请输入您想搜索的内容。');
         }
@@ -43,7 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
         alert(`感谢您的反馈！将报告当前页面的问题：\n${currentPage}\n（此功能需后端支持）`);
         console.log(`Bug reported for page: ${currentPage}`);
         // 实际操作可能是：
-        // window.location.href = `mailto:support@yourdomain.com?subject=页面问题反馈&body=问题页面：${encodeURIComponent(currentPage)}%0A请描述您遇到的问题：`;
+        window.location.href = `mailto:support@yourdomain.com?subject=页面问题反馈&body=问题页面：${encodeURIComponent(currentPage)}%0A请描述您遇到的问题：`;
     });
 
     // 4. 添加一些动态的背景元素（增加趣味性）
@@ -60,8 +61,8 @@ document.addEventListener('DOMContentLoaded', () => {
         // 随机设置动画延迟
         shape.style.animationDelay = `${Math.random() * 5}s`;
         // 随机设置颜色 (可选, 已经在CSS中nth-child设定)
-        // const colors = ['rgba(0, 123, 255, 0.1)', 'rgba(255, 107, 107, 0.1)', 'rgba(40, 167, 69, 0.1)'];
-        // shape.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        const colors = ['rgba(0, 123, 255, 0.1)', 'rgba(255, 107, 107, 0.1)', 'rgba(40, 167, 69, 0.1)'];
+        shape.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
         
         document.body.appendChild(shape);
     }

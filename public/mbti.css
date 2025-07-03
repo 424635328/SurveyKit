@@ -1,4 +1,4 @@
-/* mbti.css - 全新现代化设计 */
+/* public/mbti.css */
 
 /* 引入外部字体 */
 @import url("https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap");
@@ -229,12 +229,11 @@ h1 {
   line-height: 1.8;
   color: #374151;
   margin-bottom: 1.25rem;
-  /* white-space: pre-wrap; /* Keep pre-wrap if AI returns plain text, otherwise regular breaks */
 }
 
 /* 加载与错误/状态消息 */
-.loading-spinner { /* display handled by JS */
-  display: flex; /* Use flex for centering spinner and text */
+.loading-spinner {
+  display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
@@ -247,7 +246,7 @@ h1 {
   width: 50px;
   height: 50px;
   animation: spin 1s linear infinite;
-  margin: 40px auto 15px auto; /* Adjust margin for spacing */
+  margin: 40px auto 15px auto;
 }
 @keyframes spin {
   0% {
@@ -262,50 +261,35 @@ h1 {
   font-size: 1.1rem;
   color: #6b7280;
   font-weight: 500;
-  margin: 0; /* Reset margin */
+  margin: 0;
 }
-/* No blinking caret style needed if typing animation is used */
-/* .loading-spinner p::after {
-  content: "|";
-  animation: blink-caret 0.75s step-end infinite;
-}
-@keyframes blink-caret {
-  from,
-  to {
-    opacity: 0;
-  }
-  50% {
-    opacity: 1;
-  }
-} */
 
 
-/* New Status/Message Styles */
 .status-message {
     padding: 1rem;
-    margin-bottom: 1.5rem; /* Add space below the message */
+    margin-bottom: 1.5rem; 
     border-radius: 0.5rem;
     font-weight: 500;
-    text-align: center; /* Center the text */
+    text-align: center;
     line-height: 1.5;
 }
 
 .status-message.message-info {
-    color: #1f2937; /* Dark gray */
-    background-color: #e5e7eb; /* Light gray */
-    border: 1px solid #d1d5db; /* Gray border */
+    color: #1f2937;
+    background-color: #e5e7eb; 
+    border: 1px solid #d1d5db;
 }
 
 .status-message.message-success {
-    color: #065f46; /* Dark green */
-    background-color: #d1fae5; /* Light green */
-    border: 1px solid #a7f3d0; /* Green border */
+    color: #065f46;
+    background-color: #d1fae5;
+    border: 1px solid #a7f3d0;
 }
 
 .status-message.message-error {
-    color: #991b1b; /* Dark red */
-    background-color: #fee2e2; /* Light red */
-    border: 1px solid #fecaca; /* Red border */
+    color: #991b1b; 
+    background-color: #fee2e2;
+    border: 1px solid #fecaca; 
 }
 
 

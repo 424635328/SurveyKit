@@ -1,4 +1,4 @@
-// home.js - (最终整合版)
+// public/home.js
 
 document.addEventListener("DOMContentLoaded", () => {
   // --- 移动端导航菜单控制 ---
@@ -39,9 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // --- 页面入场动画系统 ---
 
-  /**
-   * 为文本中的每个词（或字）包裹一个 <span>，用于动画。
-   */
+  
   const wrapTextForAnimation = (element) => {
     if (!element || !element.dataset.text || element.childElementCount > 0)
       return;
@@ -55,9 +53,6 @@ document.addEventListener("DOMContentLoaded", () => {
       .join(" ");
   };
 
-  /**
-   * 重置一个区块的动画状态。
-   */
   const resetSectionAnimation = (section) => {
     const textElements = section.querySelectorAll(
       "[data-text].start-animation"
@@ -75,9 +70,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   };
 
-  /**
-   * 触发一个区块内的所有动画。
-   */
   const animateSection = (section) => {
     const textElements = section.querySelectorAll("[data-text]");
     const fadeElements = section.querySelectorAll(".fade-in-element");
@@ -93,9 +85,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 300);
   };
 
-  /**
-   * 协调整个页面的动画流程。
-   */
   const initPageAnimations = () => {
     if (!("IntersectionObserver" in window)) {
       console.warn(
@@ -131,9 +120,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
-  /**
-   * 动画失败或浏览器不支持时的回退逻辑
-   */
   const fallbackNoAnimation = () => {
     document.querySelectorAll("[data-text]").forEach((el) => {
       el.textContent = el.dataset.text;

@@ -1,6 +1,5 @@
-/* ==========================================================================
-   1. CSS Reset & Base Styles
-   ========================================================================== */
+/*    public/hub/custom-questions/custom-questions.css */
+ */
 
 *,
 *::before,
@@ -8,7 +7,7 @@
   box-sizing: border-box;
   border-width: 0;
   border-style: solid;
-  border-color: #e5e7eb; /* equivalent to Tailwind's border-gray-200 */
+  border-color: #e5e7eb;
 }
 
 html {
@@ -27,13 +26,10 @@ body {
   line-height: inherit;
 }
 
-/* ==========================================================================
-   2. Custom Properties & Global Styles
-   ========================================================================== */
 
 :root {
   --primary-color: #4f46e5;
-  --tw-ring-color: rgba(79, 70, 229, 0.5); /* For focus rings */
+  --tw-ring-color: rgba(79, 70, 229, 0.5); 
 }
 
 .font-noto-sans-sc {
@@ -42,17 +38,13 @@ body {
 
 body {
   font-family: "Noto Sans SC", sans-serif;
-  background-color: #f9fafb; /* bg-gray-50 */
+  background-color: #f9fafb; 
   min-height: 100vh;
   display: flex;
   flex-direction: column;
 }
 
-/* ==========================================================================
-   3. Custom Component & Form Styles
-   ========================================================================== */
 
-/* Custom Color Utilities */
 .text-primary {
   color: var(--primary-color);
 }
@@ -72,7 +64,6 @@ body {
   background-color: rgba(79, 70, 229, 0.1);
 }
 
-/* Form Styles (from @tailwindcss/forms) */
 .form-input,
 .form-textarea,
 .form-select,
@@ -120,10 +111,6 @@ body {
   appearance: none;
 }
 
-/* ==========================================================================
-   4. Animations & Transitions
-   ========================================================================== */
-
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -153,11 +140,7 @@ body {
   opacity: 0;
 }
 
-/* ==========================================================================
-   5. Utility Classes (Generated from HTML)
-   ========================================================================== */
 
-/* Layout & Sizing */
 .container {
   width: 100%;
   margin-right: auto;
@@ -696,25 +679,19 @@ button:disabled,
   }
 }
 
-/* ==========================================================================
-   ADD THESE STYLES TO YOUR custom-questions.css FILE
-   ========================================================================== */
 
-/* Makes labels in the preview clickable */
 .cursor-pointer {
   cursor: pointer;
 }
 
-/* Styles for the "Other" text input in the preview */
 .preview-other-input {
   flex-grow: 1;
-  max-width: 200px; /* Limits the width of the other input */
-  padding: 0.25rem 0.5rem; /* Makes it a bit smaller */
-  font-size: 0.875rem; /* Smaller font */
+  max-width: 200px; 
+  padding: 0.25rem 0.5rem;
+  font-size: 0.875rem; 
   transition: all 0.2s ease-in-out;
 }
 
-/* For smooth showing/hiding transition */
 .preview-other-input.hidden {
   opacity: 0;
   width: 0;
@@ -722,31 +699,22 @@ button:disabled,
   margin-left: 0;
   border: none;
 }
-/* ==========================================================================
-   ADD THESE STYLES TO YOUR custom-questions.css FILE
-   ========================================================================== */
 
-/* 
-  Makes the right preview pane "sticky".
-  It will stay in view as the user scrolls the left pane.
-*/
 #preview-section {
-  position: -webkit-sticky; /* For Safari */
+  position: -webkit-sticky; 
   position: sticky;
-  top: 6rem; /* Adjust this value based on your header's height + desired margin */
-  align-self: start; /* Important for sticky positioning in a flex/grid container */
+  top: 6rem; 
+  align-self: start; 
   max-height: calc(
     100vh - 8rem
-  ); /* Prevents the pane from being taller than the screen */
-  overflow-y: auto; /* Adds a scrollbar ONLY if the content inside is too tall */
+  );
+  overflow-y: auto;
 }
 
-/* Makes labels in the preview clickable */
 .cursor-pointer {
   cursor: pointer;
 }
 
-/* Styles for the "Other" text input in the preview */
 .preview-other-input {
   flex-grow: 1;
   max-width: 200px;
@@ -755,7 +723,6 @@ button:disabled,
   transition: all 0.2s ease-in-out;
 }
 
-/* For smooth showing/hiding transition */
 .preview-other-input.hidden {
   opacity: 0;
   width: 0;
@@ -763,36 +730,18 @@ button:disabled,
   margin-left: 0;
   border: none;
 }
-/* ==========================================================================
-   ENHANCEMENTS FOR ROBUSTNESS & UX
-   ========================================================================== */
 
-/* 
-  ENHANCEMENT: Add a red border to invalid (empty) required fields
-  to provide immediate visual feedback to the user.
-*/
+
 .form-input.border-red-500,
 .form-textarea.border-red-500 {
-  border-color: #ef4444; /* red-500 */
+  border-color: #ef4444;
   --tw-ring-color: #ef4444;
 }
 
-/* 
-  ENHANCEMENT: Make the delete animation smoother by transitioning max-height.
-  This prevents the layout from snapping abruptly when an item is removed.
-*/
+
 .question-card,
 .section-card,
 .option-item {
   transition: opacity 0.3s ease, transform 0.3s ease, max-height 0.3s ease;
   overflow: hidden;
 }
-
-/* 
-  ENHANCEMENT: Add accessibility attribute to notification container in HTML.
-  This allows screen readers to announce messages.
-  Find this div in your HTML:
-  <div id="notification" ...>
-  And add this attribute:
-  aria-live="polite"
-*/

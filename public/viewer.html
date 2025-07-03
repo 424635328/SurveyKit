@@ -1,3 +1,4 @@
+<!-- public/viewer.html -->
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -6,7 +7,6 @@
     <title>问卷答案预览器 - SurveyKit</title>
     <link rel="icon" href="./favicon.ico" type="image/x-icon">
     <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script> 
     <link rel="stylesheet" href="viewer.css">
     <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
@@ -74,14 +74,12 @@
         <span id="notification-text">操作成功</span>
     </div>
 
-    <!-- 滚动到顶部按钮 -->
     <button id="scrollToTopBtn"
       class="fixed bottom-6 right-6 bg-indigo-600 text-white p-3 rounded-full shadow-lg opacity-0 pointer-events-none transition-all duration-300 transform translate-y-4 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 z-50"
       aria-label="Scroll to top">
       <i class="fa fa-arrow-up text-lg"></i>
     </button>
 
-    <!-- 滚动到底部按钮 -->
     <button id="scrollToBottomBtn"
       class="fixed bottom-6 right-20 bg-emerald-600 text-white p-3 rounded-full shadow-lg opacity-0 pointer-events-none transition-all duration-300 transform translate-y-4 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 z-50"
       aria-label="Scroll to bottom">

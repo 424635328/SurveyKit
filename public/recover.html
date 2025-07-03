@@ -5,21 +5,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>找回问卷链接 - SurveyKit</title>
-    <!-- 引入 Noto Sans SC 字体 -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <!-- 引入 Font Awesome 图标库 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- 引入我们自定义的样式文件 -->
     <link rel="stylesheet" href="./recover.css">
-    <!-- 引入 Cloudflare Turnstile 的脚本 -->
     <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 </head>
 <body>
     <div class="recover-container">
         <div class="recover-card">
-            <!-- 卡片头部 -->
             <header class="card-header">
                 <div class="card-logo">
                     <i class="fas fa-paper-plane"></i>
@@ -40,7 +35,6 @@
                     <input type="text" id="surveyId" name="surveyId" placeholder="您的问卷ID (例如: s_xxxxxx)" class="form-input">
                 </div>
                 
-                <!-- Cloudflare Turnstile 小组件 -->
                 <div class="cf-turnstile" data-sitekey="0x4AAAAAABi7YQoGhynrviis" data-callback="onCaptchaVerified"></div>
                 
                 <button type="submit" id="submitRecover" class="submit-button">
@@ -49,7 +43,6 @@
                 </button>
             </form>
 
-            <!-- 成功状态显示区 -->
             <div id="successState" class="message-box message-box-success hidden">
                 <i class="fas fa-check-circle"></i>
                 <h2 class="message-title">邮件已发送！</h2>
@@ -64,14 +57,12 @@
                 </div>
             </div>
 
-            <!-- 错误状态显示区 -->
             <div id="errorState" class="message-box message-box-error hidden">
                 <i class="fas fa-times-circle"></i>
                 <h2 class="message-title">哦豁，出错了</h2>
                 <p id="errorMessage" class="message-content"></p>
             </div>
 
-            <!-- 底部帮助与返回链接 -->
             <footer class="card-footer">
                 <p class="help-text">
                     忘记了所有信息？ <a href="https://github.com/424635328/SurveyKit/issues" target="_blank" rel="noopener">联系我们</a>

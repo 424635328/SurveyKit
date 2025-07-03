@@ -1,20 +1,13 @@
-# =======================================================
-# 系统和编辑器生成的临时文件
-# =======================================================
 
-# macOS
 .DS_Store
 .AppleDouble
 .LSOverride
 
-# Thumbnails
 ._*
 
-# Windows thumbnail cache
 Thumbs.db
 ehthumbs.db
 
-# VS Code
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
@@ -22,68 +15,26 @@ ehthumbs.db
 !.vscode/extensions.json
 *.code-workspace
 
-# JetBrains IDEs (WebStorm, etc.)
 .idea/
 
 
-# =======================================================
-# Node.js / npm / pnpm / yarn
-# =======================================================
-
-# 依赖包目录
-# 这个是最重要的，永远不要将依赖包提交到仓库
 node_modules/
 
-# 日志文件
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
-# 锁文件 (根据你的包管理器选择保留一个)
-# 如果你使用 npm
-# package-lock.json
-
-# 如果你使用 yarn
-# yarn.lock
-
-# 如果你使用 pnpm
-# pnpm-lock.yaml
-
-# 错误报告
-# report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
-# pid.[0-9]*.[0-9]*.[0-9]*.[0-9]*.log
-# heapdump.[0-9]*.[0-9]*.[0-9]*.[0-9]*.heapsnapshot
-# *.npm
-
-
-# =======================================================
-# Vercel 相关的本地文件
-# =======================================================
-
-# Vercel CLI 本地开发环境生成的文件
 .vercel/
 .output/
 
 
-# =======================================================
-# 环境变量文件
-# =======================================================
-
-# 永远不要将包含密钥或敏感信息的环境变量文件提交
-# .env 文件通常包含所有环境的变量
 .env
-# .env.local 通常包含本地开发特有的变量
 .env.local
-# .env.*.local 包含特定环境（如生产、开发）的本地变量
 .env.development.local
 .env.test.local
 .env.production.local
 
-
-# =======================================================
-# 构建产物和临时文件 (如果未来使用构建工具)
-# =======================================================
 dist/
 build/
 coverage/
@@ -91,3 +42,5 @@ coverage/
 .cache/
 .vercel
 .env*.local
+
+Tips.txt

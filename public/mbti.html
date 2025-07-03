@@ -1,18 +1,15 @@
+<!-- public/mbti.html -->
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AI 人格分析报告 - SurveyKit</title>
-  <!-- 引入 Google 字体 -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
-  <!-- 引入 Font Awesome 图标库 -->
   <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
-  <!-- 引入 SheetJS 用于解析 Excel/CSV -->
   <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
-  <!-- 引入页面专属样式 -->
   <link rel="stylesheet" href="mbti.css">
 </head>
 <body class="page-background">
@@ -25,7 +22,6 @@
         <p class="time-estimate">分析过程大约需要 15-45 秒，请耐心等待魔法发生。</p>
     </div>
 
-    <!-- ★ 上传与输入区域 ★ -->
     <div id="upload-section" class="input-area">
       <!-- 文件拖拽上传区 -->
       <div class="input-card drop-zone" id="drop-zone">
@@ -58,7 +54,6 @@
       </div>
     </div>
 
-    <!-- ★ 结果展示区域 ★ -->
     <div id="result-section" class="result-section" style="display: none;">
       <!-- 加载动画 -->
       <div id="loading-spinner" class="loading-spinner" style="display: none;">
@@ -80,16 +75,14 @@
           </div>
         </div>
         <div id="mbti-analysis-report" class="analysis-report">
-          <!-- AI生成的分析段落会插入到这里 -->
         </div>
       </div>
     </div>
 
   </div>
   <script src="mbti.js" type="module"></script>
-  <!-- Placeholder for questionMap, fetched by JS -->
   <script>
-      window.questionMap = {}; // Will be populated by mbti.js init function
+      window.questionMap = {}; 
   </script>
 </body>
 </html>

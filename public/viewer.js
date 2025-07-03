@@ -1,8 +1,6 @@
-// viewer.js - 最终优化版
-
+// public/viewer.js
 document.addEventListener("DOMContentLoaded", () => {
   const resultsRenderer = (() => {
-    // 缓存所有需要操作的DOM元素
     const allElements = {
       searchNewBtn: document.getElementById("search-new-btn"),
       exportContainer: document.getElementById("export-container"),
@@ -32,11 +30,6 @@ document.addEventListener("DOMContentLoaded", () => {
     let animationObserver;
     let currentSurveyToken = null;
 
-    /**
-     * 显示一个短暂的通知消息 (toast)
-     * @param {string} message - 要显示的消息
-     * @param {string} [type='success'] - 消息类型 ('success' 或 'error')
-     */
     const showNotification = (message, type = "success") => {
       if (!allElements.notification) return;
       allElements.notificationText.textContent = message;
@@ -50,11 +43,6 @@ document.addEventListener("DOMContentLoaded", () => {
       }, 3000);
     };
 
-    /**
-     * 触发文件下载
-     * @param {string} filename - 下载的文件名
-     * @param {Blob} blob - 包含文件内容的Blob对象
-     */
     const downloadFile = (filename, blob) => {
       const link = document.createElement("a");
       link.href = URL.createObjectURL(blob);
@@ -65,10 +53,7 @@ document.addEventListener("DOMContentLoaded", () => {
       URL.revokeObjectURL(link.href);
     };
 
-    /**
-     * 在结果区域显示错误消息
-     * @param {string} message - 错误消息文本
-     */
+
     const renderError = (message) => {
       if (allElements.resultsContainer) {
         allElements.resultsContainer.textContent = ''; 
@@ -79,9 +64,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     };
 
-    /**
-     * 初始化 IntersectionObserver 来实现元素的入场动画
-     */
+
     const initAnimationObserver = () => {
       if (animationObserver) animationObserver.disconnect();
       const animatedElements = document.querySelectorAll(".animated-line");
@@ -97,10 +80,7 @@ document.addEventListener("DOMContentLoaded", () => {
       animatedElements.forEach((el) => animationObserver.observe(el));
     };
 
-    /**
-     * 切换视图 (输入视图 vs. 结果视图)
-     * @param {string} viewName - 'input' 或 'results'
-     */
+
     const switchView = (viewName) => {
       if (!allElements.idInputView || !allElements.resultsView) return;
       allElements.idInputView.classList.toggle("hidden", viewName !== "input");
@@ -116,10 +96,6 @@ document.addEventListener("DOMContentLoaded", () => {
       updateScrollButtonsVisibility();
     };
 
-    /**
-     * 实时分析输入框内容并显示相应的反馈信息。
-     * 优化点：通过检查路径名（pathname）来识别链接，使其在开发和生产环境中都可靠。
-     */
     const analyzeAndDisplayInputFeedback = () => {
         const value = allElements.surveyIdInput.value.trim();
         const { inputFeedbackContainer, inputFeedback } = allElements;
@@ -134,7 +110,6 @@ document.addEventListener("DOMContentLoaded", () => {
         try {
             const url = new URL(value);
 
-            // 检查路径是否包含 '/viewer.html'，这是识别问卷链接的关键
             if (url.pathname.includes('/viewer.html')) {
                 const hasId = url.searchParams.has('id');
                 const hasToken = url.searchParams.has('token');
@@ -149,11 +124,9 @@ document.addEventListener("DOMContentLoaded", () => {
                     feedback = { message: '警告：链接中未发现ID或密钥', type: 'warning' };
                 }
             } else {
-                // 如果是合法的URL，但不是问卷查看链接（例如 https://google.com）
                 feedback = { message: '这似乎不是一个有效的问卷链接，请输入ID或正确的链接', type: 'warning' };
             }
         } catch (error) {
-            // 如果无法解析为URL，则假定它是一个纯ID
             feedback = { message: '已识别为ID。如果需要密钥，请粘贴完整链接', type: 'info' };
         }
         
@@ -162,10 +135,7 @@ document.addEventListener("DOMContentLoaded", () => {
         inputFeedbackContainer.classList.add('visible');
     };
 
-    /**
-     * 准备用于导出的结构化数据
-     * @returns {Array} - 包含问卷结构和答案的数组
-     */
+
     const prepareStructuredExportData = () => {
       if (!sections.length || !Object.keys(surveyData).length) return [];
       const structuredData = JSON.parse(JSON.stringify(sections));
@@ -179,9 +149,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return structuredData;
     };
 
-    /**
-     * 包含所有导出操作的对象
-     */
+
     const exportActions = {
       json: () => {
         const exportData = prepareStructuredExportData();
@@ -206,10 +174,7 @@ document.addEventListener("DOMContentLoaded", () => {
       csv: () => exportToExcelOrCsv("csv"),
     };
 
-    /**
-     * 将数据导出为 Excel 或 CSV 文件
-     * @param {string} format - 'xlsx' 或 'csv'
-     */
+
     const exportToExcelOrCsv = (format) => {
       const structuredData = prepareStructuredExportData();
       if (!structuredData.length) return showNotification("没有数据可导出", "error");
@@ -229,10 +194,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     };
 
-    /**
-     * 渲染问卷结果到页面
-     * @param {object} data - 从API获取的问卷答案数据
-     */
+
     const renderResults = (data) => {
       surveyData = data;
       allElements.resultsContainer.textContent = ""; 
@@ -265,11 +227,7 @@ document.addEventListener("DOMContentLoaded", () => {
       updateScrollButtonsVisibility();
     };
 
-    /**
-     * 获取并渲染问卷数据
-     * @param {string} surveyId - 问卷ID
-     * @param {string|null} surveyToken - 问卷密钥 (token)
-     */
+
     const fetchAndRenderSurvey = async (surveyId, surveyToken) => {
       if (isLoading) return;
       isLoading = true;
@@ -329,9 +287,6 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     };
 
-    /**
-     * 根据页面滚动位置更新“滚动到顶部/底部”按钮的可见性
-     */
     const updateScrollButtonsVisibility = () => {
       const { scrollToTopBtn, scrollToBottomBtn } = allElements;
       if (!scrollToTopBtn || !scrollToBottomBtn) return;
@@ -358,10 +313,6 @@ document.addEventListener("DOMContentLoaded", () => {
       toggleBtnVisibility(scrollToBottomBtn, (scrollY + viewportHeight) < (documentHeight - SCROLL_THRESHOLD));
     };
 
-
-    /**
-     * 初始化应用，绑定所有事件监听器
-     */
     const init = () => {
       // 导出菜单的交互
       if (allElements.exportBtn) {
@@ -383,12 +334,10 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       }
 
-      // 实时输入监听
       if (allElements.surveyIdInput) {
           allElements.surveyIdInput.addEventListener('input', analyzeAndDisplayInputFeedback);
       }
 
-      // 表单提交
       if (allElements.idInputForm) {
         allElements.idInputForm.addEventListener("submit", (e) => {
           e.preventDefault();
@@ -417,7 +366,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       }
 
-      // “查询其他ID”按钮
       if (allElements.searchNewBtn) {
         allElements.searchNewBtn.addEventListener("click", () => {
           switchView("input");
@@ -425,7 +373,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       }
 
-      // 滚动按钮
       if (allElements.scrollToTopBtn) {
         allElements.scrollToTopBtn.addEventListener('click', () => { window.scrollTo({ top: 0, behavior: 'smooth' }); });
       }
@@ -433,10 +380,8 @@ document.addEventListener("DOMContentLoaded", () => {
         allElements.scrollToBottomBtn.addEventListener('click', () => { window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' }); });
       }
       
-      // 页面滚动监听
       window.addEventListener('scroll', updateScrollButtonsVisibility, { passive: true });
 
-      // 页面加载时检查URL参数
       const params = new URLSearchParams(window.location.search);
       const initialSurveyId = params.get("id");
       const initialSurveyToken = params.get("token");

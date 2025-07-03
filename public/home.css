@@ -1,4 +1,4 @@
-/* home.css - (美化升级版) */
+/* public/home.css */
 
 /* 基础字体与滚动行为 */
 body {
@@ -6,12 +6,9 @@ body {
   scroll-behavior: smooth;
 }
 
-/* ==========================================================================
-   动画系统 (Animation System)
-   ========================================================================== */
 
 [data-text] {
-  visibility: hidden; /* 在JS处理前，确保元素不可见，但空间已预留 */
+  visibility: hidden; 
 }
 
 .animated-char {
@@ -41,11 +38,6 @@ body {
   transform: translateY(0);
 }
 
-/* ==========================================================================
-   自定义组件与布局样式
-   ========================================================================== */
-
-/* 1. Hero & CTA 背景 */
 .hero-background {
   position: absolute;
   top: 50%; left: 50%;
@@ -64,7 +56,6 @@ body {
 .cta-section .section-title { color: #fff; }
 .cta-section .section-subtitle { color: #c4b5fd; }
 
-/* 2. 向下滚动提示 */
 #scroll-down-indicator {
   color: #a5b4fc;
   font-size: 1.5rem;
@@ -81,7 +72,6 @@ body {
   60% { transform: translateY(-7px) translateX(-50%); }
 }
 
-/* 3. Section 标题 */
 .section-title {
   font-size: 2.25rem;
   font-weight: 700;
@@ -100,7 +90,6 @@ body {
   .section-subtitle { font-size: 1.25rem; }
 }
 
-/* 4. Feature Card */
 .feature-card {
   position: relative;
   background-color: #fff;
@@ -125,7 +114,6 @@ body {
   margin-bottom: 1rem;
 }
 
-/* 5. 按钮 */
 .primary-btn, .secondary-btn, .secondary-btn-on-dark {
   display: inline-flex;
   align-items: center; justify-content: center;

@@ -1,24 +1,17 @@
 /* public/recover.css */
-
-/* ==========================================================================
-   1. 基础设置与全局样式
-   ========================================================================== */
 body, html {
     margin: 0;
     padding: 0;
     width: 100%;
     height: 100%;
-    background-color: #f8fafc; /* slate-50 */
+    background-color: #f8fafc; 
     font-family: 'Noto Sans SC', sans-serif;
-    color: #334155; /* slate-700 */
+    color: #334155;
     overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
 
-/* ==========================================================================
-   2. 背景辉光效果
-   ========================================================================== */
 body::before {
     content: '';
     position: fixed;
@@ -32,9 +25,6 @@ body::before {
     z-index: -1;
 }
 
-/* ==========================================================================
-   3. 主容器与卡片布局
-   ========================================================================== */
 .recover-container {
     display: flex;
     align-items: center;
@@ -48,7 +38,7 @@ body::before {
     background-color: #fff;
     padding: 2.5rem;
     border-radius: 1rem;
-    border: 1px solid #e2e8f0; /* slate-200 */
+    border: 1px solid #e2e8f0; 
     box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
     width: 100%;
     max-width: 420px;
@@ -66,11 +56,7 @@ body::before {
     }
 }
 
-/* ==========================================================================
-   4. 卡片内部组件
-   ========================================================================== */
 
-/* 4.1. 卡片头部 */
 .card-header {
     margin-bottom: 2rem;
 }
@@ -81,8 +67,8 @@ body::before {
     justify-content: center;
     width: 4rem;
     height: 4rem;
-    background-color: #eef2ff; /* indigo-100 */
-    color: #6366f1; /* indigo-500 */
+    background-color: #eef2ff; 
+    color: #6366f1;
     border-radius: 50%;
     font-size: 1.75rem;
     margin-bottom: 1rem;
@@ -91,19 +77,18 @@ body::before {
 .card-title {
     font-size: 1.875rem;
     font-weight: 700;
-    color: #1e293b; /* slate-800 */
+    color: #1e293b;
     margin: 0 0 0.5rem 0;
 }
 
 .card-subtitle {
     font-size: 1rem;
-    color: #64748b; /* slate-500 */
+    color: #64748b;
     max-width: 320px;
     margin: 0 auto;
     line-height: 1.6;
 }
 
-/* 4.2. 表单元素 */
 .recover-form {
     display: flex;
     flex-direction: column;
@@ -119,14 +104,14 @@ body::before {
     left: 1rem;
     top: 50%;
     transform: translateY(-50%);
-    color: #94a3b8; /* slate-400 */
+    color: #94a3b8;
     transition: color 0.3s ease;
 }
 
 .form-input {
     width: 100%;
     padding: 0.875rem 1rem 0.875rem 3rem;
-    border: 1px solid #cbd5e1; /* slate-300 */
+    border: 1px solid #cbd5e1;
     border-radius: 0.5rem;
     font-size: 1rem;
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
@@ -136,17 +121,17 @@ body::before {
 }
 
 .form-input::placeholder {
-    color: #94a3b8; /* slate-400 */
+    color: #94a3b8; 
 }
 
 .form-input:focus {
     outline: none;
-    border-color: #6366f1; /* indigo-500 */
+    border-color: #6366f1;
     box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
 }
 
 .form-input:focus + i {
-    color: #6366f1; /* indigo-500 */
+    color: #6366f1; 
 }
 
 .form-divider {
@@ -166,14 +151,12 @@ body::before {
     background-color: #e2e8f0;
 }
 
-/* 4.3. Turnstile 组件样式 */
 .cf-turnstile {
     display: flex;
     justify-content: center;
     margin: 0.5rem 0;
 }
 
-/* 4.4. 提交按钮 */
 .submit-button {
     display: inline-flex;
     align-items: center;
@@ -210,7 +193,6 @@ body::before {
     margin-left: 0.5rem;
 }
 
-/* 4.5. 消息提示盒子 (成功/失败) */
 .message-box {
     padding: 1.5rem;
     border-radius: 0.75rem;
@@ -259,7 +241,6 @@ body::before {
     color: #991b1b;
 }
 
-/* 4.6. "下一步" 指引 */
 .next-steps {
     margin-top: 1.5rem;
     padding-top: 1rem;
@@ -296,7 +277,6 @@ body::before {
     color: #22c55e;
 }
 
-/* 4.7. 卡片底部 */
 .card-footer {
     margin-top: 2rem;
     padding-top: 1.5rem;
@@ -333,9 +313,6 @@ body::before {
     color: #4f46e5;
 }
 
-/* ==========================================================================
-   5. 辅助工具类
-   ========================================================================== */
 .hidden {
     display: none !important;
 }

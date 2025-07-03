@@ -1,3 +1,4 @@
+<!-- public/result.html -->
 <!DOCTYPE html>
 <html lang="zh-CN">
 
@@ -14,25 +15,20 @@
 </head>
 
 <body>
-    <!-- 顶部导航栏及提交状态显示 -->
     <header class="navbar">
         <div class="navbar-brand">
             <a href="/">SurveyKit</a>
         </div>
         <div id="status-display" class="status-display">
-            <!-- 状态信息将由 JS 动态填充，初始显示加载 -->
             <p class="loading">
                 <i class="fas fa-spinner fa-spin"></i> 正在处理你的提交...
             </p>
         </div>
     </header>
 
-    <!-- 主内容区域，增加一个 wrapper 来控制整体宽度和居中 -->
     <main class="main-content">
         <div class="result-container">
-            <!-- 原有的 status-container 已移至顶部导航栏，这里移除 -->
 
-            <!-- 人格画像卡片 -->
             <div id="personality-card" class="section-card fade-in-element" style="display: none;">
                 <div class="card-header">
                     <span class="card-icon">🎭</span>
@@ -43,7 +39,6 @@
                 <p id="secondary-personality" class="secondary-personality" style="display: none;"></p>
             </div>
 
-            <!-- 彩蛋卡片 -->
             <div id="egg-container" class="section-card fade-in-element" style="display: none;">
                 <div class="card-header">
                     <span class="card-icon">💡</span>
@@ -53,13 +48,11 @@
                 <button id="reroll-egg-btn" class="reroll-btn" title="换一个看看">🎲 换一个</button>
             </div>
 
-            <!-- 操作卡片组 -->
             <div id="actions-container" class="actions-container fade-in-element" style="display: none;">
                 <div class="action-card section-card">
                     <h3>你的问卷档案</h3>
                     <p>回顾你刚刚填写的所有答案，或进行人格分析。</p>
 
-                    <!-- 专属问卷链接区域 - 保持并使其成为主要入口 -->
                     <div
                         class="my-link-section mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg text-blue-800 text-sm">
                         <p class="font-bold mb-2">✨ 你的专属问卷链接已生成！</p>
@@ -67,7 +60,6 @@
                         <div class="flex items-center space-x-2">
                             <span id="exclusive-survey-link"
                                 class="bg-blue-100 text-blue-900 p-2 rounded-md break-all flex-grow text-xs sm:text-sm">
-                                <!-- 链接将由 JS 填充 -->
                             </span>
                             <button id="copy-exclusive-link-btn"
                                 class="btn-icon bg-blue-600 text-white p-2 rounded-md hover:bg-blue-700 transition-colors"

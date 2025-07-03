@@ -1,4 +1,4 @@
-// result.js - 用于处理问卷结果页面的逻辑
+// public/result.js
 document.addEventListener("DOMContentLoaded", () => {
     // 获取 DOM 元素
     const statusDisplay = document.getElementById("status-display"); // 状态显示区域
@@ -649,9 +649,6 @@ document.addEventListener("DOMContentLoaded", () => {
         renderPage();
         // 只有在成功状态下才设置后续动作，因为失败会直接跳转
         if (status === "success") {
-            // 在卡片动画完成后再设置动作监听器，避免在元素未完全显示时就被点击
-            // 或者，如果按钮一直存在，可以在 DOMContentLoaded 时就设置，但需要注意用户体验
-            // 目前保持在 init 时就设置，因为按钮即便隐藏也是DOM的一部分。
             setupActions();
         }
     };

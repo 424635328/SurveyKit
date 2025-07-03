@@ -1,8 +1,4 @@
-/* =================================================================== */
-/*  SurveyKit - status.css (Shared Styles for Status Pages)          */
-/* =================================================================== */
-
-/* 引入外部字体 (可选，但推荐以获得更好的视觉效果) */
+/* public/status/status.css */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
 
 body {
@@ -11,9 +7,8 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* 渐变背景 */
 .gradient-background {
-  background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%); /* a light violet/purple gradient */
+  background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%);
 }
 
 /* 主容器样式 */
@@ -41,7 +36,7 @@ body {
 .status-title {
   font-size: clamp(2rem, 5vw, 3rem); /* 响应式字体大小 */
   font-weight: 700;
-  color: #4338ca; /* a deep indigo */
+  color: #4338ca;
   margin-bottom: 1rem;
   opacity: 0;
   transform: translateY(20px);
@@ -51,7 +46,7 @@ body {
 /* 描述文本样式 */
 .status-description {
   max-width: 500px;
-  color: #64748b; /* slate-500 */
+  color: #64748b;
   font-size: 1.125rem;
   line-height: 1.75;
   margin-bottom: 2.5rem;
@@ -71,7 +66,7 @@ body {
   background-image: linear-gradient(to right, #6366f1 0%, #8b5cf6 51%, #6366f1 100%);
   background-size: 200% auto;
   border: none;
-  border-radius: 9999px; /* pill shape */
+  border-radius: 9999px; 
   text-decoration: none;
   cursor: pointer;
   box-shadow: 0 4px 15px 0 rgba(139, 92, 246, 0.3);
@@ -82,7 +77,7 @@ body {
 }
 
 .status-button:hover {
-  background-position: right center; /* change the direction of the change here */
+  background-position: right center; 
   box-shadow: 0 6px 20px 0 rgba(139, 92, 246, 0.4);
   transform: translateY(-2px);
 }

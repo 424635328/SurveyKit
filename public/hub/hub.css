@@ -1,57 +1,34 @@
-/*
- * ===================================================================
- *  SurveyKit - hub.css (Enhanced & Refined Version)
- * ===================================================================
- *  This stylesheet uses modern CSS techniques including custom properties,
- *  gradient backgrounds, and enhanced interaction states to create a
- *  visually appealing and highly interactive user experience.
- */
-
-/*
- * :root -> Global Custom Properties
- * -----------------------------------------
- * Centralized control for colors, transitions, and shadows.
- */
+/* public/hub/hub.css */
 :root {
-  /* Transitions & Animations */
   --transition-fast: 0.2s;
   --transition-medium: 0.4s;
   --timing-function-ease: cubic-bezier(0.25, 0.1, 0.25, 1);
   --timing-function-elastic: cubic-bezier(0.68, -0.55, 0.27, 1.55);
 
-  /* Shadows */
   --shadow-color-light: rgba(67, 56, 202, 0.04);
   --shadow-color-medium: rgba(67, 56, 202, 0.08);
   --shadow-card: 0 4px 12px var(--shadow-color-light);
   --shadow-card-hover: 0 10px 30px -5px var(--shadow-color-medium), 0 8px 16px -8px var(--shadow-color-light);
   --shadow-text: 0 2px 5px rgba(0, 0, 0, 0.1);
 
-  /* Code Highlight */
-  --code-bg-color: #f5f3ff; /* purple-50 */
-  --code-text-color: #7c3aed; /* purple-600 */
+  --code-bg-color: #f5f3ff;
+  --code-text-color: #7c3aed;
 
-  /* Gradient Palette */
-  --grad-creator-start: #34d399; --grad-creator-end: #059669;  /* Emerald */
-  --grad-viewer-start: #60a5fa;  --grad-viewer-end: #2563eb;   /* Blue */
-  --grad-validator-start: #fb923c; --grad-validator-end: #ea580c;  /* Orange */
-  --grad-utility-start: #a78bfa;  --grad-utility-end: #7c3aed;   /* Violet */
-  --grad-creative-start: #f472b6; --grad-creative-end: #db2777;   /* Pink */
+  --grad-creator-start: #34d399; --grad-creator-end: #059669;  
+  --grad-viewer-start: #60a5fa;  --grad-viewer-end: #2563eb;  
+  --grad-validator-start: #fb923c; --grad-validator-end: #ea580c;  
+  --grad-utility-start: #a78bfa;  --grad-utility-end: #7c3aed;   
+  --grad-creative-start: #f472b6; --grad-creative-end: #db2777; 
 
-  /* Theme Colors for Highlights & Hovers */
   --theme-creator: #10b981;
   --theme-viewer: #3b82f6;
   --theme-validator: #f97316;
   --theme-utility: #8b5cf6;
   --theme-creative: #ec4899;
 
-  /* Header Scroll Effect */
   --header-border-color: rgba(229, 231, 235, 0.7);
 }
 
-/*
- * Base Styles & Scrollbar
- * -----------------------------------------
- */
 body {
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
@@ -62,10 +39,6 @@ body {
 ::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 4px; border: 2px solid #f7f7f7; }
 ::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
 
-/*
- * Utility Classes
- * -----------------------------------------
- */
 .text-shadow { text-shadow: var(--shadow-text); }
 .inline-code {
   background-color: var(--code-bg-color);
@@ -76,13 +49,7 @@ body {
   font-family: 'SFMono-Regular', Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
 
-/*
- * ===================================================================
- *  Card Component System
- * ===================================================================
- */
 
-/* 1. Card Base & Interaction */
 .card-hover {
   transition: transform var(--transition-fast) var(--timing-function-ease),
               box-shadow var(--transition-medium) var(--timing-function-ease),
@@ -93,7 +60,7 @@ body {
 }
 
 .card-hover:hover,
-.card-hover:focus-within { /* Added :focus-within for accessibility */
+.card-hover:focus-within { 
   transform: translateY(-10px) scale(1.02);
   box-shadow: var(--shadow-card-hover);
   outline-color: var(--theme-color);
@@ -107,7 +74,6 @@ body {
   transition: transform var(--transition-medium) var(--timing-function-elastic);
 }
 
-/* 2. Card Banner (Top Gradient Area) */
 .card__banner {
   display: flex;
   align-items: center;
@@ -115,28 +81,25 @@ body {
   background-image: linear-gradient(135deg, var(--grad-start), var(--grad-end));
 }
 
-/* 3. Card Content Area */
 .card__content {
-  padding: 1.5rem 2rem 2rem; /* p-6 md:p-8 */
+  padding: 1.5rem 2rem 2rem; 
   display: flex;
   flex-direction: column;
   flex-grow: 1;
 }
 
-/* 4. Card Theming */
 .card--creator   { --grad-start: var(--grad-creator-start);   --grad-end: var(--grad-creator-end);   --theme-color: var(--theme-creator); }
 .card--viewer    { --grad-start: var(--grad-viewer-start);    --grad-end: var(--grad-viewer-end);    --theme-color: var(--theme-viewer); }
 .card--validator { --grad-start: var(--grad-validator-start); --grad-end: var(--grad-validator-end); --theme-color: var(--theme-validator); }
 .card--utility   { --grad-start: var(--grad-utility-start);   --grad-end: var(--grad-utility-end);   --theme-color: var(--theme-utility); }
 .card--creative  { --grad-start: var(--grad-creative-start);  --grad-end: var(--grad-creative-end);  --theme-color: var(--theme-creative); }
 
-/* Apply theme color to headings and links */
 .card-hover h3 { color: var(--grad-end); }
 .card__action-link {
   font-weight: 600;
   color: var(--theme-color);
   transition: color var(--transition-fast) ease, transform var(--transition-fast) ease;
-  display: inline-block; /* for transform to work */
+  display: inline-block; 
 }
 .card-hover:hover .card__action-link,
 .card-hover:focus-within .card__action-link {
@@ -152,21 +115,13 @@ body {
   transform: translateX(6px) rotate(10deg);
 }
 
-/*
- * ===================================================================
- *  Quick Access Section
- * ===================================================================
- */
-
-/* 1. Section Base */
 .quick-access-section {
-  background-color: transparent; /* Remove background to blend with page */
+  background-color: transparent;
   border: 1px solid #e5e7eb;
   background-image: radial-gradient(#f9fafb 1px, transparent 1px);
   background-size: 16px 16px;
 }
 
-/* 2. Quick Access Item (Small Card) */
 .quick-access-item {
   display: flex;
   align-items: center;
@@ -181,7 +136,6 @@ body {
   outline-offset: 2px;
 }
 
-/* 3. Hover & Focus Effect */
 .quick-access-item:hover,
 .quick-access-item:focus-within {
   transform: translateY(-4px);
@@ -200,7 +154,6 @@ body {
   transform: scale(1.1);
 }
 
-/* 4. Icon Wrapper */
 .quick-access-item__icon-wrapper {
   display: flex;
   align-items: center;
@@ -219,17 +172,12 @@ body {
   transition: all var(--transition-fast) var(--timing-function-ease);
 }
 
-/* 5. Item Theming */
 .item--survey  { --item-theme-color: #3b82f6; --item-bg-color: #eff6ff; --item-theme-color-shadow: rgba(59, 130, 246, 0.3); }
 .item--ai      { --item-theme-color: #8b5cf6; --item-bg-color: #f5f3ff; --item-theme-color-shadow: rgba(139, 92, 246, 0.3); }
 .item--compare { --item-theme-color: #10b981; --item-bg-color: #ecfdf5; --item-theme-color-shadow: rgba(16, 185, 129, 0.3); }
 .item--github  { --item-theme-color: #1f2937; --item-bg-color: #f3f4f6; --item-theme-color-shadow: rgba(31, 41, 55, 0.3); }
 
-/*
- * ===================================================================
- *  Flowing Fade-in Animation
- * ===================================================================
- */
+
 [data-animate="fade-in"] {
   opacity: 0;
   transform: translateY(25px);
@@ -242,11 +190,7 @@ body {
   transform: translateY(0);
 }
 
-/*
- * ===================================================================
- *  Header Scroll Effect
- * ===================================================================
- */
+
 header {
   transition: all 0.3s ease-in-out;
   border-bottom: 1px solid transparent;

@@ -1,3 +1,4 @@
+// public/hub/custom-questions/custom-questions.js
 document.addEventListener("DOMContentLoaded", () => {
   const sectionsContainer = document.getElementById("sections-container");
   const addSectionBtn = document.getElementById("add-section-btn");

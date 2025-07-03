@@ -1,3 +1,4 @@
+/* public/survey.css */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -23,7 +24,6 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* MODIFIED: Add a helper class to hide elements during image export */
 body.is-exporting .survey-header-top,
 body.is-exporting .jump-grid-container,
 body.is-exporting .form-actions,
@@ -401,11 +401,11 @@ select:focus {
 }
 
 .error-message {
-    color: #dc2626; /* red-600 */
+    color: #dc2626; 
     font-size: 0.875rem;
     margin-top: 8px;
-    min-height: 1.25em; /* Prevent layout shift */
-    display: none; /* Initially hidden */
+    min-height: 1.25em;
+    display: none;
 }
 
 input.input-error {
@@ -722,7 +722,6 @@ select {
 .form-actions {
   margin-top: 30px;
   width: 100%;
-  /* MODIFIED: Added styles for new export button group */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -738,7 +737,7 @@ select {
 .export-options-menu {
   display: none;
   position: absolute;
-  bottom: 110%; /* Position above the button */
+  bottom: 110%;
   left: 50%;
   transform: translateX(-50%);
   background-color: #fff;
@@ -782,7 +781,6 @@ select {
   background-color: #eef2ff;
 }
 
-/* MODIFIED: Disable pointer events on icon during export to prevent hover issues */
 #exportButton.is-loading i {
     pointer-events: none;
 }

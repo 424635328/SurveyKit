@@ -1,3 +1,4 @@
+// public/survey.js
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("surveyForm");
   const progressBarElement = document.getElementById("scrollProgress");
@@ -16,7 +17,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const exportButton = document.getElementById("exportButton");
   const exportOptions = document.getElementById("exportOptions");
 
-  // 新增：获取图片导出模态框的元素
   const imageExportModal = document.getElementById('imageExportModal');
   const confirmExportImageBtn = document.getElementById('confirmExportImageBtn');
   const cancelExportImageBtn = document.getElementById('cancelExportImageBtn');
@@ -644,16 +644,7 @@ document.addEventListener("DOMContentLoaded", () => {
     },
   };
     
-    /**
-     * @module exportManager
-     * @description
-     * Manages the export functionality for the survey draft.
-     * 
-     * @changelog
-     * - Replaced Word export with a styled HTML export.
-     * - Significantly improved the TXT export format for better readability.
-     * - (NEW) Added a confirmation/warning modal for Image export to improve reliability.
-     */
+   
     const exportManager = {
         getAnsweredSurveyData: (forDisplay = false) => {
             const formData = new FormData(form);
@@ -940,7 +931,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     } else {
                         console.error('图片导出模态框未找到，将直接导出。');
                         // 这是一个备用方案，如果模态框HTML缺失，则直接触发导出
-                        // (但用户体验不如有提示的好)
                         confirmExportImageBtn.click();
                     }
                 });
@@ -1088,7 +1078,6 @@ document.addEventListener("DOMContentLoaded", () => {
       historyLookupModule.init();
       exportManager.init();
 
-      // **新增**：为图片导出模态框设置事件监听器
       if (imageExportModal) {
         // 点击“取消”按钮
         cancelExportImageBtn.addEventListener('click', () => {
