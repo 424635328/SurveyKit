@@ -1,3 +1,4 @@
+// public/hub/hub.js
 document.addEventListener('DOMContentLoaded', () => {
 
   function initApp() {

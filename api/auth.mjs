@@ -1,3 +1,4 @@
+// File: api/auth.mjs
 import { kv } from '@vercel/kv';
 import { z } from 'zod';
 import bcrypt from 'bcryptjs';
