@@ -682,7 +682,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     }
 
                     q.answer = forDisplay ? displayValue : rawValue;
-                    q.rawValue = rawValue; // Keep raw value for logic
+                    q.rawValue = rawValue;
                     return q;
 
                 }).filter(q => q !== null);
@@ -772,7 +772,6 @@ document.addEventListener("DOMContentLoaded", () => {
             exportManager.downloadFile('深度问卷草稿.txt', blob);
         },
 
-        // **已修改**：这个函数现在是执行实际截图的函数，它将被确认按钮调用
         performImageExport: async () => {
             if (typeof html2canvas === 'undefined') {
                 throw new Error('无法导出图片：所需组件 html2canvas 未能成功加载。请检查您的网络连接或浏览器插件。');
@@ -921,7 +920,6 @@ document.addEventListener("DOMContentLoaded", () => {
              setupExportHandler('exportJson', exportManager.exportAsJson);
              setupExportHandler('exportHtml', exportManager.exportAsHtml);
              
-             // **新增**：为图片导出设置特殊的点击事件，只用于打开模态框
              const exportImageLink = document.getElementById('exportImage');
              if (exportImageLink) {
                 exportImageLink.addEventListener('click', (e) => {
