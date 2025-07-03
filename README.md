@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="./public/favicon.ico" alt="SurveyKit Demo" width="800" />
+<img src="./public/favicon.ico" alt="SurveyKit Demo" width="200" />
 
 <h1 align="center">SurveyKit - 一份为你定制的深度问卷</h1>
 <p align="center">

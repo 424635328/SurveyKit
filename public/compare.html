@@ -1,111 +1,126 @@
 <!-- public/compare.html -->
-
 <!DOCTYPE html>
 <html lang="zh-CN">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>默契度对比 - SurveyKit</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap"
-        rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <!-- 引入通用样式和本页特有样式 -->
-    <link rel="stylesheet" href="viewer.css"> 
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <!-- 引入与hub页一致的字体和核心样式 -->
+    <link rel="stylesheet" href="hub/hub.css"> 
+    <!-- 引入本页特有样式 -->
     <link rel="stylesheet" href="compare.css">
 </head>
+<body class="font-sans min-h-screen flex flex-col">
 
-<body>
-    <div class="compare-container">
-        <h1 class="page-title">默契度大挑战 🧐</h1>
-        <p class="page-subtitle">输入双方问卷链接，揭示你们的默契与不同！</p>
+    <!-- 1. 复用 Hub 页的 Header 以保持导航一致性 -->
+    <header class="sticky top-0 z-50">
+      <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+        <div class="flex items-center space-x-2">
+          <span class="text-indigo-500 text-2xl"><i class="fa fa-wpforms"></i></span>
+          <h1 class="text-xl font-bold bg-gradient-to-r from-indigo-500 to-purple-600 bg-clip-text text-transparent">SurveyKit</h1>
+        </div>
+        <nav class="hidden md:flex items-center space-x-8">
+          <a href="./index.html" class="text-gray-600 hover:text-indigo-500 transition-colors duration-200 flex items-center"><i class="fa fa-home mr-2"></i> 首页</a>
+          <a href="./hub/hub.html" class="text-gray-600 hover:text-indigo-500 transition-colors duration-200 flex items-center"><i class="fa fa-wrench mr-2"></i> 工具中心</a>
+          <a href="./docs/help.html" class="text-gray-600 hover:text-indigo-500 transition-colors duration-200 flex items-center"><i class="fa fa-book mr-2"></i> 帮助文档</a>
+          <a href="https://github.com/424635328/SurveyKit" target="_blank" rel="noopener" class="text-gray-600 hover:text-indigo-500 transition-colors duration-200 flex items-center"><i class="fa fa-github mr-2"></i> GitHub</a>
+        </nav>
+        <button class="md:hidden text-gray-600 focus:outline-none" id="menu-toggle" aria-label="Toggle mobile menu"><i class="fa fa-bars text-xl"></i></button>
+      </div>
+      <div class="md:hidden hidden bg-white border-t border-gray-100 shadow-md" id="mobile-menu">
+        <div class="container mx-auto px-4 py-3 flex flex-col space-y-3">
+          <a href="./index.html" class="text-gray-600 hover:text-indigo-500 py-2 transition-colors duration-200 flex items-center"><i class="fa fa-home mr-2"></i> 首页</a>
+          <a href="./hub/hub.html" class="text-gray-600 hover:text-indigo-500 py-2 transition-colors duration-200 flex items-center"><i class="fa fa-wrench mr-2"></i> 工具中心</a>
+          <a href="./docs/help.html" class="text-gray-600 hover:text-indigo-500 py-2 transition-colors duration-200 flex items-center"><i class="fa fa-book mr-2"></i> 帮助文档</a>
+          <a href="https://github.com/424635328/SurveyKit" rel="noopener" target="_blank" class="text-gray-600 hover:text-indigo-500 py-2 transition-colors duration-200 flex items-center"><i class="fa fa-github mr-2"></i> GitHub</a>
+        </div>
+      </div>
+    </header>
+
+    <main class="flex-grow container mx-auto px-4 py-12 md:py-20">
+        <div class="text-center mb-16 max-w-3xl mx-auto">
+            <h2 class="text-[clamp(2rem,4.5vw,3rem)] font-bold mb-4 leading-tight text-shadow">默契度 <span class="bg-gradient-to-r from-orange-400 to-rose-500 bg-clip-text text-transparent">大挑战</span></h2>
+            <p class="text-slate-300 text-lg">输入双方问卷链接，揭示你们思想的共鸣与差异。</p>
+        </div>
 
         <!-- 双链接输入界面 -->
-        <div id="double-link-prompt" class="section-card compare-prompt">
-            <div class="card-header">
-                <span class="card-icon">🤝</span>
-                <h3>输入双方问卷链接</h3>
+        <div id="double-link-prompt" class="card-base max-w-2xl mx-auto p-8" style="display: none;">
+            <h3 class="form-title"><i class="fa fa-link mr-3 text-indigo-400"></i>输入双方问卷链接</h3>
+            <p class="form-description">粘贴两个完整的问卷专属链接，开始你们的默契之旅！</p>
+            <div class="space-y-6 mt-6">
+                <input type="text" id="firstLinkInput" placeholder="粘贴第一个问卷专属链接" autocomplete="off" class="form-input">
+                <input type="text" id="secondLinkInput" placeholder="粘贴第二个问卷专属链接" autocomplete="off" class="form-input">
+                <button id="compareTwoLinksBtn" class="action-button">
+                    <i class="fa fa-search mr-2"></i>开始对比
+                </button>
             </div>
-            <p>请输入两个完整的问卷专属链接进行对比，看看你们的默契度如何！</p>
-            <div class="double-compare-form">
-                <div class="input-group">
-                    <label for="firstLinkInput" class="sr-only">第一个问卷链接</label>
-                    <input type="text" id="firstLinkInput" 
-                           placeholder="在此粘贴第一个问卷专属链接 (例如：https://survey-kit.vercel.app/viewer.html?id=xxx&token=yyy)" 
-                           autocomplete="off" class="form-input">
-                </div>
-                <div class="input-group">
-                    <label for="secondLinkInput" class="sr-only">第二个问卷链接</label>
-                    <input type="text" id="secondLinkInput" 
-                           placeholder="在此粘贴第二个问卷专属链接 (例如：https://survey-kit.vercel.app/viewer.html?id=aaa&token=bbb)" 
-                           autocomplete="off" class="form-input">
-                </div>
-                <button id="compareTwoLinksBtn" class="primary-action-btn">开始对比</button>
-            </div>
-            <p class="small-text">还没有问卷？<a href="/" class="link-text">点击这里</a>去填写一份吧！</p>
+            <p class="mt-6 text-center text-sm text-slate-400">还没有问卷？<a href="./survey.html" class="font-medium text-indigo-400 hover:text-indigo-300">立即填写一份</a></p>
         </div>
 
         <!-- 单链接输入界面 -->
-        <div id="single-link-prompt" class="section-card compare-prompt">
-            <div class="card-header">
-                <span class="card-icon">🤝</span>
-                <h3>加入这场默契挑战！</h3>
+        <div id="single-link-prompt" class="card-base max-w-2xl mx-auto p-8" style="display: none;">
+            <h3 class="form-title"><i class="fa fa-user-plus mr-3 text-teal-400"></i>加入这场默契挑战！</h3>
+            <p class="form-description">你的朋友向你发起了挑战！请粘贴你自己的问卷链接来一较高下。</p>
+            <div class="space-y-6 mt-6">
+                <input type="text" id="receiverLinkInput" placeholder="粘贴你自己的问卷专属链接" autocomplete="off" class="form-input">
+                <button id="finalizeCompareBtn" class="action-button">
+                    <i class="fa fa-check-circle mr-2"></i>揭晓结果
+                </button>
             </div>
-            <p>你的朋友向你发起了挑战。请在下方粘贴你自己的问卷专属链接，来看看你们的匹配度吧！</p>
-            <div class="compare-form">
-                <input type="text" id="receiverLinkInput" 
-                       placeholder="在此粘贴你自己的问卷专属链接 (例如：https://survey-kit.vercel.app/viewer.html?id=xxx&token=yyy)" 
-                       autocomplete="off" class="form-input">
-                <button id="finalizeCompareBtn" class="primary-action-btn">揭晓结果</button>
-            </div>
-            <p class="small-text">还没有自己的问卷？<a href="/" class="link-text">点击这里</a>去填写一份吧！</p>
+            <p class="mt-6 text-center text-sm text-slate-400">还没有问卷？<a href="./survey.html" class="font-medium text-indigo-400 hover:text-indigo-300">立即填写一份</a></p>
         </div>
 
         <!-- 加载动画区域 -->
-        <div id="loading-compare-spinner" class="loading-spinner">
+        <div id="loading-compare-spinner" class="flex flex-col items-center justify-center space-y-4 py-20 text-white" style="display: none;">
             <div class="spinner"></div>
-            <p id="loading-compare-text">正在计算默契度，请稍候...</p>
+            <p id="loading-compare-text" class="text-lg text-slate-300">正在计算默契度...</p>
         </div>
 
         <!-- 状态/错误信息区域 -->
-        <div id="status-message" class="message-text"></div>
+        <div id="status-message" class="card-base max-w-2xl mx-auto p-6 text-center" style="display: none;"></div>
 
         <!-- 默契度得分仪表盘 -->
-        <div id="match-score-container" class="section-card match-score-container">
-            <div class="card-header">
-                <span class="card-icon">🎯</span>
-                <h3>默契度得分</h3>
-            </div>
+        <div id="match-score-container" class="card-base max-w-2xl mx-auto p-8 flex flex-col items-center space-y-6" style="display: none;">
+            <h3 class="form-title"><i class="fa fa-bullseye mr-3 text-rose-400"></i>默契度得分</h3>
             <div class="score-circle">
-                <span id="match-score">0</span>%
+                <span id="match-score" class="text-6xl font-extrabold text-white">0</span>
+                <span class="text-2xl font-bold text-slate-300">%</span>
             </div>
-            <p id="match-summary"></p>
+            <p id="match-summary" class="text-slate-300 text-center max-w-md"></p>
         </div>
 
         <!-- 对比结果容器 -->
-        <div id="compare-results-container" class="section-card compare-results-container">
-            <div class="card-header">
-                <span class="card-icon">📋</span>
-                <h3>对比详情</h3>
-            </div>
+        <div id="compare-results-container" class="card-base max-w-4xl mx-auto mt-12 p-6 md:p-8" style="display: none;">
+             <h3 class="form-title mb-8"><i class="fa fa-tasks mr-3 text-cyan-400"></i>对比详情</h3>
             <div class="results-table-header">
                 <div class="question-column">问题</div>
-                <div class="answer-column">答案一</div>
-                <div class="answer-column">答案二</div>
+                <div class="answer-column">回答一</div>
+                <div class="answer-column">回答二</div>
             </div>
-            <div id="results-list">
+            <div id="results-list" class="mt-4 space-y-4">
                 <!-- 对比结果项会在这里动态加载 -->
             </div>
         </div>
+    </main>
 
-        <footer class="page-footer">
-            <p>返回 <a href="/" class="link-text">问卷首页</a></p>
-        </footer>
-    </div>
+    <!-- 2. 复用 Hub 页的 Footer -->
+    <footer class="bg-slate-800 text-white py-10 mt-20">
+      <div class="container mx-auto px-4">
+        <div class="flex flex-col md:flex-row justify-between items-center text-center md:text-left space-y-6 md:space-y-0">
+          <div class="flex items-center"><span class="text-indigo-500 text-2xl mr-2"><i class="fa fa-wpforms"></i></span><h2 class="text-xl font-bold">SurveyKit</h2></div>
+          <div class="text-slate-400 text-sm">© <span id="current-year-footer"></span> SurveyKit. 保留所有权利。</div>
+          <div class="flex space-x-6"><a href="https://github.com/424635328/SurveyKit" target="_blank" rel="noopener" class="text-slate-400 hover:text-white transition-colors duration-200" aria-label="GitHub"><i class="fa fa-github text-xl"></i></a></div>
+        </div>
+      </div>
+    </footer>
 
+    <button id="scrollToTopBtn" class="fixed bottom-6 right-6 bg-indigo-600 text-white p-3 rounded-full shadow-lg opacity-0 pointer-events-none transition-all duration-300 transform translate-y-4 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 z-50" aria-label="Scroll to top"><i class="fa fa-arrow-up text-lg"></i></button>
+    
+    <!-- 为了让 Header/Footer/ScrollTop 正常工作，引入 hub.js -->
+    <script src="hub/hub.js"></script>
+    <!-- 本页面的核心逻辑 -->
     <script src="compare.js"></script>
 </body>
-
 </html>
