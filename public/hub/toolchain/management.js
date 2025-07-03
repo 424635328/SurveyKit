@@ -27,19 +27,31 @@ document.addEventListener('DOMContentLoaded', () => {
         const noSurveysMessage = document.getElementById('no-surveys-message');
         const uploadSurveyBtn = document.getElementById('upload-survey-btn');
         const fileInput = document.getElementById('file-input-hidden');
-        const shareModal = document.getElementById('share-modal');
         const deleteModal = document.getElementById('delete-modal');
+
+        // NEW: Import Survey Modal elements
+        const importSurveyModal = document.getElementById('import-survey-modal');
+        const importFileNameSpan = document.getElementById('import-file-name');
+        const importSurveyTitleInput = document.getElementById('import-survey-title-input');
+        const cancelImportBtn = document.getElementById('cancel-import-btn');
+        const confirmImportBtn = document.getElementById('confirm-import-btn');
+
+        // NEW: Toast Container
+        const toastContainer = document.getElementById('toast-container');
+
+
         let surveyToDeleteId = null;
         let surveysCache = [];
+        let currentImportFile = null; // 用于存储当前待导入的文件对象
+        let currentFileContent = null; // 用于存储当前待导入文件的内容
 
         function createSurveyCard(survey) {
             const card = document.createElement('div');
             card.className = 'survey-card';
             card.dataset.surveyId = survey.id;
-            card.dataset.surveyTitle = survey.title;
+            card.dataset.surveyTitle = escapeHtml(survey.title);
             const creationDate = new Date(survey.createdAt).toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' });
             
-            // **核心修改点：更新了所有按钮的链接和功能**
             card.innerHTML = `
                 <div class="survey-header">
                     <div class="survey-info">
@@ -57,6 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="survey-actions">
                     <button class="action-btn share-btn"><i class="fa fa-share-alt"></i> 分享</button>
                     <a href="./results.html?id=${survey.id}" class="action-btn"><i class="fa fa-bar-chart"></i> 查看结果</a>
+                    <button class="action-btn download-btn"><i class="fa fa-download"></i> 下载问卷</button>
                     <button class="action-btn delete-btn delete"><i class="fa fa-trash-o"></i> 删除</button>
                 </div>
             `;
@@ -88,19 +101,70 @@ document.addEventListener('DOMContentLoaded', () => {
         function attachActionListeners() {
             document.querySelectorAll('.share-btn').forEach(button => button.addEventListener('click', handleShareClick));
             document.querySelectorAll('.delete-btn').forEach(button => button.addEventListener('click', handleDeleteClick));
+            document.querySelectorAll('.download-btn').forEach(button => button.addEventListener('click', handleDownloadClick));
+        }
+
+        async function handleDownloadClick(event) {
+            const button = event.currentTarget;
+            const card = button.closest('.survey-card');
+            const surveyId = card.dataset.surveyId;
+            const surveyTitle = card.dataset.surveyTitle;
+
+            const originalContent = button.innerHTML;
+            button.disabled = true;
+            button.innerHTML = '<i class="fa fa-spinner fa-spin"></i> 下载中...';
+
+            try {
+                const response = await fetch(`/api/survey-details.mjs?id=${surveyId}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`获取问卷详情失败 (状态: ${response.status})`);
+                }
+
+                const surveyDetails = await response.json();
+                
+                const questionsData = surveyDetails.questions;
+                if (!questionsData || !Array.isArray(questionsData)) {
+                    throw new Error('问卷数据格式不正确或无问题内容。');
+                }
+
+                const filename = `${surveyTitle.replace(/[\/\\?%*:|"<>]/g, '-') || 'survey'}.json`;
+                const jsonString = JSON.stringify(questionsData, null, 2);
+                const blob = new Blob([jsonString], { type: 'application/json;charset=utf-8' });
+
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = filename;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(link.href);
+
+                showToast('问卷下载成功！', 'success');
+
+            } catch (error) {
+                console.error('下载问卷失败:', error);
+                showToast(`下载失败: ${error.message}`, 'error');
+            } finally {
+                button.disabled = false;
+                button.innerHTML = originalContent;
+            }
         }
         
         function handleShareClick(event) {
             const card = event.target.closest('.survey-card');
             const surveyId = card.dataset.surveyId;
-            const surveyTitle = card.dataset.surveyTitle;
-            const shareUrl = `./share.html?id=${surveyId}&title=${encodeURIComponent(surveyTitle)}`;
-            window.open(shareUrl, '_blank');
+            const surveyTitle = card.dataset.surveyTitle; 
+
+            const sharePageUrl = `./share.html?id=${surveyId}&title=${encodeURIComponent(surveyTitle)}`;
+            window.open(sharePageUrl, '_blank'); 
         }
         
         function handleDeleteClick(event) {
             surveyToDeleteId = event.target.closest('.survey-card').dataset.surveyId;
-            const surveyTitle = event.target.closest('.survey-card').querySelector('h4').textContent;
+            const surveyTitle = event.target.closest('.survey-card').dataset.surveyTitle;
             document.getElementById('delete-survey-title').textContent = `“${surveyTitle}”`;
             deleteModal.hidden = false;
         }
@@ -123,30 +187,37 @@ document.addEventListener('DOMContentLoaded', () => {
                     setTimeout(() => {
                        cardToDelete.remove();
                        surveysCache = surveysCache.filter(s => s.id !== surveyToDeleteId);
-                       if (surveysCache.length === 0) noSurveysMessage.classList.remove('hidden');
+                       if (surveysCache.length === 0) {
+                           noSurveysMessage.classList.remove('hidden');
+                       }
+                       showToast('问卷删除成功！', 'success');
                     }, 300);
                 }
-            } catch (error) { alert(`删除失败: ${error.message}`);
+            } catch (error) { 
+                alert(`删除失败: ${error.message}`); // For delete, keep alert for critical action
+                showToast(`删除失败: ${error.message}`, 'error');
             } finally { deleteModal.hidden = true; surveyToDeleteId = null; }
         }
 
+        // NEW: Unified Modal Setup
         function setupModals() {
-            shareModal.querySelector('.modal-close-btn').addEventListener('click', () => shareModal.hidden = true);
-            shareModal.addEventListener('click', (e) => { if (e.target === shareModal) shareModal.hidden = true; });
-            document.getElementById('copy-link-btn').addEventListener('click', (e) => {
-                navigator.clipboard.writeText(document.getElementById('share-link-input').value);
-                const btn = e.currentTarget;
-                const originalIcon = btn.innerHTML;
-                btn.innerHTML = '<i class="fa fa-check"></i>';
-                setTimeout(() => { btn.innerHTML = originalIcon; }, 1500);
-            });
+            // Delete Modal
             deleteModal.querySelector('.modal-cancel-btn').addEventListener('click', () => deleteModal.hidden = true);
-            deleteModal.addEventListener('click', (e) => { if (e.target === deleteModal) deleteModal.hidden = true; });
+            deleteModal.addEventListener('click', (e) => { 
+                if (e.target === deleteModal) deleteModal.hidden = true;
+            });
             document.getElementById('confirm-delete-btn').addEventListener('click', confirmDelete);
+
+            // Import Survey Modal
+            cancelImportBtn.addEventListener('click', () => importSurveyModal.hidden = true);
+            importSurveyModal.addEventListener('click', (e) => {
+                if (e.target === importSurveyModal) importSurveyModal.hidden = true;
+            });
+            confirmImportBtn.addEventListener('click', handleConfirmImport); // 确认导入按钮点击事件
         }
 
         async function fetchAndRenderSurveys() {
-            try {
+             try {
                 const response = await fetch('/api/surveys.mjs', { headers: { 'Authorization': `Bearer ${token}` } });
                 if (response.status === 401) { localStorage.removeItem('surveyKitToken'); checkAuth(); return; }
                 if (!response.ok) throw new Error('无法获取问卷列表');
@@ -155,51 +226,103 @@ document.addEventListener('DOMContentLoaded', () => {
             } catch(error) {
                 const loadingState = listContainer.querySelector('.loading-state');
                 if(loadingState) loadingState.textContent = `加载失败: ${error.message}`;
+                showToast(`加载问卷列表失败: ${error.message}`, 'error');
             }
         }
 
+        // MODIFIED: handleFileUpload now opens the modal
         function handleFileUpload(file) {
+            currentImportFile = file;
             const reader = new FileReader();
-            reader.onload = async (event) => {
-                const title = prompt("请输入新问卷的标题:", file.name.replace('.json', ''));
-                if (title === null || title.trim() === '') return alert('已取消导入。');
-                
-                uploadSurveyBtn.disabled = true;
-                uploadSurveyBtn.innerHTML = '<i class="fa fa-spinner fa-spin mr-3"></i>正在上传...';
-
-                try {
-                    const response = await fetch('/api/upload-survey.mjs', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-                        body: JSON.stringify({ title: title.trim(), questionsJSON: event.target.result })
-                    });
-                    const result = await response.json();
-                    if (!response.ok) throw new Error(result.message || '上传失败');
-                    
-                    noSurveysMessage.classList.add('hidden');
-                    const newCard = createSurveyCard(result.survey);
-                    newCard.style.opacity = '0';
-                    newCard.style.transform = 'translateY(20px)';
-                    listContainer.prepend(newCard);
-                    setTimeout(() => {
-                        newCard.style.transition = 'opacity 0.5s, transform 0.5s';
-                        newCard.style.opacity = '1';
-                        newCard.style.transform = 'translateY(0)';
-                    }, 50);
-
-                    attachActionListeners();
-                    surveysCache.push(result.survey);
-
-                } catch (error) {
-                    alert(`上传失败: ${error.message}`);
-                } finally {
-                    uploadSurveyBtn.disabled = false;
-                    uploadSurveyBtn.innerHTML = '<i class="fa fa-upload mr-3"></i> 导入问卷';
-                    fileInput.value = '';
-                }
+            reader.onload = (event) => {
+                currentFileContent = event.target.result;
+                // 预填充标题，去除 .json 后缀
+                importSurveyTitleInput.value = file.name.replace(/\.json$/i, '');
+                importFileNameSpan.textContent = file.name; // 显示文件名
+                importSurveyModal.hidden = false; // 显示导入模态框
+                importSurveyTitleInput.focus(); // 自动聚焦标题输入框
             };
             reader.readAsText(file);
         }
+
+        // NEW: handleConfirmImport triggered by modal's confirm button
+        async function handleConfirmImport() {
+            const title = importSurveyTitleInput.value.trim();
+            if (title === '') {
+                showToast('问卷标题不能为空！', 'warning');
+                importSurveyTitleInput.focus();
+                return;
+            }
+
+            if (!currentImportFile || !currentFileContent) {
+                showToast('没有可导入的文件内容。', 'error');
+                importSurveyModal.hidden = true;
+                return;
+            }
+
+            importSurveyModal.hidden = true; // 隐藏模态框
+            uploadSurveyBtn.disabled = true;
+            uploadSurveyBtn.innerHTML = '<i class="fa fa-spinner fa-spin mr-3"></i>正在上传...';
+            showToast('正在导入问卷...', 'info'); // 即时反馈
+
+            try {
+                const response = await fetch('/api/upload-survey.mjs', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                    body: JSON.stringify({ title: title, questionsJSON: currentFileContent })
+                });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.message || '上传失败');
+                
+                await fetchAndRenderSurveys(); // 重新渲染列表
+                showToast('问卷导入成功！', 'success');
+
+                // 成功导入后，给新卡片一个高亮效果
+                setTimeout(() => {
+                    const newCard = listContainer.querySelector(`[data-survey-id="${result.survey.id}"]`);
+                    if(newCard) {
+                        newCard.style.transition = 'box-shadow 0.5s ease-out';
+                        newCard.style.boxShadow = '0 0 0 2px #a5b4fc, 0 10px 30px rgba(0,0,0,0.2)';
+                        setTimeout(() => {
+                           newCard.style.boxShadow = '';
+                        }, 2500);
+                    }
+                }, 100);
+
+            } catch (error) {
+                console.error('导入问卷失败:', error);
+                showToast(`导入失败: ${error.message}`, 'error');
+            } finally {
+                uploadSurveyBtn.disabled = false;
+                uploadSurveyBtn.innerHTML = '<i class="fa fa-upload mr-3"></i> 导入问卷';
+                fileInput.value = ''; // 清空文件输入，以便下次可以再次选择相同文件
+                currentImportFile = null;
+                currentFileContent = null;
+            }
+        }
+
+        function showToast(message, type = 'info', duration = 3000) {
+            const toast = document.createElement('div');
+            toast.className = `toast-message toast-${type} opacity-0 translate-x-full transition-all duration-300 ease-out`;
+            toast.textContent = message;
+            
+            toastContainer.appendChild(toast);
+
+            // 强制浏览器重绘以应用初始状态
+            void toast.offsetWidth;
+
+            // 显示动画
+            toast.classList.remove('opacity-0', 'translate-x-full');
+            toast.classList.add('opacity-100', 'translate-x-0');
+
+            setTimeout(() => {
+                // 隐藏动画
+                toast.classList.remove('opacity-100', 'translate-x-0');
+                toast.classList.add('opacity-0', 'translate-x-full');
+                setTimeout(() => toast.remove(), 300); // 动画结束后移除元素
+            }, duration);
+        }
+
 
         uploadSurveyBtn.addEventListener('click', () => fileInput.click());
         fileInput.addEventListener('change', (e) => {
@@ -207,8 +330,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         
         function escapeHtml(str) {
+            if (!str) return '';
             return str.replace(/[&<>"']/g, function(match) {
-                return { '&': '&', '<': '<', '>': '>', '"': '"', "'": '\'' }[match];
+                return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&apos;' }[match];
             });
         }
 
@@ -223,4 +347,4 @@ document.addEventListener('DOMContentLoaded', () => {
     function updateFooterYear() { const currentYearFooter = document.getElementById('current-year-footer'); if (currentYearFooter) { currentYearFooter.textContent = new Date().getFullYear(); } }
 
     initApp();
-});// 管理端脚本
+});

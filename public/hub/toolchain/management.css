@@ -363,3 +363,49 @@ footer.bg-slate-800 {
 main > div > p {
   color: #e2e8f0;
 }
+.toast-message {
+  padding: 0.75rem 1.25rem;
+  border-radius: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  min-width: 200px; /* 确保消息有足够的宽度 */
+  text-align: center;
+}
+
+.toast-success {
+  background-color: #22c55e;
+  color: white;
+}
+
+.toast-error {
+  background-color: #ef4444;
+  color: white;
+}
+
+.toast-info {
+  background-color: #3b82f6;
+  color: white;
+}
+
+.toast-warning {
+  background-color: #f59e0b;
+  color: white;
+}
+
+.modal-confirm-btn {
+  background-color: #4f46e5;
+  color: white;
+  flex: 1;
+  border: none;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.modal-confirm-btn:hover {
+  background-color: #6366f1;
+  transform: translateY(-2px);
+}

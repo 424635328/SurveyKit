@@ -1,0 +1,151 @@
+/* public/hub/answer/answer.css */
+
+body {
+  font-family: "Inter", sans-serif;
+  color: #e2e8f0;
+}
+.aurora-background {
+  background: linear-gradient(
+    135deg,
+    #1b3a8e,
+    #33862e,
+    #483081,
+    #943c91,
+    #9c5930
+  );
+  background-size: 400% 400%;
+  animation: aurora-flow 20s ease infinite;
+}
+@keyframes aurora-flow {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+.text-shadow {
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+header {
+  transition: all 0.3s ease-in-out;
+  background-color: rgba(15, 23, 42, 0.6);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+.header-scrolled {
+  background-color: rgba(15, 23, 42, 0.8);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+nav a {
+  color: #cbd5e1;
+}
+nav a:hover {
+  color: white;
+}
+nav a.text-indigo-500 {
+  color: #a5b4fc !important;
+  font-weight: 600;
+}
+
+/* 问卷表单特定样式 */
+.form-radio {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    display: inline-block;
+    vertical-align: middle;
+    background-origin: border-box;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    flex-shrink: 0;
+    border-radius: 100%;
+    border-width: 1px;
+    border-color: var(--tw-border-opacity, 1) #475569; /* slate-600 */
+    height: 1rem;
+    width: 1rem;
+    color: var(--tw-text-opacity, 1) #6366f1; /* indigo-500 */
+    background-color: var(--tw-bg-opacity, 1) #334155; /* slate-700 */
+}
+
+.form-radio:checked {
+    background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3ccircle cx='8' cy='8' r='3'/%3e%3c/svg%3e");
+    background-size: 100% 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    border-color: transparent;
+    background-color: currentColor;
+}
+
+/* 输入框聚焦效果 */
+input[type="text"]:focus,
+textarea:focus {
+  outline: none;
+  border-color: #6366f1; /* indigo-500 */
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.5); /* indigo-500 with opacity */
+}
+
+/* 提交按钮 */
+.create-survey-btn, .secondary-action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center; /* Centered content */
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 0.5rem;
+  text-decoration: none;
+  transition: all 0.3s;
+  box-shadow: 0 4px 15px rgba(165, 180, 252, 0.2);
+  border: 1px solid transparent;
+  cursor: pointer;
+}
+.create-survey-btn {
+  color: white;
+  background: linear-gradient(to right, #818cf8, #c084fc);
+}
+.secondary-action-btn {
+  color: #e2e8f0;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+.create-survey-btn:hover, .secondary-action-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(165, 180, 252, 0.3);
+}
+
+.toast-message {
+  padding: 0.75rem 1.25rem;
+  border-radius: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  min-width: 200px;
+  text-align: center;
+}
+
+.toast-success {
+  background-color: #22c55e; /* green-500 */
+  color: white;
+}
+
+.toast-error {
+  background-color: #ef4444; /* red-500 */
+  color: white;
+}
+
+.toast-info {
+  background-color: #3b82f6; /* blue-500 */
+  color: white;
+}
+
+.toast-warning {
+  background-color: #f59e0b; /* amber-500 */
+  color: white;
+}

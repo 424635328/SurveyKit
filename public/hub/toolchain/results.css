@@ -1,0 +1,87 @@
+/* public/hub/toolchain/results.css */
+
+/* --- 表格样式 (优化对齐和美观) --- */
+.results-table {
+    background-color: rgba(30, 41, 59, 0.5); /* slate-800 with transparency */
+    border-radius: 0.75rem; /* rounded-xl for card appearance */
+    overflow: hidden; /* Ensures rounded corners apply to content */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    width: 100%; /* Ensure table takes full width of its container */
+    table-layout: fixed; /* CRITICAL: Fixed table layout for column alignment */
+    border-collapse: collapse; /* For clean border lines */
+}
+
+.results-table th, .results-table td {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    color: #e2e8f0; /* light text for dark background */
+    vertical-align: top; /* Align cell content to top */
+    white-space: normal; /* Allow text to wrap normally within fixed width */
+    word-wrap: break-word; /* Allow long words to break to prevent horizontal overflow */
+}
+
+/* Specific styles for sticky headers */
+.results-table thead th {
+    position: sticky;
+    top: 0;
+    background-color: #1e293b; /* darker slate-900 for sticky header */
+    z-index: 10; /* Ensure header is on top */
+    font-weight: 600; /* semibold */
+    color: #cbd5e1; /* lighter text for header */
+    white-space: nowrap; /* Keep header text on one line */
+    overflow: hidden; /* Hide overflow for header text */
+    text-overflow: ellipsis; /* Add ellipsis for headers if they are too long */
+}
+
+/* Specific width for the first column (Submission Time) */
+.results-table th:first-child,
+.results-table td:first-child {
+    width: 160px; /* Adjust as needed for your datetime format */
+    min-width: 160px; /* Ensure it doesn't shrink too much */
+}
+
+/* Custom scrollbar for better appearance */
+.max-h-\[60vh\] { /* Tailwind's dynamic class needs to be escaped or written literally if used in external CSS */
+    scrollbar-width: thin; /* Firefox */
+    scrollbar-color: #6366f1 #1e293b; /* thumb and track */
+}
+
+.max-h-\[60vh\]::-webkit-scrollbar {
+    width: 8px;
+    height: 8px; /* For horizontal scroll */
+}
+
+.max-h-\[60vh\]::-webkit-scrollbar-track {
+    background: #1e293b; /* track color */
+    border-radius: 10px;
+}
+
+.max-h-\[60vh\]::-webkit-scrollbar-thumb {
+    background-color: #6366f1; /* thumb color */
+    border-radius: 10px;
+    border: 2px solid #1e293b;
+}
+
+/* Error state styling */
+.error-state {
+    color: #fca5a5; /* red-300 */
+    background-color: rgba(239, 68, 68, 0.1); /* red-500 with opacity */
+    border: 1px dashed #ef4444; /* red-500 */
+    padding: 2rem;
+    border-radius: 1rem;
+    text-align: center;
+}
+.error-state p {
+    color: #f87171; /* lighter red */
+}
+.error-state i {
+    color: #f87171; /* lighter red */
+}
+
+/* Loading state is typically shared or inlined if simple. Assuming it's in toolchain.css or management.css */
+/* No surveys message is typically shared or inlined. Assuming it's in toolchain.css or management.css */
+
+/* General styles from toolchain.css that might be needed if results.css is the only one */
+/* You might want to copy general body, header, main styles from toolchain.css here if results.html only links this CSS */
+/* For this scenario, assuming toolchain.css is also linked */

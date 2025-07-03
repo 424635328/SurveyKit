@@ -1,3 +1,4 @@
 {
-    "Codegeex.CompletionDelay": 0.2
+    "Codegeex.CompletionDelay": 0.3,
+    "Codegeex.GenerationPreference": "automatic"
 }
