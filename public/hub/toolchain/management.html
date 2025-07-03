@@ -1,76 +1,128 @@
 <!-- public/hub/toolchain/management.html -->
 <!DOCTYPE html>
 <html lang="zh-CN">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>多问卷管理 - SurveyKit</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="management.css">
-</head>
-<body class="font-sans text-gray-800 min-h-screen flex flex-col">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>多问卷管理 - SurveyKit</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css"
+      rel="stylesheet">
+    <link rel="stylesheet" href="management.css">
+  </head>
+  <body class="font-sans text-gray-800 min-h-screen flex flex-col">
 
-  <header class="sticky top-0 z-50">
-    <div class="container mx-auto px-4 py-4 flex justify-between items-center">
-      <div class="flex items-center space-x-2"><span class="text-indigo-500 text-2xl"><i class="fa fa-wpforms"></i></span><a href="../../index.html" class="text-xl font-bold bg-gradient-to-r from-indigo-500 to-purple-600 bg-clip-text text-transparent">SurveyKit</a></div>
-      <nav class="hidden md:flex items-center space-x-8"><a href="../../index.html" class="text-gray-600 hover:text-indigo-500">首页</a><a href="../hub.html" class="text-indigo-500 font-medium">工具中心</a><a href="../../docs/help.html" class="text-gray-600 hover:text-indigo-500">帮助文档</a></nav>
-      <button class="md:hidden text-gray-600 focus:outline-none" id="menu-toggle" aria-label="打开主菜单"><i class="fa fa-bars text-xl"></i></button>
-    </div>
-    <div class="md:hidden hidden bg-white border-t border-gray-100 shadow-md" id="mobile-menu"><div class="container mx-auto px-4 py-3 flex flex-col space-y-3"><a href="../../index.html" class="text-gray-600 hover:text-indigo-500 py-2 flex items-center"><i class="fa fa-home mr-2"></i> 首页</a><a href="../hub.html" class="text-indigo-500 font-medium py-2 flex items-center"><i class="fa fa-wrench mr-2"></i> 工具中心</a><a href="../../docs/help.html" class="text-gray-600 hover:text-indigo-500 py-2 flex items-center"><i class="fa fa-book mr-2"></i> 帮助文档</a><a href="https://github.com/424635328/SurveyKit" rel="noopener" target="_blank" class="text-gray-600 hover:text-indigo-500 py-2 flex items-center"><i class="fa fa-github mr-2"></i> GitHub</a></div></div>
-  </header>
+    <header class="sticky top-0 z-50">
+      <div
+        class="container mx-auto px-4 py-4 flex justify-between items-center">
+        <div class="flex items-center space-x-2"><span
+            class="text-indigo-500 text-2xl"><i
+              class="fa fa-wpforms"></i></span><a href="../../index.html"
+            class="text-xl font-bold bg-gradient-to-r from-indigo-500 to-purple-600 bg-clip-text text-transparent">SurveyKit</a></div>
+        <nav class="hidden md:flex items-center space-x-8"><a
+            href="../../index.html"
+            class="text-gray-600 hover:text-indigo-500">首页</a><a
+            href="../hub.html" class="text-indigo-500 font-medium">工具中心</a><a
+            href="../../docs/help.html"
+            class="text-gray-600 hover:text-indigo-500">帮助文档</a></nav>
+        <button class="md:hidden text-gray-600 focus:outline-none"
+          id="menu-toggle" aria-label="打开主菜单"><i
+            class="fa fa-bars text-xl"></i></button>
+      </div>
+      <div class="md:hidden hidden bg-white border-t border-gray-100 shadow-md"
+        id="mobile-menu"><div
+          class="container mx-auto px-4 py-3 flex flex-col space-y-3"><a
+            href="../../index.html"
+            class="text-gray-600 hover:text-indigo-500 py-2 flex items-center"><i
+              class="fa fa-home mr-2"></i> 首页</a><a href="../hub.html"
+            class="text-indigo-500 font-medium py-2 flex items-center"><i
+              class="fa fa-wrench mr-2"></i> 工具中心</a><a
+            href="../../docs/help.html"
+            class="text-gray-600 hover:text-indigo-500 py-2 flex items-center"><i
+              class="fa fa-book mr-2"></i> 帮助文档</a><a
+            href="https://github.com/424635328/SurveyKit" rel="noopener"
+            target="_blank"
+            class="text-gray-600 hover:text-indigo-500 py-2 flex items-center"><i
+              class="fa fa-github mr-2"></i> GitHub</a></div></div>
+    </header>
 
-  <main class="flex-grow container mx-auto px-4 py-12 md:py-20">
-    <div class="flex flex-col md:flex-row justify-between items-center mb-12" data-animate="reveal-up">
+    <main class="flex-grow container mx-auto px-4 py-12 md:py-20">
+      <div class="flex flex-col md:flex-row justify-between items-center mb-12"
+        data-animate="reveal-up">
         <div class="text-center md:text-left mb-6 md:mb-0">
-            <h2 class="text-[clamp(2rem,5vw,2.8rem)] font-bold leading-tight text-shadow">问卷管理中心</h2>
-            <p class="text-slate-300 text-lg mt-1">在这里创建、分享并追踪您的所有问卷。</p>
+          <h2
+            class="text-[clamp(2rem,5vw,2.8rem)] font-bold leading-tight text-shadow">问卷管理中心</h2>
+          <p class="text-slate-300 text-lg mt-1">在这里创建、分享并追踪您的所有问卷。</p>
         </div>
         <div class="flex gap-4">
-            <button id="upload-survey-btn" class="secondary-action-btn"><i class="fa fa-upload mr-3"></i> 导入问卷</button>
-            <a href="../custom-questions/custom-questions.html" class="create-survey-btn"><i class="fa fa-plus-circle mr-3"></i> 创建新问卷</a>
+          <button id="upload-survey-btn" class="secondary-action-btn"><i
+              class="fa fa-upload mr-3"></i> 导入问卷</button>
+          <a href="../custom-questions/custom-questions.html"
+            class="create-survey-btn"><i class="fa fa-plus-circle mr-3"></i>
+            创建新问卷</a>
         </div>
-    </div>
+      </div>
 
-    <div id="survey-list-container" data-animate="reveal-up" data-delay="0.2">
-        <p class="loading-state"><i class="fa fa-spinner fa-spin mr-3"></i>正在加载您的问卷列表...</p>
+      <div id="survey-list-container" data-animate="reveal-up" data-delay="0.2">
+        <p class="loading-state"><i
+            class="fa fa-spinner fa-spin mr-3"></i>正在加载您的问卷列表...</p>
         <div id="no-surveys-message" class="no-surveys-message hidden">
-            <i class="fa fa-folder-open-o"></i>
-            <h3>空空如也</h3>
-            <p>您还没有任何问卷，点击上方按钮创建或导入您的第一个问卷吧！</p>
+          <i class="fa fa-folder-open-o"></i>
+          <h3>空空如也</h3>
+          <p>您还没有任何问卷，点击上方按钮创建或导入您的第一个问卷吧！</p>
         </div>
-    </div>
-  </main>
-  
-  <div id="import-survey-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="import-survey-modal-title" hidden>
-    <div class="modal-content">
+      </div>
+    </main>
+
+    <div id="import-survey-modal" class="modal-overlay" role="dialog"
+      aria-modal="true" aria-labelledby="import-survey-modal-title" hidden>
+      <div class="modal-content">
         <h3 id="import-survey-modal-title" class="modal-title">导入问卷</h3>
-        <p class="modal-description">您正在导入问卷文件：<strong id="import-file-name"></strong>。<br>请为新问卷输入一个标题。</p>
+        <p class="modal-description">您正在导入问卷文件：<strong
+            id="import-file-name"></strong>。<br>请为新问卷输入一个标题。</p>
         <div class="mb-4">
-            <label for="import-survey-title-input" class="block text-sm font-medium text-slate-300 text-left mb-1">问卷标题:</label>
-            <input type="text" id="import-survey-title-input" class="w-full bg-slate-700/50 border border-slate-600 rounded-lg p-3 text-indigo-300 font-mono focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="请输入问卷标题" required>
+          <label for="import-survey-title-input"
+            class="block text-sm font-medium text-slate-300 text-left mb-1">问卷标题:</label>
+          <input type="text" id="import-survey-title-input"
+            class="w-full bg-slate-700/50 border border-slate-600 rounded-lg p-3 text-indigo-300 font-mono focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            placeholder="请输入问卷标题" required>
         </div>
         <div class="modal-actions">
-            <button class="modal-cancel-btn" id="cancel-import-btn">取消</button>
-            <button id="confirm-import-btn" class="modal-confirm-btn">确认导入</button>
+          <button class="modal-cancel-btn" id="cancel-import-btn">取消</button>
+          <button id="confirm-import-btn"
+            class="modal-confirm-btn">确认导入</button>
         </div>
+      </div>
     </div>
-  </div>
 
-  <div id="delete-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="delete-modal-title" hidden>
-    <div class="modal-content"><div class="modal-icon-danger"><i class="fa fa-exclamation-triangle"></i></div><h3 id="delete-modal-title" class="modal-title">确认删除</h3><p id="delete-modal-description" class="modal-description">您确定要永久删除问卷 <strong id="delete-survey-title"></strong> 吗？<br>所有相关数据都将被清除，此操作无法撤销。</p><div class="modal-actions"><button class="modal-cancel-btn">取消</button><button id="confirm-delete-btn" class="modal-confirm-btn-danger">确认删除</button></div></div>
-  </div>
+    <div id="delete-modal" class="modal-overlay" role="dialog" aria-modal="true"
+      aria-labelledby="delete-modal-title" hidden>
+      <div class="modal-content"><div class="modal-icon-danger"><i
+            class="fa fa-exclamation-triangle"></i></div><h3
+          id="delete-modal-title" class="modal-title">确认删除</h3><p
+          id="delete-modal-description" class="modal-description">您确定要永久删除问卷
+          <strong id="delete-survey-title"></strong>
+          吗？<br>所有相关数据都将被清除，此操作无法撤销。</p><div class="modal-actions"><button
+            class="modal-cancel-btn">取消</button><button id="confirm-delete-btn"
+            class="modal-confirm-btn-danger">确认删除</button></div></div>
+    </div>
 
-  <div id="toast-container" class="fixed top-4 right-4 z-[1001] flex flex-col gap-3 max-w-xs w-full"></div>
+    <div id="toast-container"
+      class="fixed top-4 right-4 z-[1001] flex flex-col gap-3 max-w-xs w-full"></div>
 
-  <footer class="bg-slate-800 text-white py-10 mt-20">
-    <div class="container mx-auto px-4"><div class="flex justify-center"><p>© <span id="current-year-footer"></span> SurveyKit</p></div></div>
-  </footer>
+    <footer class="bg-slate-800 text-white py-10 mt-20">
+      <div class="container mx-auto px-4"><div class="flex justify-center"><p>©
+            <span id="current-year-footer"></span> SurveyKit</p></div></div>
+    </footer>
 
-  <button id="scrollToTopBtn" class="fixed bottom-6 right-6 bg-indigo-600 text-white p-3 rounded-full shadow-lg opacity-0 pointer-events-none transition-all duration-300 transform translate-y-4 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 z-50" aria-label="Scroll to top"><i class="fa fa-arrow-up text-lg"></i></button>
-  
-  <input type="file" id="file-input-hidden" accept=".json" class="visually-hidden" aria-labelledby="upload-survey-btn" />
+    <button id="scrollToTopBtn"
+      class="fixed bottom-6 right-6 bg-indigo-600 text-white p-3 rounded-full shadow-lg opacity-0 pointer-events-none transition-all duration-300 transform translate-y-4 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 z-50"
+      aria-label="Scroll to top"><i class="fa fa-arrow-up text-lg"></i></button>
 
-  <script src="management.js" defer></script>
-</body>
+    <input type="file" id="file-input-hidden" accept=".json"
+      class="visually-hidden" aria-labelledby="upload-survey-btn" />
+
+    <script src="management.js" defer></script>
+  </body>
 </html>

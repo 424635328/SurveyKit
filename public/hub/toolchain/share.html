@@ -1,62 +1,81 @@
 <!-- public/hub/toolchain/share.html -->
 <!DOCTYPE html>
 <html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>分享问卷 - SurveyKit</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
-    <link rel="stylesheet" href="toolchain.css">
-</head>
-<body class="aurora-background min-h-screen flex flex-col">
-    <header class="sticky top-0 z-50">
-        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
-            <div class="flex items-center space-x-2">
-                <span class="text-indigo-500 text-2xl"><i class="fa fa-wpforms"></i></span>
-                <a href="../../index.html" rel="noopener noreferrer" class="text-xl font-bold bg-gradient-to-r from-indigo-500 to-purple-600 bg-clip-text text-transparent">SurveyKit</a>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>分享问卷 - SurveyKit</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <link
+            href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css"
+            rel="stylesheet">
+        <script
+            src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+        <link rel="stylesheet" href="toolchain.css">
+    </head>
+    <body class="aurora-background min-h-screen flex flex-col">
+        <header class="sticky top-0 z-50">
+            <div
+                class="container mx-auto px-4 py-4 flex justify-between items-center">
+                <div class="flex items-center space-x-2">
+                    <span class="text-indigo-500 text-2xl"><i
+                            class="fa fa-wpforms"></i></span>
+                    <a href="../../index.html" rel="noopener noreferrer"
+                        class="text-xl font-bold bg-gradient-to-r from-indigo-500 to-purple-600 bg-clip-text text-transparent">SurveyKit</a>
+                </div>
+                <nav class="hidden md:flex items-center space-x-8">
+                    <a href="../../index.html" rel="noopener noreferrer"
+                        class="text-gray-600 hover:text-indigo-500">首页</a>
+                    <a href="../hub.html" rel="noopener noreferrer"
+                        class="text-indigo-500 font-medium">工具中心</a>
+                    <a href="../../docs/help.html" rel="noopener noreferrer"
+                        class="text-gray-600 hover:text-indigo-500">帮助文档</a>
+                </nav>
+                <button class="md:hidden text-gray-600 focus:outline-none"
+                    id="menu-toggle" aria-label="打开主菜单">
+                    <i class="fa fa-bars text-xl"></i>
+                </button>
             </div>
-            <nav class="hidden md:flex items-center space-x-8">
-                <a href="../../index.html" rel="noopener noreferrer" class="text-gray-600 hover:text-indigo-500">首页</a>
-                <a href="../hub.html" rel="noopener noreferrer" class="text-indigo-500 font-medium">工具中心</a>
-                <a href="../../docs/help.html" rel="noopener noreferrer" class="text-gray-600 hover:text-indigo-500">帮助文档</a>
-            </nav>
-            <button class="md:hidden text-gray-600 focus:outline-none" id="menu-toggle" aria-label="打开主菜单">
-                <i class="fa fa-bars text-xl"></i>
-            </button>
-        </div>
-    </header>
+        </header>
 
-    <main class="flex-grow container mx-auto px-4 py-12 md:py-20">
-        <div class="text-center mb-12" data-animate="reveal-up">
-            <h2 class="page-title text-white">分享您的问卷</h2>
-            <!-- id="survey-title" 用于显示问卷的标题 -->
-            <p id="survey-title" class="page-subtitle text-lg mt-2">问卷加载中...</p> 
-        </div>
-        <div class="max-w-xl mx-auto content-card space-y-8" data-animate="reveal-up" data-delay="0.2">
-            <div>
-                <label for="share-link-input" class="block text-sm font-medium text-slate-300 mb-2">分享链接</label>
-                <div class="flex">
-                    <input type="text" id="share-link-input" readonly class="w-full bg-slate-700/50 border border-slate-600 rounded-l-lg p-3 text-indigo-300 font-mono">
-                    <button id="copy-link-btn" class="bg-indigo-600 text-white px-4 rounded-r-lg hover:bg-indigo-700" aria-label="复制分享链接">
-                        <i class="fa fa-copy"></i>
-                    </button>
+        <main class="flex-grow container mx-auto px-4 py-12 md:py-20">
+            <div class="text-center mb-12" data-animate="reveal-up">
+                <h2 class="page-title text-white">分享您的问卷</h2>
+                <!-- id="survey-title" 用于显示问卷的标题 -->
+                <p id="survey-title"
+                    class="page-subtitle text-lg mt-2">问卷加载中...</p>
+            </div>
+            <div class="max-w-xl mx-auto content-card space-y-8"
+                data-animate="reveal-up" data-delay="0.2">
+                <div>
+                    <label for="share-link-input"
+                        class="block text-sm font-medium text-slate-300 mb-2">分享链接</label>
+                    <div class="flex">
+                        <input type="text" id="share-link-input" readonly
+                            class="w-full bg-slate-700/50 border border-slate-600 rounded-l-lg p-3 text-indigo-300 font-mono">
+                        <button id="copy-link-btn"
+                            class="bg-indigo-600 text-white px-4 rounded-r-lg hover:bg-indigo-700"
+                            aria-label="复制分享链接">
+                            <i class="fa fa-copy"></i>
+                        </button>
+                    </div>
+                </div>
+                <div>
+                    <label
+                        class="block text-sm font-medium text-slate-300 mb-2">二维码</label>
+                    <div id="qrcode"
+                        class="p-4 bg-white rounded-lg w-48 h-48 mx-auto"
+                        role="img" aria-label="问卷分享二维码"></div>
                 </div>
             </div>
-            <div>
-                <label class="block text-sm font-medium text-slate-300 mb-2">二维码</label>
-                <div id="qrcode" class="p-4 bg-white rounded-lg w-48 h-48 mx-auto" role="img" aria-label="问卷分享二维码"></div>
+        </main>
+        <footer class="bg-slate-800 text-white py-10 mt-20">
+            <div class="container mx-auto px-4">
+                <div class="flex justify-center">
+                    <p>© <span id="current-year-footer"></span> SurveyKit</p>
+                </div>
             </div>
-        </div>
-    </main>
-    <footer class="bg-slate-800 text-white py-10 mt-20">
-        <div class="container mx-auto px-4">
-            <div class="flex justify-center">
-                <p>© <span id="current-year-footer"></span> SurveyKit</p>
-            </div>
-        </div>
-    </footer>
-    <script src="share.js"></script>
-</body>
+        </footer>
+        <script src="share.js"></script>
+    </body>
 </html>

@@ -1,88 +1,205 @@
 <!-- public/hub/toolchain/customizer.html -->
 <!DOCTYPE html>
 <html lang="zh-CN">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>主题定制器 - SurveyKit</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="customizer.css"> 
-</head>
-<body class="font-sans text-gray-800 min-h-screen flex flex-col">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>主题定制器 - SurveyKit</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css"
+      rel="stylesheet">
+    <link rel="stylesheet" href="customizer.css">
+  </head>
+  <body class="font-sans text-gray-800 min-h-screen flex flex-col">
 
-  <header class="sticky top-0 z-50">
-    <div class="container mx-auto px-4 py-4 flex justify-between items-center">
-      <div class="flex items-center space-x-2"><span class="text-indigo-500 text-2xl"><i class="fa fa-wpforms"></i></span><a href="../../index.html" class="text-xl font-bold bg-gradient-to-r from-indigo-500 to-purple-600 bg-clip-text text-transparent">SurveyKit</a></div>
-      <nav class="hidden md:flex items-center space-x-8"><a href="../../index.html" class="text-gray-600 hover:text-indigo-500 transition-colors duration-200 flex items-center"><i class="fa fa-home mr-2"></i> 首页</a><a href="../hub.html" class="text-indigo-500 font-medium flex items-center"><i class="fa fa-wrench mr-2"></i> 工具中心</a><a href="../../docs/help.html" class="text-gray-600 hover:text-indigo-500 transition-colors duration-200 flex items-center"><i class="fa fa-book mr-2"></i> 帮助文档</a><a href="https://github.com/424635328/SurveyKit" target="_blank" rel="noopener" class="text-gray-600 hover:text-indigo-500 transition-colors duration-200 flex items-center"><i class="fa fa-github mr-2"></i> GitHub</a></nav>
-      <button class="md:hidden text-gray-600 focus:outline-none" id="menu-toggle" aria-label="Toggle mobile menu"><i class="fa fa-bars text-xl"></i></button>
-    </div>
-    <div class="md:hidden hidden bg-white border-t border-gray-100 shadow-md" id="mobile-menu"><div class="container mx-auto px-4 py-3 flex flex-col space-y-3"><a href="../../index.html" class="text-gray-600 hover:text-indigo-500 py-2 flex items-center"><i class="fa fa-home mr-2"></i> 首页</a><a href="../hub.html" class="text-indigo-500 font-medium py-2 flex items-center"><i class="fa fa-wrench mr-2"></i> 工具中心</a><a href="../../docs/help.html" class="text-gray-600 hover:text-indigo-500 py-2 flex items-center"><i class="fa fa-book mr-2"></i> 帮助文档</a><a href="https://github.com/424635328/SurveyKit" rel="noopener" target="_blank" class="text-gray-600 hover:text-indigo-500 py-2 flex items-center"><i class="fa fa-github mr-2"></i> GitHub</a></div></div>
-  </header>
-
-  <main class="flex-grow container mx-auto px-4 py-12 md:py-20">
-    <div class="text-center mb-12 max-w-3xl mx-auto" data-animate="reveal-up"><h2 class="text-[clamp(2rem,5vw,3.2rem)] font-bold mb-4 leading-tight text-shadow flex items-center justify-center"><i class="fa fa-palette mr-4 text-indigo-400"></i>主题<span class="text-white">定制器</span></h2><p class="text-slate-300 text-lg">实时预览并定制您的问卷外观，打造与众不同的用户体验。</p></div>
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12" data-animate="reveal-up">
-      <div class="lg:col-span-1">
-        <div class="card-base p-6 sm:p-8 space-y-6 sticky top-28">
-          <div class="control-group"><label id="primary-color-label" class="control-label">主色调 (Primary)</label><div class="flex items-center space-x-3"><input type="color" id="primary-color-input" class="control-color-picker" aria-labelledby="primary-color-label"><input type="text" id="primary-color-text" class="control-text-input flex-grow" aria-labelledby="primary-color-label" placeholder="#6d28d9"></div></div>
-          <div class="control-group"><label id="background-color-label" class="control-label">背景色 (Background)</label><div class="flex items-center space-x-3"><input type="color" id="background-color-input" class="control-color-picker" aria-labelledby="background-color-label"><input type="text" id="background-color-text" class="control-text-input flex-grow" aria-labelledby="background-color-label" placeholder="#111827"></div></div>
-          <div class="control-group"><label id="card-color-label" class="control-label">卡片颜色 (Card)</label><div class="flex items-center space-x-3"><input type="color" id="card-color-input" class="control-color-picker" aria-labelledby="card-color-label"><input type="text" id="card-color-text" class="control-text-input flex-grow" aria-labelledby="card-color-label" placeholder="#1f2937"></div></div>
-          <div class="control-group"><label id="text-color-label" class="control-label">主要文字 (Text)</label><div class="flex items-center space-x-3"><input type="color" id="text-color-input" class="control-color-picker" aria-labelledby="text-color-label"><input type="text" id="text-color-text" class="control-text-input flex-grow" aria-labelledby="text-color-label" placeholder="#e5e7eb"></div></div>
-          <div class="control-group"><label for="font-select" class="control-label">问卷字体 (Font)</label><select id="font-select" class="control-select"><option value="'Noto Sans SC', sans-serif">思源黑体 (推荐)</option><option value="'Inter', sans-serif">Inter (西文)</option><option value="'Roboto', sans-serif">Roboto</option><option value="'Lato', sans-serif">Lato</option><option value="'-apple-system', 'BlinkMacSystemFont', 'Segoe UI', sans-serif">系统默认</option></select></div>
-          <div class="pt-4 border-t border-slate-700/50 flex flex-col space-y-3"><button id="export-btn" class="action-btn bg-teal-600 hover:bg-teal-700"><i class="fa fa-code mr-2"></i>导出主题 CSS</button><button id="reset-btn" class="action-btn bg-slate-600 hover:bg-slate-700"><i class="fa fa-undo mr-2"></i>重置为默认</button></div>
-          <div id="export-container" class="hidden"><label for="export-textarea" class="sr-only">导出的CSS代码</label><textarea id="export-textarea" rows="10" readonly class="w-full"></textarea><button id="copy-css-btn" class="action-btn bg-indigo-600 hover:bg-indigo-700 mt-3 w-full"><i class="fa fa-copy mr-2"></i>复制到剪贴板</button></div>
-        </div>
+    <header class="sticky top-0 z-50">
+      <div
+        class="container mx-auto px-4 py-4 flex justify-between items-center">
+        <div class="flex items-center space-x-2"><span
+            class="text-indigo-500 text-2xl"><i
+              class="fa fa-wpforms"></i></span><a href="../../index.html"
+            class="text-xl font-bold bg-gradient-to-r from-indigo-500 to-purple-600 bg-clip-text text-transparent">SurveyKit</a></div>
+        <nav class="hidden md:flex items-center space-x-8"><a
+            href="../../index.html"
+            class="text-gray-600 hover:text-indigo-500 transition-colors duration-200 flex items-center"><i
+              class="fa fa-home mr-2"></i> 首页</a><a href="../hub.html"
+            class="text-indigo-500 font-medium flex items-center"><i
+              class="fa fa-wrench mr-2"></i> 工具中心</a><a
+            href="../../docs/help.html"
+            class="text-gray-600 hover:text-indigo-500 transition-colors duration-200 flex items-center"><i
+              class="fa fa-book mr-2"></i> 帮助文档</a><a
+            href="https://github.com/424635328/SurveyKit" target="_blank"
+            rel="noopener"
+            class="text-gray-600 hover:text-indigo-500 transition-colors duration-200 flex items-center"><i
+              class="fa fa-github mr-2"></i> GitHub</a></nav>
+        <button class="md:hidden text-gray-600 focus:outline-none"
+          id="menu-toggle" aria-label="Toggle mobile menu"><i
+            class="fa fa-bars text-xl"></i></button>
       </div>
-      <div class="lg:col-span-2">
-        <div id="preview-area" class="preview-wrapper">
-          <div class="preview-survey-page">
-            <header class="preview-header">
+      <div class="md:hidden hidden bg-white border-t border-gray-100 shadow-md"
+        id="mobile-menu"><div
+          class="container mx-auto px-4 py-3 flex flex-col space-y-3"><a
+            href="../../index.html"
+            class="text-gray-600 hover:text-indigo-500 py-2 flex items-center"><i
+              class="fa fa-home mr-2"></i> 首页</a><a href="../hub.html"
+            class="text-indigo-500 font-medium py-2 flex items-center"><i
+              class="fa fa-wrench mr-2"></i> 工具中心</a><a
+            href="../../docs/help.html"
+            class="text-gray-600 hover:text-indigo-500 py-2 flex items-center"><i
+              class="fa fa-book mr-2"></i> 帮助文档</a><a
+            href="https://github.com/424635328/SurveyKit" rel="noopener"
+            target="_blank"
+            class="text-gray-600 hover:text-indigo-500 py-2 flex items-center"><i
+              class="fa fa-github mr-2"></i> GitHub</a></div></div>
+    </header>
+
+    <main class="flex-grow container mx-auto px-4 py-12 md:py-20">
+      <div class="text-center mb-12 max-w-3xl mx-auto"
+        data-animate="reveal-up"><h2
+          class="text-[clamp(2rem,5vw,3.2rem)] font-bold mb-4 leading-tight text-shadow flex items-center justify-center"><i
+            class="fa fa-palette mr-4 text-indigo-400"></i>主题<span
+            class="text-white">定制器</span></h2><p
+          class="text-slate-300 text-lg">实时预览并定制您的问卷外观，打造与众不同的用户体验。</p></div>
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12"
+        data-animate="reveal-up">
+        <div class="lg:col-span-1">
+          <div class="card-base p-6 sm:p-8 space-y-6 sticky top-28">
+            <div class="control-group"><label id="primary-color-label"
+                class="control-label">主色调 (Primary)</label><div
+                class="flex items-center space-x-3"><input type="color"
+                  id="primary-color-input" class="control-color-picker"
+                  aria-labelledby="primary-color-label"><input type="text"
+                  id="primary-color-text" class="control-text-input flex-grow"
+                  aria-labelledby="primary-color-label"
+                  placeholder="#6d28d9"></div></div>
+            <div class="control-group"><label id="background-color-label"
+                class="control-label">背景色 (Background)</label><div
+                class="flex items-center space-x-3"><input type="color"
+                  id="background-color-input" class="control-color-picker"
+                  aria-labelledby="background-color-label"><input type="text"
+                  id="background-color-text"
+                  class="control-text-input flex-grow"
+                  aria-labelledby="background-color-label"
+                  placeholder="#111827"></div></div>
+            <div class="control-group"><label id="card-color-label"
+                class="control-label">卡片颜色 (Card)</label><div
+                class="flex items-center space-x-3"><input type="color"
+                  id="card-color-input" class="control-color-picker"
+                  aria-labelledby="card-color-label"><input type="text"
+                  id="card-color-text" class="control-text-input flex-grow"
+                  aria-labelledby="card-color-label"
+                  placeholder="#1f2937"></div></div>
+            <div class="control-group"><label id="text-color-label"
+                class="control-label">主要文字 (Text)</label><div
+                class="flex items-center space-x-3"><input type="color"
+                  id="text-color-input" class="control-color-picker"
+                  aria-labelledby="text-color-label"><input type="text"
+                  id="text-color-text" class="control-text-input flex-grow"
+                  aria-labelledby="text-color-label"
+                  placeholder="#e5e7eb"></div></div>
+            <div class="control-group"><label for="font-select"
+                class="control-label">问卷字体 (Font)</label><select
+                id="font-select" class="control-select"><option
+                  value="'Noto Sans SC', sans-serif">思源黑体 (推荐)</option><option
+                  value="'Inter', sans-serif">Inter (西文)</option><option
+                  value="'Roboto', sans-serif">Roboto</option><option
+                  value="'Lato', sans-serif">Lato</option><option
+                  value="'-apple-system', 'BlinkMacSystemFont', 'Segoe UI', sans-serif">系统默认</option></select></div>
+            <div
+              class="pt-4 border-t border-slate-700/50 flex flex-col space-y-3"><button
+                id="export-btn"
+                class="action-btn bg-teal-600 hover:bg-teal-700"><i
+                  class="fa fa-code mr-2"></i>导出主题 CSS</button><button
+                id="reset-btn"
+                class="action-btn bg-slate-600 hover:bg-slate-700"><i
+                  class="fa fa-undo mr-2"></i>重置为默认</button></div>
+            <div id="export-container" class="hidden"><label
+                for="export-textarea" class="sr-only">导出的CSS代码</label><textarea
+                id="export-textarea" rows="10" readonly
+                class="w-full"></textarea><button id="copy-css-btn"
+                class="action-btn bg-indigo-600 hover:bg-indigo-700 mt-3 w-full"><i
+                  class="fa fa-copy mr-2"></i>复制到剪贴板</button></div>
+          </div>
+        </div>
+        <div class="lg:col-span-2">
+          <div id="preview-area" class="preview-wrapper">
+            <div class="preview-survey-page">
+              <header class="preview-header">
                 <div class="preview-progress-bar-container">
-                    <progress class="preview-progress" value="75" max="100" aria-label="问卷进度条预览"></progress>
+                  <progress class="preview-progress" value="75" max="100"
+                    aria-label="问卷进度条预览"></progress>
                 </div>
-            </header>
-            <div class="preview-survey-container">
+              </header>
+              <div class="preview-survey-container">
                 <div class="preview-title-group">
-                    <h1 class="preview-section-title">秘密档案 🤫</h1>
-                    <p class="preview-subtitle">这是一个深度探索邀请，所有问题都是选填。</p>
+                  <h1 class="preview-section-title">秘密档案 🤫</h1>
+                  <p class="preview-subtitle">这是一个深度探索邀请，所有问题都是选填。</p>
                 </div>
                 <form class="preview-form" aria-label="问卷预览表单">
-                    <fieldset>
-                        <legend>Part 1: 直觉与本能</legend>
-                        <div class="preview-question-block">
-                            <p id="q1-label" class="preview-question-label"><span class="preview-question-number">1. </span><span class="preview-question-text">当你需要提神时，第一选择是？</span></p>
-                            <div class="preview-radio-group" role="radiogroup" aria-labelledby="q1-label">
-                                <input type="radio" id="p_radio1" name="preview_radio1"><label for="p_radio1" class="preview-radio-label">☕ 一杯浓缩黑咖啡</label>
-                                <input type="radio" id="p_radio2" name="preview_radio1" checked><label for="p_radio2" class="preview-radio-label">🥤 一杯加满料的奶茶</label>
-                            </div>
-                        </div>
-                    </fieldset>
-                    <fieldset>
-                        <legend>Part 2: 思考与决策</legend>
-                        <div class="preview-question-block">
-                             <label for="preview-text-input" class="preview-question-label"><span class="preview-question-number">2. </span><span class="preview-question-text">你最近在思考的一个问题是什么？</span></label>
-                             <input type="text" id="preview-text-input" class="preview-input" placeholder="输入框预览...">
-                        </div>
-                    </fieldset>
-                    <div class="preview-form-actions">
-                        <button type="button" class="preview-secondary-btn"><i class="fa fa-download"></i> 导出草稿</button>
-                        <button type="button" class="preview-primary-btn">封存我的答案 <i class="fa fa-paper-plane"></i></button>
+                  <fieldset>
+                    <legend>Part 1: 直觉与本能</legend>
+                    <div class="preview-question-block">
+                      <p id="q1-label" class="preview-question-label"><span
+                          class="preview-question-number">1. </span><span
+                          class="preview-question-text">当你需要提神时，第一选择是？</span></p>
+                      <div class="preview-radio-group" role="radiogroup"
+                        aria-labelledby="q1-label">
+                        <input type="radio" id="p_radio1"
+                          name="preview_radio1"><label for="p_radio1"
+                          class="preview-radio-label">☕ 一杯浓缩黑咖啡</label>
+                        <input type="radio" id="p_radio2" name="preview_radio1"
+                          checked><label for="p_radio2"
+                          class="preview-radio-label">🥤 一杯加满料的奶茶</label>
+                      </div>
                     </div>
+                  </fieldset>
+                  <fieldset>
+                    <legend>Part 2: 思考与决策</legend>
+                    <div class="preview-question-block">
+                      <label for="preview-text-input"
+                        class="preview-question-label"><span
+                          class="preview-question-number">2. </span><span
+                          class="preview-question-text">你最近在思考的一个问题是什么？</span></label>
+                      <input type="text" id="preview-text-input"
+                        class="preview-input" placeholder="输入框预览...">
+                    </div>
+                  </fieldset>
+                  <div class="preview-form-actions">
+                    <button type="button" class="preview-secondary-btn"><i
+                        class="fa fa-download"></i> 导出草稿</button>
+                    <button type="button" class="preview-primary-btn">封存我的答案 <i
+                        class="fa fa-paper-plane"></i></button>
+                  </div>
                 </form>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  </main>
+    </main>
 
-  <footer class="bg-slate-800 text-white py-10 mt-20">
-    <div class="container mx-auto px-4"><div class="flex flex-col md:flex-row justify-between items-center text-center md:text-left space-y-6 md:space-y-0"><div class="flex items-center"><span class="text-indigo-500 text-2xl mr-2"><i class="fa fa-wpforms"></i></span><h2 class="text-xl font-bold">SurveyKit</h2></div><div class="text-slate-400 text-sm">© <span id="current-year-footer"></span> SurveyKit. 保留所有权利。</div><div class="flex space-x-6"><a href="https://github.com/424635328/SurveyKit" target="_blank" rel="noopener" class="text-slate-400 hover:text-white transition-colors duration-200" aria-label="GitHub"><i class="fa fa-github text-xl"></i></a></div></div></div>
-  </footer>
+    <footer class="bg-slate-800 text-white py-10 mt-20">
+      <div class="container mx-auto px-4"><div
+          class="flex flex-col md:flex-row justify-between items-center text-center md:text-left space-y-6 md:space-y-0"><div
+            class="flex items-center"><span
+              class="text-indigo-500 text-2xl mr-2"><i
+                class="fa fa-wpforms"></i></span><h2
+              class="text-xl font-bold">SurveyKit</h2></div><div
+            class="text-slate-400 text-sm">© <span
+              id="current-year-footer"></span> SurveyKit. 保留所有权利。</div><div
+            class="flex space-x-6"><a
+              href="https://github.com/424635328/SurveyKit" target="_blank"
+              rel="noopener"
+              class="text-slate-400 hover:text-white transition-colors duration-200"
+              aria-label="GitHub"><i
+                class="fa fa-github text-xl"></i></a></div></div></div>
+    </footer>
 
-  <button id="scrollToTopBtn" class="fixed bottom-6 right-6 bg-indigo-600 text-white p-3 rounded-full shadow-lg opacity-0 pointer-events-none transition-all duration-300 transform translate-y-4 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 z-50" aria-label="Scroll to top"><i class="fa fa-arrow-up text-lg"></i></button>
-  
-  <script src="customizer.js" defer></script>
-</body>
+    <button id="scrollToTopBtn"
+      class="fixed bottom-6 right-6 bg-indigo-600 text-white p-3 rounded-full shadow-lg opacity-0 pointer-events-none transition-all duration-300 transform translate-y-4 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 z-50"
+      aria-label="Scroll to top"><i class="fa fa-arrow-up text-lg"></i></button>
+
+    <script src="customizer.js" defer></script>
+  </body>
 </html>
