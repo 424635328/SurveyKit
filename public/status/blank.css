@@ -1,4 +1,4 @@
-/* public/status/error.css */
+/* public/status/blank-status.css */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
 
 body {
@@ -7,9 +7,8 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* 渐变背景样式：神秘的紫粉色调 */
 .gradient-background {
-  background: linear-gradient(135deg, #f0e6f7 0%, #e3c1e8 100%); /* 柔和的薰衣草紫到浅粉紫渐变 */
+  background: linear-gradient(135deg, #ac6e3e 0%, #1e959d 100%);
 }
 
 /* 主容器样式 */
@@ -37,7 +36,7 @@ body {
 .status-title {
   font-size: clamp(2rem, 5vw, 3rem); /* 响应式字体大小 */
   font-weight: 700;
-  color: #8A2BE2; /* 蓝紫色 */
+  color: #d97706; /* 深橙色 */
   margin-bottom: 1rem;
   opacity: 0;
   transform: translateY(20px);
@@ -47,7 +46,7 @@ body {
 /* 描述文本样式 */
 .status-description {
   max-width: 500px;
-  color: #6A1A6A; /* 深洋红色 */
+  color: #c8b9ad; /* 柔和的深棕色 */
   font-size: 1.125rem;
   line-height: 1.75;
   margin-bottom: 2.5rem;
@@ -64,15 +63,15 @@ body {
   font-size: 1rem;
   font-weight: 600;
   color: #fff;
-  /* 按钮渐变：紫罗兰色到浅紫红色 */
-  background-image: linear-gradient(to right, #8A2BE2 0%, #BA55D3 51%, #8A2BE2 100%);
+  /* 按钮渐变：充满活力的橙色 */
+  background-image: linear-gradient(to right, #f59e0b 0%, #fcd34d 51%, #f59e0b 100%);
   background-size: 200% auto;
   border: none;
   border-radius: 9999px; 
   text-decoration: none;
   cursor: pointer;
-  /* 按钮阴影：与紫色调匹配 */
-  box-shadow: 0 4px 15px 0 rgba(138, 43, 226, 0.3);
+  /* 按钮阴影：与橙色调匹配 */
+  box-shadow: 0 4px 15px 0 rgba(245, 158, 11, 0.3);
   transition: all 0.4s ease;
   opacity: 0;
   transform: translateY(20px);
@@ -81,8 +80,8 @@ body {
 
 .status-button:hover {
   background-position: right center; 
-  /* 按钮悬停阴影：与紫色调匹配 */
-  box-shadow: 0 6px 20px 0 rgba(138, 43, 226, 0.4);
+  /* 按钮悬停阴影：与橙色调匹配 */
+  box-shadow: 0 6px 20px 0 rgba(245, 158, 11, 0.4);
   transform: translateY(-2px);
 }
 
@@ -114,7 +113,7 @@ body {
   100% { transform: translateY(0px); }
 }
 
-/* 未完成页面特定的动画：施工效果（不用于404，但保留以便复用） */
+/* 未完成页面特定的动画：施工效果 */
 .build-animation {
   animation: build 2s ease-in-out infinite alternate;
 }
@@ -125,11 +124,11 @@ body {
 }
 
 
-/* 继续优化后的新内容，颜色调整以匹配紫粉色主题 */
+/* 继续优化后的新内容，颜色调整以匹配橙色主题 */
 
 .status-additional-info {
   margin-top: 25px;
-  color: #6A1A6A; /* 调整为与描述文本一致的深洋红色，在浅背景上更易读 */
+  color: #783a04; /* 调整为与描述文本一致的深棕色，在浅背景上更易读 */
   font-size: 0.95em;
   line-height: 1.6;
   text-align: left;
@@ -156,28 +155,28 @@ body {
   content: "→";
   position: absolute;
   left: 0;
-  color: #BA55D3; /* 浅紫红色箭头，与主按钮色调一致 */
+  color: #f59e0b; /* 橙色箭头，与主按钮色调一致 */
   font-weight: bold;
   font-size: 1.1em;
 }
 
 .status-additional-info a {
-  color: #8A2BE2; /* 调整为与标题一致的蓝紫色 */
+  color: #d97706; /* 调整为与标题一致的深橙色 */
   text-decoration: none;
   transition: color 0.2s ease-in-out;
 }
 
 .status-additional-info a:hover {
-  color: #BA55D3; /* 悬停时更亮的紫红色，与主按钮悬停色一致 */
+  color: #f59e0b; /* 悬停时更亮的橙色，与主按钮悬停色一致 */
   text-decoration: underline;
 }
 
 .status-explore-more {
   margin-top: 35px;
   padding-top: 25px;
-  border-top: 1px dashed rgba(138, 43, 226, 0.2); /* 虚线分隔符，使用紫色透明版本 */
+  border-top: 1px dashed rgba(245, 158, 11, 0.2); /* 虚线分隔符，使用橙色透明版本 */
   text-align: center;
-  color: #6A1A6A; /* 调整为与描述文本一致的深洋红色 */
+  color: #6e543d; /* 调整为与描述文本一致的深棕色 */
 }
 
 .status-explore-more p {
@@ -198,9 +197,9 @@ body {
   display: inline-flex;
   align-items: center;
   padding: 10px 22px;
-  /* 小按钮背景：更透明的紫色 */
-  background-color: rgba(138, 43, 226, 0.05); 
-  color: #8A2BE2; /* 小按钮文字：紫色 */
+  /* 小按钮背景：更透明的橙色 */
+  background-color: rgba(245, 158, 11, 0.05); 
+  color: #f59e0b; /* 小按钮文字：橙色 */
   text-decoration: none;
   border-radius: 25px;
   font-size: 0.9em;
@@ -208,12 +207,12 @@ body {
   transition: all 0.3s ease;
   -webkit-backdrop-filter: blur(8px); /* Safari support */
   backdrop-filter: blur(8px);
-  border: 1px solid rgba(138, 43, 226, 0.15); /* 边框：透明的紫色 */
+  border: 1px solid rgba(245, 158, 11, 0.15); /* 边框：透明的橙色 */
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 }
 
 .status-small-button:hover {
-  background-color: rgba(138, 43, 226, 0.1); /* 悬停背景：更明显的透明紫色 */
+  background-color: rgba(245, 158, 11, 0.1); /* 悬停背景：更明显的透明橙色 */
   transform: translateY(-3px);
   box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
 }
@@ -238,7 +237,7 @@ body {
 .status-footer {
   margin-top: 50px;
   text-align: center;
-  color: #9370DB; /* 调整为柔和的浅紫色 */
+  color: #a16207; /* 调整为柔和的灰橙色 */
   font-size: 0.85em;
   padding: 30px 0 20px;
   line-height: 1.8;
@@ -249,7 +248,7 @@ body {
 }
 
 .status-footer a {
-  color: #8A2BE2; /* 调整为与标题一致的蓝紫色 */
+  color: #d97706; /* 调整为与标题一致的深橙色 */
   text-decoration: none;
   font-weight: bold;
   transition: color 0.2s ease-in-out;
@@ -257,5 +256,5 @@ body {
 
 .status-footer a:hover {
   text-decoration: underline;
-  color: #BA55D3; /* 悬停颜色：更亮的紫红色 */
+  color: #f59e0b; /* 悬停颜色：更亮的橙色 */
 }

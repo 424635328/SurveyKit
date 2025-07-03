@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>跳转中...</title>
+  <!-- 引入Font Awesome，用于加载图标 -->
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <style>
+    /* 极简样式，确保在跳转前的短暂瞬间不出现空白或错乱 */
+    body {
+      background-color: #f8f9fa; /* 轻微的灰色背景，避免纯白闪烁 */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh; /* 撑满视口高度 */
+      margin: 0;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      color: #6c757d; /* 柔和的文字颜色 */
+      font-size: 1.1em;
+      text-align: center;
+    }
+    .redirect-message {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 20px;
+      border-radius: 8px;
+      background-color: #ffffff;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      animation: pulse 1.5s infinite ease-in-out; /* 添加微弱的呼吸动画 */
+    }
+    .redirect-message i {
+      font-size: 1.5em;
+      color: #007bff; /* 蓝色加载图标 */
+    }
+    @keyframes pulse {
+      0% { transform: scale(1); opacity: 0.9; }
+      50% { transform: scale(1.02); opacity: 1; }
+      100% { transform: scale(1); opacity: 0.9; }
+    }
+  </style>
+  <script>
+    // 使用绝对路径进行跳转，确保无论 validator.html 被如何访问，都能正确跳转到网站根目录下的 status 文件夹
+    window.location.replace("/status/status.html?code=blank");
+  </script>
+</head>
+<body>
+  <div class="redirect-message">
+    <i class="fa fa-spinner fa-spin"></i> 页面正在跳转，请稍候...
+  </div>
+</body>
+</html>

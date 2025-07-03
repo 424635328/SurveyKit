@@ -1,11 +1,12 @@
-// public/hub/hub.js
 document.addEventListener('DOMContentLoaded', () => {
+
   function initApp() {
+    document.body.classList.add('aurora-background');
     initMobileMenu();
     initHeaderScrollEffect();
-    initFadeInAnimations();
-    initSmoothScrolling();
+    initScrollAnimations();
     initScrollToTopButton();
+    updateFooterYear();
   }
 
   function initMobileMenu() {
@@ -14,7 +15,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const icon = menuToggle?.querySelector('i');
 
     if (!menuToggle || !mobileMenu || !icon) {
-      console.warn('Mobile menu elements not found. Skipping initialization.');
       return;
     }
 
@@ -29,67 +29,46 @@ document.addEventListener('DOMContentLoaded', () => {
     const header = document.querySelector('header');
     if (!header) return;
 
-    const SCROLL_THRESHOLD = 50; 
-    let isScrolled = window.scrollY > SCROLL_THRESHOLD;
-    header.classList.toggle('header-scrolled', isScrolled);
+    const SCROLL_THRESHOLD = 50;
 
-    window.addEventListener('scroll', () => {
-      const shouldBeScrolled = window.scrollY > SCROLL_THRESHOLD;
-      if (shouldBeScrolled !== isScrolled) { 
-        isScrolled = shouldBeScrolled;
-        header.classList.toggle('header-scrolled', isScrolled);
-      }
-    }, { passive: true });
+    const toggleHeaderScrolledClass = () => {
+      header.classList.toggle('header-scrolled', window.scrollY > SCROLL_THRESHOLD);
+    };
+
+    toggleHeaderScrolledClass();
+    window.addEventListener('scroll', toggleHeaderScrolledClass, { passive: true });
   }
 
-
-  function initFadeInAnimations() {
-    const animatedElements = document.querySelectorAll('[data-animate="fade-in"]');
-
-    if (animatedElements.length === 0) {
-      return;
-    }
+  function initScrollAnimations() {
+    const animatedElements = document.querySelectorAll('[data-animate="reveal-up"]');
+    if (animatedElements.length === 0) return;
 
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
+        const target = entry.target;
         if (entry.isIntersecting) {
-          
-          entry.target.classList.add('is-visible');
+          target.classList.add('is-visible');
         } else {
-         
-          entry.target.classList.remove('is-visible');
+          target.classList.remove('is-visible');
         }
       });
     }, {
-      threshold: 0.1,
+      threshold: 0.15,
       rootMargin: '0px 0px -50px 0px'
     });
 
-    const delayIncrement = 0.1; 
+    const delayIncrement = 0.05;
     let currentDelay = 0;
 
     animatedElements.forEach((element) => {
       element.style.setProperty('--animation-delay', `${currentDelay}s`);
-      currentDelay += delayIncrement;
+      const textElements = element.querySelectorAll('[data-reveal-text]');
+      textElements.forEach((el, index) => {
+        el.style.setProperty('--text-reveal-delay', `${index * 0.1 + 0.2}s`);
+      });
 
+      currentDelay += delayIncrement;
       observer.observe(element);
-    });
-  }
-  
-  function initSmoothScrolling() {
-      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function(e) {
-          const href = this.getAttribute('href');
-          if (href.length > 1) { 
-            e.preventDefault();
-            const targetElement = document.querySelector(href);
-            if (targetElement) {
-              targetElement.scrollIntoView({
-                behavior: 'smooth'
-              });
-            }
-          }
-        });
     });
   }
 
@@ -97,9 +76,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const scrollToTopBtn = document.getElementById('scrollToTopBtn');
     if (!scrollToTopBtn) return;
 
-    const SCROLL_VISIBLE_THRESHOLD = 300; 
+    const SCROLL_VISIBLE_THRESHOLD = 300;
 
-    window.addEventListener('scroll', () => {
+    const toggleButtonVisibility = () => {
       if (window.scrollY > SCROLL_VISIBLE_THRESHOLD) {
         scrollToTopBtn.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-4');
         scrollToTopBtn.classList.add('opacity-100', 'pointer-events-auto', 'translate-y-0');
@@ -107,18 +86,19 @@ document.addEventListener('DOMContentLoaded', () => {
         scrollToTopBtn.classList.remove('opacity-100', 'pointer-events-auto', 'translate-y-0');
         scrollToTopBtn.classList.add('opacity-0', 'pointer-events-none', 'translate-y-4');
       }
-    }, { passive: true });
+    };
 
+    window.addEventListener('scroll', toggleButtonVisibility, { passive: true });
     scrollToTopBtn.addEventListener('click', () => {
-      window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-      });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     });
+    toggleButtonVisibility();
+  }
 
-    if (window.scrollY > SCROLL_VISIBLE_THRESHOLD) {
-      scrollToTopBtn.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-4');
-      scrollToTopBtn.classList.add('opacity-100', 'pointer-events-auto', 'translate-y-0');
+  function updateFooterYear() {
+    const currentYearFooter = document.getElementById('current-year-footer');
+    if (currentYearFooter) {
+      currentYearFooter.textContent = new Date().getFullYear();
     }
   }
 

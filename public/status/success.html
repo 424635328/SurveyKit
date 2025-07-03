@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>操作成功！ - SurveyKit</title>
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="success.css">
+</head>
+<body class="gradient-background">
+
+  <div class="status-container">
+    <img src="https://user-images.githubusercontent.com/107765106/220531518-e34920e5-7b56-4c9b-8a7e-976a2e4d0c9f.png" alt="宇航员成功完成任务" class="status-illustration float-animation">
+    
+    <h1 class="status-title">操作成功！</h1>
+    
+    <p class="status-description">
+      恭喜您！您的操作已顺利完成，一切都已按预期处理。
+    </p>
+    <p class="status-description">
+      感谢您使用 SurveyKit。如果您有任何疑问，欢迎随时联系我们。
+    </p>
+    
+    <a href="../index.html" class="status-button">
+      <i class="fa fa-home"></i>
+      返回主页
+    </a>
+
+    <div class="status-additional-info">
+      <p>您可以尝试：</p>
+      <ul>
+        <li><a href="https://survey-kit.vercel.app/" target="_blank" rel="noopener noreferrer">立即体验 SurveyKit 项目</a></li>
+        <li><a href="../hub/hub.html">访问工具中心</a></li>
+        <li><a href="../docs/help.html">查阅帮助文档</a></li>
+      </ul>
+    </div>
+
+    <div class="status-explore-more">
+        <p>或继续探索 SurveyKit 的更多精彩：</p>
+        <div class="explore-buttons">
+            <a href="error.html" class="status-small-button">
+                <i class="fa fa-exclamation-triangle"></i> 状态页面中心
+            </a>
+            <a href="https://github.com/424635328/SurveyKit/issues" target="_blank" rel="noopener noreferrer" class="status-small-button">
+                <i class="fa fa-bug"></i> 报告问题
+            </a>
+            <a href="https://github.com/424635328/SurveyKit" target="_blank" rel="noopener noreferrer" class="status-small-button">
+                <i class="fa fa-github"></i> 查看GitHub
+            </a>
+        </div>
+    </div>
+  </div>
+
+  <footer class="status-footer">
+    <p>© <span id="current-year"></span> SurveyKit - 一份为你定制的深度问卷.</p>
+    <p>Created with ❤️ by <a href="https://github.com/424635328" target="_blank" rel="noopener noreferrer">424635328</a>.</p>
+  </footer>
+
+  <script src="status.js"></script>
+  <script>
+    document.getElementById('current-year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>

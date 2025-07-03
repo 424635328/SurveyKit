@@ -1,4 +1,5 @@
-/* public/status/error.css */
+
+/* public/status/success-status.css */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
 
 body {
@@ -7,9 +8,9 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* 渐变背景样式：神秘的紫粉色调 */
+/* 渐变背景样式：清新且令人放松的蓝色渐变 */
 .gradient-background {
-  background: linear-gradient(135deg, #f0e6f7 0%, #e3c1e8 100%); /* 柔和的薰衣草紫到浅粉紫渐变 */
+  background: linear-gradient(135deg, #e0f2f7 0%, #b3e0e9 100%); /* 浅蓝色到湖蓝色渐变 */
 }
 
 /* 主容器样式 */
@@ -37,7 +38,7 @@ body {
 .status-title {
   font-size: clamp(2rem, 5vw, 3rem); /* 响应式字体大小 */
   font-weight: 700;
-  color: #8A2BE2; /* 蓝紫色 */
+  color: #2c3e50; /* 深沉的蓝灰色，带来稳重感 */
   margin-bottom: 1rem;
   opacity: 0;
   transform: translateY(20px);
@@ -47,7 +48,7 @@ body {
 /* 描述文本样式 */
 .status-description {
   max-width: 500px;
-  color: #6A1A6A; /* 深洋红色 */
+  color: #5d6d7e; /* 柔和的灰蓝色，易于阅读 */
   font-size: 1.125rem;
   line-height: 1.75;
   margin-bottom: 2.5rem;
@@ -64,15 +65,15 @@ body {
   font-size: 1rem;
   font-weight: 600;
   color: #fff;
-  /* 按钮渐变：紫罗兰色到浅紫红色 */
-  background-image: linear-gradient(to right, #8A2BE2 0%, #BA55D3 51%, #8A2BE2 100%);
+  /* 按钮渐变：海洋般的深蓝色 */
+  background-image: linear-gradient(to right, #3498db 0%, #2980b9 51%, #3498db 100%);
   background-size: 200% auto;
   border: none;
   border-radius: 9999px; 
   text-decoration: none;
   cursor: pointer;
-  /* 按钮阴影：与紫色调匹配 */
-  box-shadow: 0 4px 15px 0 rgba(138, 43, 226, 0.3);
+  /* 按钮阴影：与蓝色调匹配 */
+  box-shadow: 0 4px 15px 0 rgba(52, 152, 219, 0.3);
   transition: all 0.4s ease;
   opacity: 0;
   transform: translateY(20px);
@@ -81,8 +82,8 @@ body {
 
 .status-button:hover {
   background-position: right center; 
-  /* 按钮悬停阴影：与紫色调匹配 */
-  box-shadow: 0 6px 20px 0 rgba(138, 43, 226, 0.4);
+  /* 按钮悬停阴影：与蓝色调匹配 */
+  box-shadow: 0 6px 20px 0 rgba(52, 152, 219, 0.4);
   transform: translateY(-2px);
 }
 
@@ -114,7 +115,7 @@ body {
   100% { transform: translateY(0px); }
 }
 
-/* 未完成页面特定的动画：施工效果（不用于404，但保留以便复用） */
+/* 未完成页面特定的动画：施工效果（此处不适用，但保留以便复用） */
 .build-animation {
   animation: build 2s ease-in-out infinite alternate;
 }
@@ -125,11 +126,11 @@ body {
 }
 
 
-/* 继续优化后的新内容，颜色调整以匹配紫粉色主题 */
+/* 继续优化后的新内容，颜色调整以匹配蓝色主题 */
 
 .status-additional-info {
   margin-top: 25px;
-  color: #6A1A6A; /* 调整为与描述文本一致的深洋红色，在浅背景上更易读 */
+  color: #5d6d7e; /* 调整为与描述文本一致的灰蓝色，在浅背景上更易读 */
   font-size: 0.95em;
   line-height: 1.6;
   text-align: left;
@@ -156,28 +157,28 @@ body {
   content: "→";
   position: absolute;
   left: 0;
-  color: #BA55D3; /* 浅紫红色箭头，与主按钮色调一致 */
+  color: #3498db; /* 蓝色箭头，与主按钮色调一致 */
   font-weight: bold;
   font-size: 1.1em;
 }
 
 .status-additional-info a {
-  color: #8A2BE2; /* 调整为与标题一致的蓝紫色 */
+  color: #2c3e50; /* 调整为与标题一致的深蓝灰色 */
   text-decoration: none;
   transition: color 0.2s ease-in-out;
 }
 
 .status-additional-info a:hover {
-  color: #BA55D3; /* 悬停时更亮的紫红色，与主按钮悬停色一致 */
+  color: #3498db; /* 悬停时更亮的蓝色，与主按钮悬停色一致 */
   text-decoration: underline;
 }
 
 .status-explore-more {
   margin-top: 35px;
   padding-top: 25px;
-  border-top: 1px dashed rgba(138, 43, 226, 0.2); /* 虚线分隔符，使用紫色透明版本 */
+  border-top: 1px dashed rgba(52, 152, 219, 0.2); /* 虚线分隔符，使用蓝色透明版本 */
   text-align: center;
-  color: #6A1A6A; /* 调整为与描述文本一致的深洋红色 */
+  color: #5d6d7e; /* 调整为与描述文本一致的灰蓝色 */
 }
 
 .status-explore-more p {
@@ -198,9 +199,9 @@ body {
   display: inline-flex;
   align-items: center;
   padding: 10px 22px;
-  /* 小按钮背景：更透明的紫色 */
-  background-color: rgba(138, 43, 226, 0.05); 
-  color: #8A2BE2; /* 小按钮文字：紫色 */
+  /* 小按钮背景：更透明的蓝色 */
+  background-color: rgba(52, 152, 219, 0.05); 
+  color: #3498db; /* 小按钮文字：蓝色 */
   text-decoration: none;
   border-radius: 25px;
   font-size: 0.9em;
@@ -208,12 +209,12 @@ body {
   transition: all 0.3s ease;
   -webkit-backdrop-filter: blur(8px); /* Safari support */
   backdrop-filter: blur(8px);
-  border: 1px solid rgba(138, 43, 226, 0.15); /* 边框：透明的紫色 */
+  border: 1px solid rgba(52, 152, 219, 0.15); /* 边框：透明的蓝色 */
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 }
 
 .status-small-button:hover {
-  background-color: rgba(138, 43, 226, 0.1); /* 悬停背景：更明显的透明紫色 */
+  background-color: rgba(52, 152, 219, 0.1); /* 悬停背景：更明显的透明蓝色 */
   transform: translateY(-3px);
   box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
 }
@@ -238,7 +239,7 @@ body {
 .status-footer {
   margin-top: 50px;
   text-align: center;
-  color: #9370DB; /* 调整为柔和的浅紫色 */
+  color: #7f8c8d; /* 调整为柔和的灰蓝色 */
   font-size: 0.85em;
   padding: 30px 0 20px;
   line-height: 1.8;
@@ -249,7 +250,7 @@ body {
 }
 
 .status-footer a {
-  color: #8A2BE2; /* 调整为与标题一致的蓝紫色 */
+  color: #2c3e50; /* 调整为与标题一致的深蓝灰色 */
   text-decoration: none;
   font-weight: bold;
   transition: color 0.2s ease-in-out;
@@ -257,5 +258,5 @@ body {
 
 .status-footer a:hover {
   text-decoration: underline;
-  color: #BA55D3; /* 悬停颜色：更亮的紫红色 */
+  color: #3498db; /* 悬停颜色：更亮的蓝色 */
 }

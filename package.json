@@ -31,5 +31,8 @@
   "bugs": {
     "url": "https://github.com/424635328/SurveyKit/issues"
   },
-  "homepage": "https://github.com/424635328/SurveyKit#readme"
+  "homepage": "https://github.com/424635328/SurveyKit#readme",
+  "devDependencies": {
+    "tailwindcss": "^4.1.11"
+  }
 }
