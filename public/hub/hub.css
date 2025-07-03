@@ -6,7 +6,7 @@ body {
 }
 
 .aurora-background {
-  background: linear-gradient(135deg, #7a7ab0, #486fae, #425cb3, #5241bc, #873cc1);
+  background: linear-gradient(135deg, #8e6c1b, #2e8633, #483081, #943c91, #9c5930);
   background-size: 400% 400%;
   animation: aurora-flow 20s ease infinite;
 }
@@ -206,7 +206,7 @@ nav a.text-indigo-500 {
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, #f8fafc, #e2e8f0);
+  background: linear-gradient(90deg, #03e6de, #e4ebeb);
   transform: translateX(-101%);
   animation: text-reveal-wipe 0.8s cubic-bezier(0.77, 0, 0.175, 1) forwards;
   animation-delay: var(--text-reveal-delay, 0s);
