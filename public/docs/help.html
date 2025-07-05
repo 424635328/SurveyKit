@@ -1,270 +1,324 @@
 <!-- public/docs/help.html -->
 <!DOCTYPE html>
 <html lang="zh-CN">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>帮助中心 - SurveyKit</title>
-  <link rel="icon" href="../favicon.ico" type="image/x-icon">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>帮助中心 - SurveyKit</title>
+    <link rel="icon" href="../favicon.ico" type="image/x-icon">
 
-  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
-  
-  <link rel="stylesheet" href="help.css">
-</head>
-<body class="font-noto-sans-sc">
+    <link
+      href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css"
+      rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap"
+      rel="stylesheet">
 
-  <div class="background-container">
-    <div class="aurora"></div>
-    <canvas id="star-canvas"></canvas>
-  </div>
+    <link rel="stylesheet" href="help.css">
+  </head>
+  <body class="font-noto-sans-sc">
 
-  <header class="sticky top-0 z-50">
-    <div class="container mx-auto px-4 py-4 flex justify-between items-center">
-      <a href="../index.html" class="flex items-center space-x-2">
-        <h1 class="text-xl font-bold text-glow">SurveyKit</h1>
-      </a>
-      
-      <nav class="hidden md:flex items-center space-x-8">
-        <a href="../index.html" class="nav-link"><span><i class="fa fa-home mr-2"></i>首页</span></a>
-        <a href="../hub/hub.html" class="nav-link"><span><i class="fa fa-wrench mr-2"></i>工具中心</span></a>
-        <a href="#" class="nav-link active"><span><i class="fa fa-book mr-2"></i>帮助文档</span></a>
-        <a href="https://github.com/424635328/SurveyKit" target="_blank" rel="noopener" class="nav-link"><span><i class="fa fa-github mr-2"></i>GitHub</span></a>
-      </nav>
-      
-      <button class="md:hidden text-gray-300 focus:outline-none" id="menu-toggle" aria-label="Toggle navigation menu">
-        <i class="fa fa-bars text-xl"></i>
-      </button>
+    <div class="background-container">
+      <div class="aurora"></div>
+      <canvas id="star-canvas"></canvas>
     </div>
-    
-    <div class="md:hidden hidden mobile-menu-glass" id="mobile-menu">
-      <div class="container mx-auto px-4 py-3 flex flex-col space-y-3">
-        <a href="../index.html" class="nav-link-mobile"><span><i class="fa fa-home mr-2"></i>首页</span></a>
-        <a href="../hub/hub.html" class="nav-link-mobile"><span><i class="fa fa-wrench mr-2"></i>工具中心</span></a>
-        <a href="#" class="nav-link-mobile active"><span><i class="fa fa-book mr-2"></i>帮助文档</span></a>
-        <a href="https://github.com/424635328/SurveyKit" target="_blank" rel="noopener" class="nav-link-mobile"><span><i class="fa fa-github mr-2"></i>GitHub</span></a>
-      </div>
-    </div>
-  </header>
 
-  <main class="container mx-auto px-4 py-16 md:py-24 relative z-10">
-    
-    <section class="text-center mb-20 md:mb-28 reveal">
-      <h1 class="text-4xl md:text-6xl font-bold text-glow mb-6">欢迎来到知识星系</h1>
-      <p class="max-w-3xl mx-auto text-lg md:text-xl text-gray-300 leading-relaxed mb-8">在这里，你将找到驾驭 SurveyKit 的一切所需，从启航到精通，每一步都有星光指引。</p>
-      <a href="../hub/hub.html" class="btn-primary">
-        <i class="fa fa-rocket mr-2"></i> 前往工具中心
-      </a>
-    </section>
-
-    <section class="mb-20 md:mb-28">
-      <h2 class="section-title reveal">快速导航</h2>
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-        <a href="../hub/toolchain/management.html" class="tilt-card reveal">
-          <div class="card-content">
-            <div class="card-icon"><i class="fa fa-tasks"></i></div>
-            <h3 class="card-title">问卷管理</h3>
-            <p class="card-description">创建、编辑、分享和分析你的所有问卷。</p>
-          </div>
+    <header class="sticky top-0 z-50">
+      <div
+        class="container mx-auto px-4 py-4 flex justify-between items-center">
+        <a href="../index.html" class="flex items-center space-x-2">
+          <h1 class="text-xl font-bold text-glow">SurveyKit</h1>
         </a>
-        <a href="../hub/custom-questions/index.html" class="tilt-card reveal" style="--animation-delay: 100ms;">
+
+        <nav class="hidden md:flex items-center space-x-8">
+          <a href="../index.html" class="nav-link"><span><i
+                class="fa fa-home mr-2"></i>首页</span></a>
+          <a href="../hub/hub.html" class="nav-link"><span><i
+                class="fa fa-wrench mr-2"></i>工具中心</span></a>
+          <a href="#" class="nav-link active"><span><i
+                class="fa fa-book mr-2"></i>帮助文档</span></a>
+          <a href="https://github.com/424635328/SurveyKit" target="_blank"
+            rel="noopener" class="nav-link"><span><i
+                class="fa fa-github mr-2"></i>GitHub</span></a>
+        </nav>
+
+        <button class="md:hidden text-gray-300 focus:outline-none"
+          id="menu-toggle" aria-label="Toggle navigation menu">
+          <i class="fa fa-bars text-xl"></i>
+        </button>
+      </div>
+
+      <div class="md:hidden hidden mobile-menu-glass" id="mobile-menu">
+        <div class="container mx-auto px-4 py-3 flex flex-col space-y-3">
+          <a href="../index.html" class="nav-link-mobile"><span><i
+                class="fa fa-home mr-2"></i>首页</span></a>
+          <a href="../hub/hub.html" class="nav-link-mobile"><span><i
+                class="fa fa-wrench mr-2"></i>工具中心</span></a>
+          <a href="#" class="nav-link-mobile active"><span><i
+                class="fa fa-book mr-2"></i>帮助文档</span></a>
+          <a href="https://github.com/424635328/SurveyKit" target="_blank"
+            rel="noopener" class="nav-link-mobile"><span><i
+                class="fa fa-github mr-2"></i>GitHub</span></a>
+        </div>
+      </div>
+    </header>
+
+    <main class="container mx-auto px-4 py-16 md:py-24 relative z-10">
+
+      <section class="text-center mb-20 md:mb-28 reveal">
+        <h1 class="text-4xl md:text-6xl font-bold text-glow mb-6">欢迎来到知识星系</h1>
+        <p
+          class="max-w-3xl mx-auto text-lg md:text-xl text-gray-300 leading-relaxed mb-8">在这里，你将找到驾驭
+          SurveyKit 的一切所需，从启航到精通，每一步都有星光指引。</p>
+        <a href="../hub/hub.html" class="btn-primary">
+          <i class="fa fa-rocket mr-2"></i> 前往工具中心
+        </a>
+      </section>
+
+      <section class="mb-20 md:mb-28">
+        <h2 class="section-title reveal">快速导航</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <a href="../hub/toolchain/management.html" class="tilt-card reveal">
+            <div class="card-content">
+              <div class="card-icon"><i class="fa fa-tasks"></i></div>
+              <h3 class="card-title">问卷管理</h3>
+              <p class="card-description">创建、编辑、分享和分析你的所有问卷。</p>
+            </div>
+          </a>
+          <a href="../hub/custom-questions/index.html" class="tilt-card reveal"
+            style="--animation-delay: 100ms;">
             <div class="card-content">
               <div class="card-icon"><i class="fa fa-magic"></i></div>
               <h3 class="card-title">可视化编辑器</h3>
               <p class="card-description">通过拖拽轻松构建复杂的问卷结构。</p>
             </div>
-        </a>
-        <a href="../mbti.html" class="tilt-card reveal" style="--animation-delay: 200ms;">
-          <div class="card-content">
-            <div class="card-icon"><i class="fa fa-robot"></i></div>
-            <h3 class="card-title">AI 人格分析</h3>
-            <p class="card-description">提交问卷，获得专属的深度人格报告。</p>
-          </div>
-        </a>
-        <a href="roadmap.html" class="tilt-card reveal" style="--animation-delay: 300ms;">
-          <div class="card-content">
-            <div class="card-icon"><i class="fa fa-map-signs"></i></div>
-            <h3 class="card-title">发展路线图</h3>
-            <p class="card-description">查看 SurveyKit 的未来计划与新功能预告。</p>
-          </div>
-        </a>
-      </div>
-    </section>
-
-    <section class="mb-20 md:mb-28">
-      <h2 class="section-title reveal">常见问题 (FAQ)</h2>
-      <div class="faq-container space-y-10">
-
-        <div class="faq-category reveal">
-            <h3 class="faq-category-title"><i class="fa fa-rocket mr-3"></i>入门与账户</h3>
-            <details class="faq-item">
-                <summary class="faq-question">
-                    <span>SaaS模式和旧版静态模式有什么区别？</span>
-                    <i class="fa fa-chevron-down faq-arrow"></i>
-                </summary>
-                <div class="faq-answer">
-                    <p>
-                        <strong>SaaS 模式 (推荐)</strong> 是 SurveyKit 的核心。它支持用户注册、登录，并拥有一个私人的管理后台，可以创建和管理多份问卷，并在线查看每份问卷的统计结果。这是功能最完整、最强大的使用方式。<br><br>
-                        <strong>旧版静态模式</strong> 则是一个无需登录的单问卷展示方案。您需要手动修改 <code>public/questions.json</code> 文件来定义一份问卷，它不支持多问卷管理和在线结果分析。这种方式更适合快速部署一个简单的、一次性的信息收集页面。
-                    </p>
-                </div>
-            </details>
-            <details class="faq-item">
-                <summary class="faq-question">
-                    <span>如果我忘记了密码怎么办？</span>
-                    <i class="fa fa-chevron-down faq-arrow"></i>
-                </summary>
-                <div class="faq-answer">
-                    <p>
-                        目前我们正在开发密码找回功能。如果您急需重置密码，可以联系项目管理员进行手动处理。我们建议您使用密码管理器来妥善保管您的登录凭证。
-                    </p>
-                </div>
-            </details>
-             <details class="faq-item">
-                <summary class="faq-question">
-                    <span>数据安全是如何保障的？</span>
-                    <i class="fa fa-chevron-down faq-arrow"></i>
-                </summary>
-                 <div class="faq-answer">
-                    <p>
-                        我们极为重视数据安全。用户密码使用 `bcrypt` 加盐哈希存储；会话管理采用安全的 JWT；所有敏感API均需授权访问并设有速率限制；前后端数据传输经过严格校验。您可以查阅我们的<a href="security.html" class="text-link">安全中心文档</a>了解更多细节。
-                    </p>
-                </div>
-            </details>
-        </div>
-
-        <div class="faq-category reveal">
-            <h3 class="faq-category-title"><i class="fa fa-pencil-square-o mr-3"></i>问卷创建与管理</h3>
-            <details class="faq-item">
-                <summary class="faq-question">
-                    <span>如何定制我问卷的外观（主题）？</span>
-                    <i class="fa fa-chevron-down faq-arrow"></i>
-                </summary>
-                <div class="faq-answer">
-                    <p>
-                        请前往 <a href="../hub/hub.html" class="text-link">工具中心</a>，找到并进入“主题定制器”。在这里，您可以实时预览并调整问卷的主色调、背景、字体等视觉元素。完成设计后，一键即可生成对应的主题CSS代码，您可以将其应用到您的项目中。
-                    </p>
-                </div>
-            </details>
-            <details class="faq-item">
-                <summary class="faq-question">
-                    <span>目前支持哪些问题类型？</span>
-                    <i class="fa fa-chevron-down faq-arrow"></i>
-                </summary>
-                <div class="faq-answer">
-                    <p>
-                        当前核心版本主要支持深度访谈式的<strong>单项选择题</strong>（包括“其他”选项的文本输入）。我们的 <a href="roadmap.html" class="text-link">发展路线图</a> 中已经规划了支持更多丰富的问题类型，如多选题、填空题、矩阵题、文件上传等，敬请期待！
-                    </p>
-                </div>
-            </details>
-            <details class="faq-item">
-                <summary class="faq-question">
-                    <span>AI分析是如何工作的？它会看到我的哪些数据？</span>
-                    <i class="fa fa-chevron-down faq-arrow"></i>
-                </summary>
-                <div class="faq-answer">
-                    <p>
-                        AI人格分析功能会将您在问卷中提交的<strong>所有答案文本</strong>（不包括您的邮箱等个人身份信息）发送给火山方舟大模型。AI会基于这些回答内容，综合分析您的性格特质、思维方式和价值观，从而生成一份MBTI风格的报告。我们不会存储AI生成的报告，它仅在您的会话中一次性生成并展示。
-                    </p>
-                </div>
-            </details>
-        </div>
-
-        <div class="faq-category reveal">
-            <h3 class="faq-category-title"><i class="fa fa-cogs mr-3"></i>部署与技术</h3>
-            <details class="faq-item">
-                <summary class="faq-question">
-                    <span>部署到 Vercel 时最重要的步骤是什么？</span>
-                    <i class="fa fa-chevron-down faq-arrow"></i>
-                </summary>
-                <div class="faq-answer">
-                    <p>
-                        最关键的一步是：在 Vercel 项目设置的 "General" 标签页下，将 **Root Directory (根目录)** 修改为 <code>public</code>。这能确保 Vercel 正确地将 <code>public</code> 目录作为网站的根来提供静态文件服务，否则页面和API路由将无法正常工作。
-                    </p>
-                </div>
-            </details>
-            <details class="faq-item">
-                <summary class="faq-question">
-                    <span>我必须设置所有的环境变量吗？</span>
-                    <i class="fa fa-chevron-down faq-arrow"></i>
-                </summary>
-                <div class="faq-answer">
-                    <p>
-                        不完全是，这取决于您需要的功能：
-                        <ul>
-                            <li><code>JWT_SECRET</code>: <strong>必需</strong>。用于用户认证核心功能。</li>
-                            <li><code>ARK_API_KEY</code>: 如果您想使用AI人格分析功能，则为必需。</li>
-                            <li><code>RESEND_API_KEY</code> & <code>SENDER_EMAIL</code>: 如果您想使用旧版邮件找回链接功能，则为必需。SaaS模式下此功能已弱化。</li>
-                            <li><code>ADMIN_TOKEN</code>: 仅用于旧版API的后门访问，建议不设置或保持高度机密。</li>
-                        </ul>
-                    </p>
-                </div>
-            </details>
-            <details class="faq-item">
-                <summary class="faq-question">
-                    <span>我该如何为这个项目做出贡献？</span>
-                    <i class="fa fa-chevron-down faq-arrow"></i>
-                </summary>
-                <div class="faq-answer">
-                    <p>
-                        我们非常欢迎任何形式的贡献！您可以 Fork 我们的 <a href="https://github.com/424635328/SurveyKit" target="_blank" rel="noopener" class="text-link">GitHub 仓库</a>，创建一个新分支进行修改（如修复Bug、实现新功能或改进文档），然后向我们提交一个 Pull Request。请在 PR 中详细描述您的更改。
-                    </p>
-                </div>
-            </details>
-        </div>
-      </div>
-    </section>
-
-    <section class="reveal">
-        <div class="cta-glass-card">
-            <div class="cta-content">
-                <h2 class="section-title !mb-4">找不到答案？</h2>
-                <p class="text-gray-300 text-center mb-8">我们随时准备提供帮助。探索以下资源，或直接与我们联系。</p>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <a href="https://github.com/424635328/SurveyKit/issues/new?assignees=&labels=bug&template=bug_report.md&title=%5BBUG%5D" target="_blank" rel="noopener" class="cta-link">
-                        <i class="fa fa-bug"></i>
-                        <span>报告一个 Bug</span>
-                    </a>
-                    <a href="https://github.com/424635328/SurveyKit/issues/new?assignees=&labels=enhancement&template=feature_request.md&title=%5BFEAT%5D" target="_blank" rel="noopener" class="cta-link">
-                        <i class="fa fa-lightbulb-o"></i>
-                        <span>提出新功能</span>
-                    </a>
-                    <a href="https://github.com/424635328/SurveyKit#readme" target="_blank" rel="noopener" class="cta-link">
-                        <i class="fa fa-book"></i>
-                        <span>阅读完整文档</span>
-                    </a>
-                </div>
+          </a>
+          <a href="../mbti.html" class="tilt-card reveal"
+            style="--animation-delay: 200ms;">
+            <div class="card-content">
+              <div class="card-icon"><i class="fa fa-robot"></i></div>
+              <h3 class="card-title">AI 人格分析</h3>
+              <p class="card-description">提交问卷，获得专属的深度人格报告。</p>
             </div>
+          </a>
+          <a href="roadmap.html" class="tilt-card reveal"
+            style="--animation-delay: 300ms;">
+            <div class="card-content">
+              <div class="card-icon"><i class="fa fa-map-signs"></i></div>
+              <h3 class="card-title">发展路线图</h3>
+              <p class="card-description">查看 SurveyKit 的未来计划与新功能预告。</p>
+            </div>
+          </a>
         </div>
-    </section>
+      </section>
 
-  </main>
-  
-  <footer class="footer-glass">
-    <div class="container mx-auto px-4 py-8">
-      <div class="flex flex-col md:flex-row justify-between items-center text-center md:text-left">
-        <div class="mb-6 md:mb-0">
-          <p class="text-gray-400 text-sm">© 2025 SurveyKit. 由 <a href="https://github.com/424635328" target="_blank" rel="noopener" class="text-link">424635328</a> 倾力打造。</p>
+      <section class="mb-20 md:mb-28">
+        <h2 class="section-title reveal">常见问题 (FAQ)</h2>
+        <div class="faq-container space-y-10">
+
+          <div class="faq-category reveal">
+            <h3 class="faq-category-title"><i
+                class="fa fa-rocket mr-3"></i>入门与账户</h3>
+            <details class="faq-item">
+              <summary class="faq-question">
+                <span>SaaS模式和旧版静态模式有什么区别？</span>
+                <i class="fa fa-chevron-down faq-arrow"></i>
+              </summary>
+              <div class="faq-answer">
+                <p>
+                  <strong>SaaS 模式 (推荐)</strong> 是 SurveyKit
+                  的核心。它支持用户注册、登录，并拥有一个私人的管理后台，可以创建和管理多份问卷，并在线查看每份问卷的统计结果。这是功能最完整、最强大的使用方式。<br><br>
+                  <strong>旧版静态模式</strong> 则是一个无需登录的单问卷展示方案。您需要手动修改
+                  <code>public/questions.json</code>
+                  文件来定义一份问卷，它不支持多问卷管理和在线结果分析。这种方式更适合快速部署一个简单的、一次性的信息收集页面。
+                </p>
+              </div>
+            </details>
+            <details class="faq-item">
+              <summary class="faq-question">
+                <span>如果我忘记了密码怎么办？</span>
+                <i class="fa fa-chevron-down faq-arrow"></i>
+              </summary>
+              <div class="faq-answer">
+                <p>
+                  目前我们正在开发密码找回功能。如果您急需重置密码，可以联系项目管理员进行手动处理。我们建议您使用密码管理器来妥善保管您的登录凭证。
+                </p>
+              </div>
+            </details>
+            <details class="faq-item">
+              <summary class="faq-question">
+                <span>数据安全是如何保障的？</span>
+                <i class="fa fa-chevron-down faq-arrow"></i>
+              </summary>
+              <div class="faq-answer">
+                <p>
+                  我们极为重视数据安全。用户密码使用 `bcrypt` 加盐哈希存储；会话管理采用安全的
+                  JWT；所有敏感API均需授权访问并设有速率限制；前后端数据传输经过严格校验。您可以查阅我们的<a
+                    href="security.html" class="text-link">安全中心文档</a>了解更多细节。
+                </p>
+              </div>
+            </details>
+          </div>
+
+          <div class="faq-category reveal">
+            <h3 class="faq-category-title"><i
+                class="fa fa-pencil-square-o mr-3"></i>问卷创建与管理</h3>
+            <details class="faq-item">
+              <summary class="faq-question">
+                <span>如何定制我问卷的外观（主题）？</span>
+                <i class="fa fa-chevron-down faq-arrow"></i>
+              </summary>
+              <div class="faq-answer">
+                <p>
+                  请前往 <a href="../hub/hub.html"
+                    class="text-link">工具中心</a>，找到并进入“主题定制器”。在这里，您可以实时预览并调整问卷的主色调、背景、字体等视觉元素。完成设计后，一键即可生成对应的主题CSS代码，您可以将其应用到您的项目中。
+                </p>
+              </div>
+            </details>
+            <details class="faq-item">
+              <summary class="faq-question">
+                <span>目前支持哪些问题类型？</span>
+                <i class="fa fa-chevron-down faq-arrow"></i>
+              </summary>
+              <div class="faq-answer">
+                <p>
+                  当前核心版本主要支持深度访谈式的<strong>单项选择题</strong>（包括“其他”选项的文本输入）。我们的 <a
+                    href="roadmap.html" class="text-link">发展路线图</a>
+                  中已经规划了支持更多丰富的问题类型，如多选题、填空题、矩阵题、文件上传等，敬请期待！
+                </p>
+              </div>
+            </details>
+            <details class="faq-item">
+              <summary class="faq-question">
+                <span>AI分析是如何工作的？它会看到我的哪些数据？</span>
+                <i class="fa fa-chevron-down faq-arrow"></i>
+              </summary>
+              <div class="faq-answer">
+                <p>
+                  AI人格分析功能会将您在问卷中提交的<strong>所有答案文本</strong>（不包括您的邮箱等个人身份信息）发送给火山方舟大模型。AI会基于这些回答内容，综合分析您的性格特质、思维方式和价值观，从而生成一份MBTI风格的报告。我们不会存储AI生成的报告，它仅在您的会话中一次性生成并展示。
+                </p>
+              </div>
+            </details>
+          </div>
+
+          <div class="faq-category reveal">
+            <h3 class="faq-category-title"><i
+                class="fa fa-cogs mr-3"></i>部署与技术</h3>
+            <details class="faq-item">
+              <summary class="faq-question">
+                <span>部署到 Vercel 时最重要的步骤是什么？</span>
+                <i class="fa fa-chevron-down faq-arrow"></i>
+              </summary>
+              <div class="faq-answer">
+                <p>
+                  最关键的一步是：在 Vercel 项目设置的 "General" 标签页下，将 **Root Directory
+                  (根目录)** 修改为 <code>public</code>。这能确保 Vercel 正确地将
+                  <code>public</code> 目录作为网站的根来提供静态文件服务，否则页面和API路由将无法正常工作。
+                </p>
+              </div>
+            </details>
+            <details class="faq-item">
+              <summary class="faq-question">
+                <span>我必须设置所有的环境变量吗？</span>
+                <i class="fa fa-chevron-down faq-arrow"></i>
+              </summary>
+              <div class="faq-answer">
+                <p>
+                  不完全是，这取决于您需要的功能：
+                  <ul>
+                    <li><code>JWT_SECRET</code>:
+                      <strong>必需</strong>。用于用户认证核心功能。</li>
+                    <li><code>ARK_API_KEY</code>: 如果您想使用AI人格分析功能，则为必需。</li>
+                    <li><code>RESEND_API_KEY</code> & <code>SENDER_EMAIL</code>:
+                      如果您想使用旧版邮件找回链接功能，则为必需。SaaS模式下此功能已弱化。</li>
+                    <li><code>ADMIN_TOKEN</code>:
+                      仅用于旧版API的后门访问，建议不设置或保持高度机密。</li>
+                  </ul>
+                </p>
+              </div>
+            </details>
+            <details class="faq-item">
+              <summary class="faq-question">
+                <span>我该如何为这个项目做出贡献？</span>
+                <i class="fa fa-chevron-down faq-arrow"></i>
+              </summary>
+              <div class="faq-answer">
+                <p>
+                  我们非常欢迎任何形式的贡献！您可以 Fork 我们的 <a
+                    href="https://github.com/424635328/SurveyKit"
+                    target="_blank" rel="noopener" class="text-link">GitHub
+                    仓库</a>，创建一个新分支进行修改（如修复Bug、实现新功能或改进文档），然后向我们提交一个 Pull
+                  Request。请在 PR 中详细描述您的更改。
+                </p>
+              </div>
+            </details>
+          </div>
         </div>
-        <div class="flex space-x-6">
-          <a href="https://github.com/424635328/SurveyKit/issues" target="_blank" rel="noopener" class="footer-link" aria-label="报告Bug">
-            <i class="fa fa-bug"></i>
-          </a>
-          <a href="https://github.com/424635328/SurveyKit" target="_blank" rel="noopener" class="footer-link" aria-label="查看源码">
-            <i class="fa fa-github"></i>
-          </a>
+      </section>
+
+      <section class="reveal">
+        <div class="cta-glass-card">
+          <div class="cta-content">
+            <h2 class="section-title !mb-4">找不到答案？</h2>
+            <p
+              class="text-gray-300 text-center mb-8">我们随时准备提供帮助。探索以下资源，或直接与我们联系。</p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <a
+                href="https://github.com/424635328/SurveyKit/issues/new?assignees=&labels=bug&template=bug_report.md&title=%5BBUG%5D"
+                target="_blank" rel="noopener" class="cta-link">
+                <i class="fa fa-bug"></i>
+                <span>报告一个 Bug</span>
+              </a>
+              <a
+                href="https://github.com/424635328/SurveyKit/issues/new?assignees=&labels=enhancement&template=feature_request.md&title=%5BFEAT%5D"
+                target="_blank" rel="noopener" class="cta-link">
+                <i class="fa fa-lightbulb-o"></i>
+                <span>提出新功能</span>
+              </a>
+              <a href="https://github.com/424635328/SurveyKit#readme"
+                target="_blank" rel="noopener" class="cta-link">
+                <i class="fa fa-book"></i>
+                <span>阅读完整文档</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <footer class="footer-glass">
+      <div class="container mx-auto px-4 py-8">
+        <div
+          class="flex flex-col md:flex-row justify-between items-center text-center md:text-left">
+          <div class="mb-6 md:mb-0">
+            <p class="text-gray-400 text-sm">© 2025 SurveyKit. 由 <a
+                href="https://github.com/424635328" target="_blank"
+                rel="noopener" class="text-link">424635328</a> 倾力打造。</p>
+          </div>
+          <div class="flex space-x-6">
+            <a href="https://github.com/424635328/SurveyKit/issues"
+              target="_blank" rel="noopener" class="footer-link"
+              aria-label="报告Bug">
+              <i class="fa fa-bug"></i>
+            </a>
+            <a href="https://github.com/424635328/SurveyKit" target="_blank"
+              rel="noopener" class="footer-link" aria-label="查看源码">
+              <i class="fa fa-github"></i>
+            </a>
+          </div>
         </div>
       </div>
-    </div>
-  </footer>
+    </footer>
 
-  <a href="#" id="back-to-top" aria-label="返回顶部">
-    <i class="fa fa-arrow-up"></i>
-  </a>
+    <a href="#" id="back-to-top" aria-label="返回顶部">
+      <i class="fa fa-arrow-up"></i>
+    </a>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.1/vanilla-tilt.min.js"></script>
-  <script src="help.js"></script>
-</body>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.1/vanilla-tilt.min.js"></script>
+    <script src="help.js"></script>
+  </body>
 </html>
