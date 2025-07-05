@@ -13,7 +13,8 @@
 html {
     -webkit-text-size-adjust: 100%;
     tab-size: 4;
-    font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    scroll-behavior: smooth; /* 平滑滚动 */
 }
 
 body {
@@ -22,6 +23,16 @@ body {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+}
+
+/* 自定义文本选中颜色 */
+::-moz-selection { /* Firefox */
+    background: #818cf8;
+    color: #fff;
+}
+::selection {
+    background: #818cf8;
+    color: #fff;
 }
 
 .aurora-background {
@@ -67,6 +78,7 @@ header {
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* 增加头部阴影 */
 }
 
 header .container > div {
@@ -270,22 +282,48 @@ header .flex.items-center {
     color: #fff;
 }
 
+/* 主内容区淡入效果 */
 main {
     padding-top: 4rem;
     padding-bottom: 4rem;
     flex-grow: 1;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
 }
+main.is-loaded {
+    opacity: 1;
+    transform: translateY(0);
+}
+
 
 .hero-section {
     text-align: center;
     margin-bottom: 5rem;
 }
 
+/* 打字机文本容器的初始状态和动画 */
+.section-heading,
+.section-subheading,
+.category-title,
+.pili-card-subtitle {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+.section-heading.is-visible,
+.section-subheading.is-visible,
+.category-title.is-visible,
+.pili-card-subtitle.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
 .section-heading {
     font-size: 2.5rem;
     font-weight: 800;
     margin-bottom: 1rem;
-    min-height: 2.5rem;
+    min-height: 2.5rem; /* 确保动画前预留空间 */
 }
 
 .section-subheading {
@@ -295,7 +333,7 @@ main {
     margin-left: auto;
     margin-right: auto;
     line-height: 1.7;
-    min-height: 3.8rem;
+    min-height: 3.8rem; /* 确保动画前预留空间 */
 }
 
 .features-section {
@@ -308,7 +346,7 @@ main {
     margin-bottom: 2.5rem;
     padding-bottom: 0.5rem;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    min-height: 2.5rem;
+    min-height: 2.5rem; /* 确保动画前预留空间 */
 }
 
 .card-grid {
@@ -324,9 +362,10 @@ main {
     font-weight: 600;
     margin-bottom: 0.75rem;
     line-height: 1;
-    min-height: 1.25rem;
+    min-height: 1.25rem; /* 确保动画前预留空间 */
 }
 
+/* Pili Card 初始隐藏和动画 */
 .pili-card {
     display: flex;
     flex-direction: column;
@@ -335,8 +374,16 @@ main {
     border-radius: 1rem;
     overflow: hidden;
     position: relative;
-    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
     z-index: 1;
+    opacity: 0; /* 初始隐藏 */
+    transform: translateY(30px); /* 初始位置偏下 */
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.6s ease-out, box-shadow 0.4s ease; /* 添加 opacity 和 transform 过渡 */
+}
+
+/* Pili Card 滚动可见时的动画 */
+.pili-card.is-visible {
+    opacity: 1;
+    transform: translateY(0);
 }
 
 .pili-card::after {
@@ -357,7 +404,7 @@ main {
     background: conic-gradient(from var(--angle), transparent 50%, var(--gradient-start), var(--gradient-end));
     animation: border-rotate 6s linear infinite;
     z-index: -2;
-    opacity: 1; /* Default hover opacity for border */
+    opacity: 1;
     transition: opacity 0.4s ease;
 }
 
@@ -371,7 +418,7 @@ main {
 }
 
 .pili-card:hover::before {
-    opacity: 0.8; /* Changed to 0.8 for subtle effect */
+    opacity: 0.8;
 }
 
 .pili-card-icon {
@@ -424,12 +471,13 @@ main {
     transform: translateX(5px);
 }
 
+/* --- Typewriter Character Styles (for individual characters) --- */
 .typewriter-char {
     display: inline-block;
     opacity: 0;
     transform: translateY(10px) scale(0.9);
     filter: blur(3px);
-    animation: char-reveal 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    /* animation is applied dynamically by JS */
 }
 
 @keyframes char-reveal {
@@ -449,6 +497,10 @@ main {
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
+    /* 优化 text-shadow，减小模糊半径以提高清晰度 */
+    text-shadow: 
+        0 0 3px rgba(255, 255, 255, 0.8), /* 更清晰的白色核心光晕 */
+        0 0 8px var(--gradient-start, #a78bfa); /* 减小了渐变色光晕的半径 */
 }
 
 footer {
@@ -496,11 +548,3 @@ footer .text-slate-400 { color: #94a3b8; }
 footer .text-sm { font-size: 0.875rem; }
 footer .hover\:text-white:hover { color: #fff; }
 footer .transition-colors { transition-property: color, background-color, border-color, text-decoration-color, fill, stroke; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms; }
-/* --- Typewriter Initial State --- */
-.section-heading,
-.section-subheading,
-.category-title,
-.pili-card-subtitle {
-    opacity: 0; /* 所有打字机元素初始时都不可见 */
-    transition: opacity 0.3s ease; /* 添加一个平滑的过渡效果 */
-}
