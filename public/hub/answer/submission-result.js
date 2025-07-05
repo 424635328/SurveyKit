@@ -1,3 +1,4 @@
+// public/hub/answer/submission-result.js
 document.addEventListener('DOMContentLoaded', () => {
     const params = new URLSearchParams(window.location.search);
     const status = params.get('status');
