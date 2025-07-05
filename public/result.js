@@ -1,5 +1,5 @@
+// file: public/result.js
 document.addEventListener("DOMContentLoaded", () => {
-    // 全局变量和DOM元素获取
     const starCanvas = document.getElementById('star-canvas');
     const statusDisplay = document.getElementById("status-display");
     const personalityCard = document.getElementById("personality-card");
@@ -30,14 +30,12 @@ document.addEventListener("DOMContentLoaded", () => {
     let lastDisplayedEggIndex = -1;
     let loadingTimeout;
 
-    // 辅助函数：更新顶部状态栏信息
     const updateStatus = (icon, message, iconClass = '') => {
         if (statusDisplay) {
             statusDisplay.innerHTML = `<span class="icon ${iconClass}"><i class="fa-solid ${icon}"></i></span><span>${message}</span>`;
         }
     };
 
-    // 星空背景初始化
     if (starCanvas) {
         const ctx = starCanvas.getContext('2d');
         let stars = [];

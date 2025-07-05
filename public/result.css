@@ -1,3 +1,4 @@
+/* file: public/result.css */
 :root {
   --bg-color: #020617;
   --glass-bg: rgba(17, 24, 39, 0.5);
@@ -87,6 +88,7 @@ a {
   justify-content: space-between;
   align-items: center;
   background-color: rgba(2, 6, 23, 0.6);
+  -webkit-backdrop-filter: blur(12px);
   backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border-color);
 }
@@ -139,6 +141,7 @@ a {
   border-radius: 16px;
   padding: 2rem;
   width: 100%;
+  -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
   transition: all 0.3s ease;
 }
