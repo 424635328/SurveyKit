@@ -461,14 +461,23 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     const handleIdInput = () => {
-      const surveyId = surveyIdInput.value.trim();
+      const idValue = surveyIdInput.value.trim();
 
-      if (!surveyId) {
-        uiManager.displayMessage("请输入你的问卷ID。", 'error');
+      if (!idValue) {
+        uiManager.displayMessage("请输入你的问卷ID或提交ID。", 'error');
         return;
       }
 
-      const payload = { surveyId: surveyId };
+      let payload = {};
+
+      if (idValue.startsWith('sub_')) {
+          payload = { submissionId: idValue };
+      } else if (idValue.startsWith('survey_')) {
+          payload = { surveyId: idValue };
+      } else {
+          uiManager.displayMessage("ID格式无效。请输入以 'sub_' 或 'survey_' 开头的ID。", 'error');
+          return;
+      }
 
       if (initialSurveyToken) {
           payload.token = initialSurveyToken;

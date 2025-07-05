@@ -1,0 +1,55 @@
+[
+  {
+    "legend": "Part 1: 直觉与本能 (1-5)",
+    "questions": [
+      {
+        "id": "q1_beverage",
+        "text": "1. 当你需要提神时，第一选择是？",
+        "type": "radio",
+        "options": [
+          {
+            "value": "一杯浓缩黑咖啡",
+            "label": "☕ 一杯浓缩黑咖啡"
+          },
+          {
+            "value": "一杯加满料的奶茶",
+            "label": "🥤 一杯加满料的奶茶"
+          }
+        ],
+        "hasOther": true
+      },
+      {
+        "id": "q2_travel_prep",
+        "text": "2. 一场说走就走的旅行，你最先打包的是？",
+        "type": "radio",
+        "options": [
+          {
+            "value": "相机和日记本",
+            "label": "📷 相机和日记本"
+          },
+          {
+            "value": "充电宝和降噪耳机",
+            "label": "🔋 充电宝和降噪耳机"
+          }
+        ],
+        "hasOther": true
+      },
+      {
+        "id": "q3_rainy_day_feeling",
+        "text": "3. 窗外下起了雨，你的第一感觉是？",
+        "type": "radio",
+        "options": [
+          {
+            "value": "终于可以宅家了，很安心",
+            "label": "终于可以宅家了，很安心"
+          },
+          {
+            "value": "有点打乱计划，略感烦躁",
+            "label": "有点打乱计划，略感烦躁"
+          }
+        ],
+        "hasOther": true
+      }
+    ]
+  }
+]

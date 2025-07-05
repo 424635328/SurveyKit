@@ -117,7 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (surveyId && submissionId) {
                 aiAnalyzeBtn.classList.remove('hidden');
                 exportButtonsContainer.classList.remove('hidden');
-                aiAnalyzeBtn.onclick = () => { window.location.href = `../../analyze.html?id=${submissionId}`; };
+                aiAnalyzeBtn.onclick = () => { window.location.href = `../../mbti.html?id=${submissionId}`; };
                 exportButtonsContainer.querySelectorAll('.export-btn').forEach(btn => {
                     btn.addEventListener('click', (e) => handleExport(e.currentTarget.dataset.format, e.currentTarget));
                 });

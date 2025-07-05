@@ -1,28 +1,27 @@
-// public/hub/answer/answer.js
 document.addEventListener('DOMContentLoaded', () => {
     const params = new URLSearchParams(window.location.search);
     const surveyId = params.get('id');
 
-    const surveyContainer = document.getElementById('survey-container');
     const surveyTitleElement = document.getElementById('survey-title');
     const surveyDescriptionElement = document.getElementById('survey-description');
     const loadingState = document.getElementById('loading-state');
     const surveyForm = document.getElementById('survey-form');
     const surveyContent = document.getElementById('survey-content');
-    const progressBarContainer = document.getElementById('progress-bar-container');
-    const progressBar = document.getElementById('progress-bar');
-    const prevBtn = document.getElementById('prev-btn');
-    const nextBtn = document.getElementById('next-btn');
     const submitButton = document.getElementById('submit-survey-btn');
     const toastContainer = document.getElementById('toast-container');
     const autosaveIndicator = document.getElementById('autosave-indicator');
     const scrollToTopBtn = document.getElementById('scrollToTopBtn');
     const scrollToBottomBtn = document.getElementById('scrollToBottomBtn');
+    const previewModal = document.getElementById('preview-modal');
+    const previewModalContent = document.getElementById('preview-modal-content');
+    const closePreviewBtn = document.getElementById('close-preview-btn');
+    const editAnswersBtn = document.getElementById('edit-answers-btn');
+    const finalSubmitBtn = document.getElementById('final-submit-btn');
+    const previewAnswersList = document.getElementById('preview-answers-list');
 
     let surveyData = {};
-    let surveyParts = [];
-    let currentPartIndex = 0;
-    let isReviewing = false;
+    let allQuestions = [];
+    let collectedAnswers = {};
     let autosaveTimeout;
     const localStorageKey = `survey_progress_${surveyId}`;
 
@@ -48,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => toast.remove(), 300);
         }, duration);
     }
-    
+
     function showAutosaveIndicator() {
         if (autosaveTimeout) clearTimeout(autosaveTimeout);
         autosaveIndicator.classList.add('opacity-100');
@@ -74,6 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 } else {
                     el.value = savedData[key];
                 }
+                el.dispatchEvent(new Event('input', { bubbles: true }));
             }
         });
         document.querySelectorAll('input[type="radio"]:checked').forEach(radio => {
@@ -82,24 +82,23 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderQuestion(question) {
-        let questionHtml = `<div id="q-block-${question.id}" class="question-block p-4 rounded-lg bg-white/5 space-y-3 mb-6 transition-all duration-300"><label for="${question.id}" class="font-medium text-slate-200 mb-3 block">${escapeHtml(question.text)} ${question.required ? '<span class="text-red-400">*</span>' : ''}</label>`;
+        let questionHtml = `<div id="q-block-${question.id}" class="question-block p-4 rounded-lg bg-white/5 space-y-3 transition-all duration-300"><label for="${question.id}" class="font-medium text-slate-200 mb-3 block">${escapeHtml(question.text)} ${question.required ? '<span class="text-red-400">*</span>' : ''}</label>`;
         switch (question.type) {
             case 'text':
-                questionHtml += `<input type="text" id="${question.id}" name="${question.id}" class="w-full bg-slate-800 border border-slate-600 rounded-md p-2 text-white placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-indigo-500">`;
+                questionHtml += `<input type="text" id="${question.id}" name="${question.id}" class="w-full form-input">`;
                 break;
             case 'radio':
                 question.options.forEach(opt => {
                     const value = (typeof opt === 'object' && opt.value) ? opt.value : opt;
                     const label = (typeof opt === 'object' && opt.label) ? opt.label : opt;
-                    const optionId = `q_${question.id}_${value.replace(/\W/g, '_')}`;
-                    questionHtml += `<div class="flex items-center"><input type="radio" id="${optionId}" name="${question.id}" value="${escapeHtml(value)}" class="form-radio text-indigo-500 focus:ring-indigo-500 h-4 w-4 bg-slate-700 border-slate-600 cursor-pointer"><label for="${optionId}" class="ml-3 text-slate-300 cursor-pointer">${escapeHtml(label)}</label></div>`;
+                    questionHtml += `<div class="flex items-center"><input type="radio" id="q_${question.id}_${value.replace(/\W/g, '_')}" name="${question.id}" value="${escapeHtml(value)}" class="form-radio"><label for="q_${question.id}_${value.replace(/\W/g, '_')}" class="ml-3 text-slate-300 cursor-pointer">${escapeHtml(label)}</label></div>`;
                 });
                 if (question.hasOther) {
-                    questionHtml += `<div class="flex items-center"><input type="radio" id="q_${question.id}_other_radio" name="${question.id}" value="_other_" class="form-radio text-indigo-500 focus:ring-indigo-500 h-4 w-4 bg-slate-700 border-slate-600 cursor-pointer"><label for="q_${question.id}_other_radio" class="ml-3 text-slate-300 cursor-pointer">其他</label></div><input type="text" id="q_${question.id}_other_text" name="${question.id}_other" class="hidden w-full bg-slate-800 border border-slate-600 rounded-md p-2 text-white placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-indigo-500 mt-2" placeholder="请输入其他选项内容">`;
+                    questionHtml += `<div class="flex items-center"><input type="radio" id="q_${question.id}_other_radio" name="${question.id}" value="_other_" class="form-radio"><label for="q_${question.id}_other_radio" class="ml-3 text-slate-300 cursor-pointer">其他</label></div><input type="text" id="q_${question.id}_other_text" name="${question.id}_other" class="hidden w-full form-input mt-2" placeholder="请输入其他选项内容">`;
                 }
                 break;
             case 'select':
-                questionHtml += `<select id="${question.id}" name="${question.id}" class="w-full custom-select bg-slate-800 border border-slate-600 rounded-md p-2 text-white focus:outline-none focus:ring-1 focus:ring-indigo-500"><option value="" disabled selected>${escapeHtml(question.placeholder || '请选择...')}</option>`;
+                questionHtml += `<select id="${question.id}" name="${question.id}" class="w-full custom-select form-input"><option value="" disabled selected>${escapeHtml(question.placeholder || '请选择...')}</option>`;
                 question.options.forEach(opt => {
                     const value = (typeof opt === 'object' && opt.value) ? opt.value : opt;
                     const label = (typeof opt === 'object' && opt.label) ? opt.label : opt;
@@ -107,135 +106,159 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
                 questionHtml += `</select>`;
                 break;
+            case 'color':
+                questionHtml += `<div class="flex items-center gap-4"><input type="color" id="${question.id}" name="${question.id}" value="${escapeHtml(question.defaultValue || '#6366f1')}" class="form-color-picker"><span id="color-preview-${question.id}" class="w-10 h-10 rounded-md border border-slate-600"></span></div>`;
+                break;
+            case 'range':
+                const { min = 0, max = 100, step = 1, defaultValue = 50 } = question;
+                questionHtml += `<div class="flex items-center gap-4"><input type="range" id="${question.id}" name="${question.id}" min="${min}" max="${max}" step="${step}" value="${defaultValue}" class="w-full form-range"><output for="${question.id}" class="font-mono text-lg text-white bg-slate-700/50 rounded-md px-3 py-1 w-16 text-center">${defaultValue}</output></div>`;
+                break;
         }
         questionHtml += `</div>`;
         return questionHtml;
     }
 
-    function renderCurrentPart() {
-        isReviewing = false;
-        const part = surveyParts[currentPartIndex];
-        let partHtml = `<fieldset class="survey-section"><legend class="text-xl font-semibold text-white mb-6 px-2 border-b-2 border-indigo-500/50 pb-2">${escapeHtml(part.legend)}</legend>`;
-        part.questions.forEach(question => { partHtml += renderQuestion(question); });
-        partHtml += `</fieldset>`;
-        surveyContent.innerHTML = partHtml;
-        loadProgress();
-        attachEventListenersForPart();
-        updateNavigation();
-        updateProgressBar();
-    }
-    
-    function renderReviewPage() {
-        isReviewing = true;
-        const allAnswers = collectAllAnswers(); // We still call it here to get data for display
-        let reviewHtml = `<div class="review-section space-y-6"><h3 class="text-2xl font-bold text-white text-center mb-6">回顾你的答案</h3>`;
-        surveyParts.forEach((part, index) => {
-            reviewHtml += `<div class="mb-4"><h4 class="text-lg font-semibold text-indigo-300 mb-3">${escapeHtml(part.legend)}</h4>`;
-            part.questions.forEach(q => {
-                let answerText = allAnswers[q.id] ? escapeHtml(allAnswers[q.id]) : '<i class="text-slate-400">未作答</i>';
-                reviewHtml += `<div class="review-answer-block p-4 rounded-md mb-3"><p class="font-medium text-slate-300 mb-2">${escapeHtml(q.text)}</p><div class="flex justify-between items-center"><p class="text-white text-lg">${answerText}</p><button type="button" class="edit-answer-btn text-indigo-400 hover:text-white text-sm" data-part-index="${index}">编辑</button></div></div>`;
-            });
-            reviewHtml += `</div>`;
-        });
-        reviewHtml += `</div>`;
-        surveyContent.innerHTML = reviewHtml;
-        updateNavigation();
-        updateProgressBar();
-        document.querySelectorAll('.edit-answer-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                currentPartIndex = parseInt(e.target.dataset.partIndex, 10);
-                renderCurrentPart();
-            });
-        });
-    }
-
-    function attachEventListenersForPart() {
+    function attachEventListeners() {
         surveyForm.addEventListener('input', saveProgress);
         surveyForm.addEventListener('change', saveProgress);
-        document.querySelectorAll('input[type="radio"][name]').forEach(radio => {
-            radio.addEventListener('change', e => {
-                const name = e.target.name;
-                const otherInput = document.getElementById(`q_${name}_other_text`);
-                if (otherInput) {
-                    const isOtherChecked = document.getElementById(`q_${name}_other_radio`).checked;
+
+        allQuestions.forEach(q => {
+            if (q.type === 'radio' && q.hasOther) {
+                const radioGroup = surveyForm.querySelectorAll(`input[name="${q.id}"]`);
+                radioGroup.forEach(radio => radio.addEventListener('change', () => {
+                    const otherInput = document.getElementById(`q_${q.id}_other_text`);
+                    const isOtherChecked = document.getElementById(`q_${q.id}_other_radio`).checked;
                     otherInput.classList.toggle('hidden', !isOtherChecked);
-                    otherInput.required = isOtherChecked;
+                    if (isOtherChecked) otherInput.focus();
+                }));
+            } else if (q.type === 'range') {
+                const slider = document.getElementById(q.id);
+                const output = surveyForm.querySelector(`output[for="${q.id}"]`);
+                if(slider && output) slider.addEventListener('input', () => { output.value = slider.value; });
+            } else if (q.type === 'color') {
+                const colorPicker = document.getElementById(q.id);
+                const preview = document.getElementById(`color-preview-${q.id}`);
+                if(colorPicker && preview) {
+                    preview.style.backgroundColor = colorPicker.value;
+                    colorPicker.addEventListener('input', () => { preview.style.backgroundColor = colorPicker.value; });
                 }
-            });
-        });
-        document.querySelectorAll('input[type="text"]').forEach((input, index, allInputs) => {
-            input.addEventListener('keydown', e => {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    const nextInput = allInputs[index + 1];
-                    if (nextInput) nextInput.focus(); else nextBtn.click();
-                }
-            });
+            }
         });
     }
 
-    function validateCurrentPart() {
+    function validateForm() {
         document.querySelectorAll('.input-error').forEach(el => el.classList.remove('input-error'));
-        const part = surveyParts[currentPartIndex];
-        for (const question of part.questions) {
-            let isValid = true; let el;
-            if (question.type === 'radio') {
-                const selected = surveyForm.querySelector(`input[name="${question.id}"]:checked`);
-                if (question.required && !selected) isValid = false;
-                if (selected && selected.value === '_other_') {
-                    el = document.getElementById(`q_${question.id}_other_text`);
-                    if (question.required && !el.value.trim()) isValid = false;
+        let firstInvalidElement = null;
+
+        for (const question of allQuestions) {
+            let isValid = true;
+            let el;
+            if (question.required) {
+                if (question.type === 'radio') {
+                    const selected = surveyForm.querySelector(`input[name="${question.id}"]:checked`);
+                    if (!selected) isValid = false;
+                    else if (selected.value === '_other_') {
+                        el = document.getElementById(`q_${question.id}_other_text`);
+                        if (!el || !el.value.trim()) isValid = false;
+                    }
+                } else {
+                    el = document.getElementById(question.id);
+                    if (!el || !el.value.trim()) isValid = false;
                 }
-            } else {
-                el = document.getElementById(question.id);
-                if (question.required && !el.value.trim()) isValid = false;
             }
             if (!isValid) {
-                showToast(`请回答: ${question.text}`, 'warning');
                 const block = document.getElementById(`q-block-${question.id}`);
                 block.classList.add('input-error');
-                block.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                return false;
+                if (!firstInvalidElement) {
+                    firstInvalidElement = block;
+                    showToast(`请回答必填项: "${question.text}"`, 'warning');
+                }
             }
+        }
+        
+        if (firstInvalidElement) {
+            firstInvalidElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            return false;
         }
         return true;
     }
 
     function collectAllAnswers() {
-        const savedData = JSON.parse(localStorage.getItem(localStorageKey) || '{}');
-        const allAnswers = {};
-
-        surveyParts.flat().flatMap(p => p.questions).forEach(q => {
+        const formData = new FormData(surveyForm);
+        const answers = {};
+        allQuestions.forEach(q => {
             const questionId = q.id;
-            let answer = savedData[questionId] || '';
-
+            let answer = formData.get(questionId) || '';
             if (q.type === 'radio' && answer === '_other_') {
-                answer = savedData[`${questionId}_other`] || '';
+                answer = formData.get(`${questionId}_other`) || '';
             }
-            allAnswers[questionId] = answer;
+            answers[questionId] = answer;
         });
-
-        return allAnswers;
+        return answers;
     }
 
-    function updateNavigation() {
-        prevBtn.classList.toggle('hidden', currentPartIndex === 0 || isReviewing);
-        const isLastPart = currentPartIndex >= surveyParts.length - 1;
-        nextBtn.classList.toggle('hidden', isLastPart || isReviewing);
-        if (!isReviewing && isLastPart) {
-            nextBtn.classList.remove('hidden');
-            nextBtn.innerHTML = '完成并回顾答案 <i class="fa fa-check-square-o ml-2"></i>';
-        } else { nextBtn.innerHTML = '下一步 <i class="fa fa-arrow-right ml-2"></i>'; }
-        submitButton.classList.toggle('hidden', !isReviewing);
+    function showPreviewModal() {
+        collectedAnswers = collectAllAnswers();
+        let previewHtml = '';
+        allQuestions.forEach(q => {
+            const answer = collectedAnswers[q.id];
+            let displayAnswer = answer ? escapeHtml(answer) : '<i class="text-slate-400">未作答</i>';
+            if (q.type === 'color' && answer) {
+                displayAnswer = `<span class="inline-flex items-center gap-2">${escapeHtml(answer)} <span class="w-5 h-5 rounded border border-slate-500" style="background-color: ${escapeHtml(answer)};"></span></span>`;
+            }
+            previewHtml += `<div class="py-3 border-b border-slate-700"><p class="font-semibold text-slate-300">${escapeHtml(q.text)}</p><p class="text-white text-lg mt-1">${displayAnswer}</p></div>`;
+        });
+        previewAnswersList.innerHTML = previewHtml;
+        previewModal.classList.remove('hidden');
+        setTimeout(() => {
+            previewModalContent.classList.remove('opacity-0', '-translate-y-4');
+        }, 10);
     }
     
-    function updateProgressBar() {
-        const totalSteps = surveyParts.length;
-        const currentStep = isReviewing ? totalSteps : currentPartIndex + 1;
-        const progress = totalSteps > 0 ? (currentStep / totalSteps) * 100 : 0;
-        progressBar.style.width = `${progress}%`;
+    function hidePreviewModal() {
+        previewModalContent.classList.add('opacity-0', '-translate-y-4');
+        setTimeout(() => {
+            previewModal.classList.add('hidden');
+        }, 300);
     }
 
+    function handleFormSubmit(event) {
+        event.preventDefault();
+        if (validateForm()) {
+            showPreviewModal();
+        }
+    }
+
+    async function handleFinalSubmit() {
+        finalSubmitBtn.disabled = true;
+        finalSubmitBtn.innerHTML = '<i class="fa fa-spinner fa-spin mr-3"></i> 正在提交...';
+        
+        try {
+            const response = await fetch('/api/submissions.mjs', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ surveyId: surveyId, answers: collectedAnswers })
+            });
+            const result = await response.json();
+            if (!response.ok) throw new Error(result.message || '提交失败');
+
+            const authoritativeSubmissionId = result.submissionId;
+            if (!authoritativeSubmissionId) {
+                throw new Error('提交成功，但未能获取到提交ID。');
+            }
+            
+            sessionStorage.setItem(`survey_answers_${authoritativeSubmissionId}`, JSON.stringify(collectedAnswers));
+            localStorage.removeItem(localStorageKey);
+            window.location.href = `./submission-result.html?status=success&surveyId=${surveyId}&submissionId=${authoritativeSubmissionId}`;
+        } catch (error) {
+            hidePreviewModal();
+            showToast(error.message, 'error');
+        } finally {
+            finalSubmitBtn.disabled = false;
+            finalSubmitBtn.innerHTML = '确认并提交';
+        }
+    }
+    
     function handleScrollButtons() {
         const atTop = window.scrollY < 200;
         const atBottom = (window.innerHeight + window.scrollY) >= document.body.offsetHeight - 200;
@@ -243,44 +266,7 @@ document.addEventListener('DOMContentLoaded', () => {
         scrollToBottomBtn.classList.toggle('visible', !atBottom);
     }
     
-    function handleNext() {
-        if (validateCurrentPart()) {
-            if (currentPartIndex >= surveyParts.length - 1) { renderReviewPage(); } else { currentPartIndex++; renderCurrentPart(); }
-            surveyContainer.scrollIntoView({ behavior: 'smooth' });
-        }
-    }
-
-    function handlePrev() {
-        currentPartIndex--; renderCurrentPart();
-        surveyContainer.scrollIntoView({ behavior: 'smooth' });
-    }
-
-    async function handleSubmit(event) {
-        event.preventDefault();
-        submitButton.disabled = true;
-        submitButton.innerHTML = '<i class="fa fa-spinner fa-spin mr-3"></i> 提交中...';
-        
-        const answers = collectAllAnswers();
-        
-        const submissionId = `sub_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-        sessionStorage.setItem(`survey_answers_${submissionId}`, JSON.stringify(answers));
-        
-        try {
-            const response = await fetch('/api/submissions.mjs', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ surveyId: surveyId, answers: answers })
-            });
-            const result = await response.json();
-            if (!response.ok) throw new Error(result.message || '提交失败');
-            localStorage.removeItem(localStorageKey);
-            window.location.href = `./submission-result.html?status=success&surveyId=${surveyId}&submissionId=${submissionId}`;
-        } catch (error) {
-            window.location.href = `./submission-result.html?status=error&message=${encodeURIComponent(error.message)}`;
-        }
-    }
-
-    async function fetchSurveyData() {
+    async function fetchAndRenderSurvey() {
         if (!surveyId) {
             surveyTitleElement.textContent = '错误：问卷ID缺失';
             loadingState.classList.add('hidden');
@@ -290,18 +276,35 @@ document.addEventListener('DOMContentLoaded', () => {
             const response = await fetch(`/api/survey-details.mjs?id=${surveyId}`);
             if (!response.ok) throw new Error(response.status === 404 ? '问卷未找到。' : '加载问卷失败。');
             surveyData = await response.json();
-            surveyParts = surveyData.questions || [];
-            if (surveyParts.length === 0) {
+            const surveyParts = surveyData.questions || [];
+            allQuestions = surveyParts.flatMap(p => p.questions);
+
+            if (allQuestions.length === 0) {
                 surveyTitleElement.textContent = '此问卷暂无问题';
                 loadingState.classList.add('hidden');
                 return;
             }
+
             surveyTitleElement.textContent = surveyData.title || '无标题问卷';
             surveyDescriptionElement.textContent = surveyData.description || '';
+
+            let fullSurveyHtml = '';
+            surveyParts.forEach(part => {
+                fullSurveyHtml += `<fieldset class="survey-section border-t border-white/10 pt-6"><legend class="text-xl font-semibold text-white mb-4 -mt-3 px-2">${escapeHtml(part.legend)}</legend><div class="space-y-6">`;
+                part.questions.forEach(question => {
+                    fullSurveyHtml += renderQuestion(question);
+                });
+                fullSurveyHtml += `</div></fieldset>`;
+            });
+            surveyContent.innerHTML = fullSurveyHtml;
+            
             loadingState.classList.add('hidden');
             surveyForm.classList.remove('hidden');
-            progressBarContainer.classList.remove('hidden');
-            renderCurrentPart();
+            submitButton.classList.remove('hidden');
+            
+            attachEventListeners();
+            loadProgress();
+
         } catch (error) {
             surveyTitleElement.textContent = '问卷加载失败';
             surveyDescriptionElement.textContent = error.message;
@@ -309,14 +312,16 @@ document.addEventListener('DOMContentLoaded', () => {
             showToast(error.message, 'error');
         }
     }
-    
-    nextBtn.addEventListener('click', handleNext);
-    prevBtn.addEventListener('click', handlePrev);
-    surveyForm.addEventListener('submit', handleSubmit);
+
+    surveyForm.addEventListener('submit', handleFormSubmit);
+    closePreviewBtn.addEventListener('click', hidePreviewModal);
+    editAnswersBtn.addEventListener('click', hidePreviewModal);
+    finalSubmitBtn.addEventListener('click', handleFinalSubmit);
     scrollToTopBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
     scrollToBottomBtn.addEventListener('click', () => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }));
     window.addEventListener('scroll', handleScrollButtons, { passive: true });
     
     handleScrollButtons();
-    fetchSurveyData();
+    document.getElementById('current-year-footer').textContent = new Date().getFullYear();
+    fetchAndRenderSurvey();
 });
