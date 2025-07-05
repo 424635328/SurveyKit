@@ -1,0 +1,63 @@
+/* file: public/hub/toolchain/share.css */
+/* 毛玻璃效果卡片 */
+#share-card {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+}
+
+/* 复制区域的悬浮效果 */
+#copy-area:hover #copy-feedback {
+    color: #a5b4fc; /* indigo-300 */
+}
+
+/* 复制反馈动画 */
+@keyframes bounce-in {
+  0% { transform: scale(0.8); opacity: 0; }
+  50% { transform: scale(1.2); opacity: 1; }
+  100% { transform: scale(1); }
+}
+
+#copy-feedback.copied .fa-check {
+  color: #4ade80; /* green-400 */
+  animation: bounce-in 0.5s ease;
+}
+
+/* 二维码容器 */
+#qrcode-display-wrapper {
+    box-shadow: 0 0 25px rgba(255, 255, 255, 0.1);
+}
+
+/* 下载按钮加载状态 */
+.create-survey-btn:disabled {
+  cursor: wait;
+}
+
+.create-survey-btn .fa-spinner {
+  animation: fa-spin 1s infinite linear;
+}
+
+/* 社交分享按钮样式 */
+.social-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    color: white;
+    font-size: 20px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+.social-btn:hover {
+    transform: translateY(-3px) scale(1.1);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.social-btn.weibo { background: #E6162D; }
+.social-btn.twitter { background: #1DA1F2; }
+.social-btn.telegram { background: #2AABEE; }
+.social-btn.wechat { background: #09B83E; }

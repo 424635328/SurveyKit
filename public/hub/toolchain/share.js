@@ -1,93 +1,170 @@
+// File: public/hub/toolchain/share.js
 document.addEventListener("DOMContentLoaded", () => {
-  const params = new URLSearchParams(window.location.search);
-  const surveyId = params.get("id");
-  const surveyTitle = params.get("title");
+    // --- 辅助函数 ---
+    const escapeHTML = (str) => str.replace(/[&<>"']/g, (match) => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'})[match]);
 
-  const pageSurveyTitleElement = document.getElementById("survey-title");
-  if (pageSurveyTitleElement) {
-    pageSurveyTitleElement.textContent = surveyTitle
-      ? `“${surveyTitle}”`
-      : "您的问卷";
-  }
+    // --- DOM 元素获取 ---
+    const pageSurveyTitleElement = document.getElementById("survey-title");
+    const copyArea = document.getElementById("copy-area");
+    const linkInput = document.getElementById("share-link-input");
+    const copyFeedback = document.getElementById("copy-feedback");
+    const qrcodeDisplayDiv = document.getElementById("qrcode-display");
+    const downloadQrBtn = document.getElementById("download-qr-btn");
+    const socialShareContainer = document.getElementById("social-share-buttons");
+    const qrExportContainer = document.getElementById("qr-export-container");
+    const qrExportTitle = document.getElementById("qr-export-title");
+    const qrExportCodeDiv = document.getElementById("qr-export-code");
 
-  const linkInput = document.getElementById("share-link-input");
-  const copyButton = document.getElementById("copy-link-btn"); // 获取复制按钮的引用
-  const qrcodeDiv = document.getElementById("qrcode");
+    // --- 初始化和数据处理 ---
+    const params = new URLSearchParams(window.location.search);
+    const surveyId = params.get("id");
+    const surveyTitle = params.get("title") || "我的问卷";
+    const shareLink = `${window.location.origin}/hub/answer/answer.html?id=${surveyId}`;
+    const shareText = `我创建了一个问卷「${surveyTitle}」，快来参与吧！`;
 
-  // 构造分享链接
-  const shareLink = `${window.location.origin}/hub/answer/answer.html?id=${surveyId}`;
+    // --- 核心功能模块 ---
+    const ShareModule = {
+        isCopying: false,
 
-  if (linkInput) {
-    linkInput.value = shareLink;
-  }
+        init() {
+            this.updateTitles();
+            this.setupShareLink();
+            if (surveyId) {
+                this.generateQRCodes();
+                this.setupQRCodeDownload();
+                this.setupSocialShare();
+            } else {
+                this.handleError();
+            }
+            this.setupAnimations();
+        },
 
-  // 生成二维码
-  if (qrcodeDiv && surveyId) {
-    new QRCode(qrcodeDiv, {
-      text: shareLink,
-      width: 160,
-      height: 160,
-      colorDark: "#000000",
-      colorLight: "#ffffff",
-      correctLevel: QRCode.CorrectLevel.H,
-    });
-  } else if (!surveyId) {
-    if (qrcodeDiv)
-      qrcodeDiv.innerHTML =
-        '<p class="text-red-500 text-center text-sm mt-4">无法生成二维码：缺少问卷ID。</p>';
-  }
+        updateTitles() {
+            pageSurveyTitleElement.textContent = `“${escapeHTML(surveyTitle)}”`;
+            document.title = `分享「${escapeHTML(surveyTitle)}」 - SurveyKit`;
+        },
 
-  // 复制链接功能
-  if (copyButton) {
-    // 确保按钮存在才添加事件监听
-    copyButton.addEventListener("click", (e) => {
-      if (linkInput) {
-        linkInput.select(); // 选中输入框中的文本
+        setupShareLink() {
+            linkInput.value = shareLink;
+            copyArea.addEventListener("click", () => this.copyToClipboard());
+        },
+        
+        copyToClipboard() {
+            if (this.isCopying) return;
+            this.isCopying = true;
 
-        navigator.clipboard
-          .writeText(linkInput.value)
-          .then(() => {
-            const originalIconHtml = copyButton.innerHTML; // 直接从DOM获取原始HTML
-            copyButton.innerHTML = '<i class="fa fa-check"></i> 已复制!'; // 显示成功提示
+            navigator.clipboard.writeText(shareLink).then(() => {
+                copyFeedback.innerHTML = '<i class="fa fa-check"></i>';
+                copyFeedback.classList.add("copied");
 
-            setTimeout(() => {
-              // 在设置回HTML前，再次检查元素是否还在DOM中，以防万一
-              if (document.body.contains(copyButton)) {
-                copyButton.innerHTML = originalIconHtml;
-              }
-            }, 1500);
-          })
-          .catch((err) => {
-            console.error("复制到剪贴板失败:", err);
-            alert("复制链接失败，请手动复制。");
-          });
-      }
-    });
-  } else {
-    console.warn("Share page: 'copy-link-btn' element not found.");
-  }
+                setTimeout(() => {
+                    copyFeedback.innerHTML = '<i class="fa fa-copy"></i>';
+                    copyFeedback.classList.remove("copied");
+                    this.isCopying = false;
+                }, 2000);
+            }).catch(err => {
+                console.error("复制失败:", err);
+                alert("复制链接失败，请手动复制。");
+                this.isCopying = false;
+            });
+        },
 
-  const currentYearFooter = document.getElementById("current-year-footer");
-  if (currentYearFooter) {
-    currentYearFooter.textContent = new Date().getFullYear();
-  }
+        generateQRCodes() {
+            // 生成用于页面显示的二维码
+            new QRCode(qrcodeDisplayDiv, {
+                text: shareLink,
+                width: 176, height: 176,
+                colorDark: "#1e293b", colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H,
+            });
 
-  document
-    .querySelectorAll("[data-animate]")
-    .forEach((el) => el.classList.add("is-visible"));
+            // 生成用于下载的、更高分辨率的二维码
+            new QRCode(qrExportCodeDiv, {
+                text: shareLink,
+                width: 256, height: 256,
+                colorDark: "#1e293b", colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H,
+            });
+        },
 
-  // 移动端菜单切换逻辑 (从您原有代码中提取)
-  const menuToggle = document.getElementById("menu-toggle");
-  // 使用更健壮的选择器或确保 mobile-menu 有一个ID
-  const mobileMenu = document.getElementById("mobile-menu");
-  if (menuToggle && mobileMenu) {
-    const icon = menuToggle.querySelector("i");
-    menuToggle.addEventListener("click", () => {
-      mobileMenu.classList.toggle("hidden");
-      if (icon) {
-        icon.classList.toggle("fa-bars");
-        icon.classList.toggle("fa-times");
-      }
-    });
-  }
+        async setupQRCodeDownload() {
+            downloadQrBtn.addEventListener("click", async () => {
+                const btnText = downloadQrBtn.querySelector('.btn-text');
+                const originalText = btnText.innerHTML;
+                
+                downloadQrBtn.disabled = true;
+                btnText.innerHTML = '<i class="fa fa-spinner fa-spin"></i> 生成中...';
+
+                try {
+                    // 准备用于截图的容器
+                    qrExportTitle.textContent = surveyTitle;
+                    
+                    // 等待下一帧以确保DOM渲染完成
+                    await new Promise(resolve => requestAnimationFrame(resolve));
+                    
+                    const canvas = await html2canvas(qrExportContainer, {
+                        scale: 2, // 提高分辨率
+                        backgroundColor: null, // 使用元素本身的背景色
+                        useCORS: true,
+                    });
+
+                    const link = document.createElement("a");
+                    link.download = `SurveyKit_Card_${surveyId}.png`;
+                    link.href = canvas.toDataURL("image/png");
+                    link.click();
+
+                } catch (error) {
+                    console.error("下载二维码卡片失败:", error);
+                    alert("生成分享卡片失败，请稍后重试。");
+                } finally {
+                    downloadQrBtn.disabled = false;
+                    btnText.innerHTML = originalText;
+                }
+            });
+        },
+
+        setupSocialShare() {
+            const encodedLink = encodeURIComponent(shareLink);
+            const encodedText = encodeURIComponent(shareText);
+            
+            const platforms = [
+                { name: 'weibo', icon: 'fa-weibo', url: `http://service.weibo.com/share/share.php?url=${encodedLink}&title=${encodedText}` },
+                { name: 'twitter', icon: 'fa-twitter', url: `https://twitter.com/intent/tweet?url=${encodedLink}&text=${encodedText}` },
+                { name: 'telegram', icon: 'fa-telegram', url: `https://t.me/share/url?url=${encodedLink}&text=${encodedText}` },
+                { name: 'wechat', icon: 'fa-wechat', url: '#', action: () => alert('请复制链接或下载分享卡片，在微信中打开并分享。') }
+            ];
+
+            platforms.forEach(p => {
+                const btn = document.createElement("a");
+                btn.href = p.url;
+                btn.className = `social-btn ${p.name}`;
+                btn.innerHTML = `<i class="fa ${p.icon}"></i>`;
+                btn.target = "_blank";
+                btn.rel = "noopener noreferrer";
+                btn.setAttribute("aria-label", `分享到 ${p.name}`);
+
+                if (p.action) {
+                    btn.addEventListener("click", (e) => { e.preventDefault(); p.action(); });
+                }
+                socialShareContainer.appendChild(btn);
+            });
+        },
+
+        handleError() {
+            const errorMessage = "无效的问卷信息，请返回重试。";
+            pageSurveyTitleElement.textContent = errorMessage;
+            linkInput.value = "错误：缺少问卷ID";
+            copyArea.style.cursor = "not-allowed";
+            copyArea.onclick = null;
+            downloadQrBtn.style.display = 'none';
+        },
+
+        setupAnimations() {
+            document.querySelectorAll("[data-animate]").forEach((el) => {
+                setTimeout(() => el.classList.add("is-visible"), parseFloat(el.dataset.delay || 0) * 1000);
+            });
+        }
+    };
+
+    ShareModule.init();
 });

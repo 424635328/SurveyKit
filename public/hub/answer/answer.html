@@ -65,9 +65,28 @@
   
   <div id="toast-container" class="fixed top-4 right-4 z-[1001] flex flex-col gap-3 max-w-xs w-full"></div>
 
-  <footer class="bg-slate-800 text-white py-10 mt-20">
-    <div class="container mx-auto px-4"><div class="flex justify-center"><p>© <span id="current-year-footer"></span> SurveyKit</p></div></div>
-  </footer>
+    <footer class="bg-slate-800 text-white py-10">
+      <div class="container mx-auto px-4">
+        <div
+          class="flex flex-col md:flex-row justify-between items-center text-center md:text-left space-y-6 md:space-y-0">
+          <div class="flex items-center">
+            <span class="text-indigo-500 text-2xl mr-2"><i
+                class="fa fa-wpforms"></i></span>
+            <h2 class="text-xl font-bold">SurveyKit</h2>
+          </div>
+          <div class="text-slate-400 text-sm">© <span
+              id="current-year-footer"></span> SurveyKit. 保留所有权利。</div>
+          <div class="flex space-x-6">
+            <a href="https://github.com/424635328/SurveyKit" target="_blank"
+              rel="noopener"
+              class="text-slate-400 hover:text-white transition-colors duration-200"
+              aria-label="GitHub">
+              <i class="fa fa-github text-xl"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </footer>
 
   <button id="scrollToTopBtn" class="scroll-btn fixed bottom-20 right-6" aria-label="Scroll to top"><i class="fa fa-arrow-up text-lg"></i></button>
   <button id="scrollToBottomBtn" class="scroll-btn fixed bottom-6 right-6" aria-label="Scroll to bottom"><i class="fa fa-arrow-down text-lg"></i></button>
