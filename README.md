@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="./public/favicon.ico" alt="SurveyKit Demo" width="200" />
+<img src="./public/favicon.ico" alt="SurveyKit Logo" width="200" />
 
 <h1 align="center">SurveyKit - 你的多用户问卷SaaS平台</h1>
 <p align="center">
@@ -22,6 +22,8 @@
   ·
   <a href="https://survey-kit.vercel.app/docs/help.html" target="_blank"><strong>📖 阅读帮助文档</strong></a>
   ·
+    <a href="https://survey-kit.vercel.app/contact.html" target="_blank"><strong>💬 联系我们</strong></a>
+  ·
   <a href="https://survey-kit.vercel.app/docs/roadmap.html" target="_blank"><strong>🔮 查看路线图</strong></a>
 </p>
 
@@ -40,7 +42,7 @@
 
 ## ✨ 项目亮点 (Highlights)
 
-SurveyKit 的诞生源于一个简单的想法：**提问，是深入了解一个人的最佳方式**。我们致力于打造一个不仅功能强大，更充满人文关怀的问卷工具。
+SurveyKit 的诞生源于一个简单的想法：**提问，是深入了解一个人的最佳方式**。我们致力于打造一个不仅功能强大，更充满人文关怀和极致美学的问卷工具。
 
 - ### 🔐 多用户问卷管理系统 (Multi-User & Multi-Survey)
 
@@ -57,12 +59,14 @@ SurveyKit 的诞生源于一个简单的想法：**提问，是深入了解一�
   - **便捷的问卷下载**: 在问卷管理中心，用户可以随时将自己的问卷结构（`JSON` 格式）下载到本地，便于备份或分享模板。
   - **主题定制器 (Theme Customizer)**: 实时预览并调整问卷的主色调、背景色、字体等，一键生成主题CSS，打造独特品牌风格。
   - **智能JSON修正器**: 粘贴您的 `questions.json`，自动修复常见错误（如注释、缺引号、尾逗号），确保部署万无一失。
-  - **玻璃拟态设计 (Glassmorphism)**: 工具中心等核心页面采用现代化的玻璃拟态设计，搭配流动的**极光背景**，视觉效果出众，提供沉浸式体验。
+  - **玻璃拟态设计 (Glassmorphism)**: 工具中心、联系页面等核心界面采用现代化的玻璃拟态设计，搭配流动的**极光背景**，视觉效果出众，提供沉浸式体验。
 
 - ### 🎨 极致的用户体验 (UX First)
 
   - **全局命令面板**: 在任何页面按下 `⌘K` (`Ctrl+K`) 即可唤出高效的命令面板，快速导航至任何功能、工具或文档，提升操作效率。
-  - **优雅动效与沉浸填写**: 全站采用**循环流式浮现动画**，结合智能题号导航、自动草稿保存，提供如丝般顺滑的填写体验。问卷填写页现在专注于**内容展示与数据收集**，提交后会跳转至简洁的提交结果页。
+  - **3D辉光悬停卡片**: 在联系页面等处，当鼠标悬停时，卡片会产生平滑的 **3D倾斜** 效果，并被一个动态旋转的 **辉光渐变边框** 包围，同时卡片上的图标会轻微浮动，提供丰富的视觉反馈和游戏化的交互体验。
+  - **智能联系人模态框**: 点击联系方式弹出的模态框，不仅UI精致，更集成了实用功能：**二维码图片可自适应调整窗口大小**，并提供**一键复制账号**（带成功提示）和**直接保存二维码图片**的功能，极大提升了用户操作的便捷性。
+  - **优雅动效与沉浸填写**: 全站采用**流式浮现动画**，结合智能题号导航、自动草稿保存，提供如丝般顺滑的填写体验。问卷填写页现在专注于**内容展示与数据收集**，提交后会跳转至简洁的提交结果页。
   - **简洁的提交结果页**: 问卷提交后，用户将跳转到一个独立的页面，清晰展示提交成功或失败的状态，并提供返回首页的选项，流程更清晰。
   - **专业文档中心**: 配备**带粘性侧边栏目录**的帮助中心与**安全中心**、**发展路线图**等多个文档页，信息透明，查阅方便。
 
@@ -123,12 +127,12 @@ npm install
 
 ### 4. 部署到 Vercel (关键步骤)
 
-1. 登录 Vercel，从你的 GitHub 导入你 Fork 的仓库。
-2. 在 **"Project Settings" -> "General"** 中，找到 **"Root Directory"** 设置。
-3. **将根目录修改为 `public`**。这是最关键的一步，确保 Vercel 正确提供静态文件服务。
-4. 框架预设 (Framework Preset) 应自动识别为 **"Other"**。
-5. 在 **"Storage"** 标签页创建一个新的 KV 数据库并连接到项目。
-6. 点击 **"Deploy"**。
+1.  登录 Vercel，从你的 GitHub 导入你 Fork 的仓库。
+2.  在 **"Project Settings" -> "General"** 中，找到 **"Root Directory"** 设置。
+3.  **将根目录修改为 `public`**。这是最关键的一步，确保 Vercel 正确提供静态文件服务。
+4.  框架预设 (Framework Preset) 应自动识别为 **"Other"**。
+5.  在 **"Storage"** 标签页创建一个新的 KV 数据库并连接到项目。
+6.  点击 **"Deploy"**。
 
 部署完成后，Vercel 会将 `public` 目录作为网站根目录来提供服务，所有前端路由和后端 API 都将正常工作！
 
@@ -140,22 +144,22 @@ npm install
 
 这是 SurveyKit 的核心使用方式，提供完整的问卷生命周期管理。
 
-1. 访问你部署好的项目，点击右上角或工具中心进入**登录/注册**页面。
-2. 注册并登录你的账户。
-3. 系统将自动跳转到**问卷管理中心** (`/hub/toolchain/management.html`)。
-4. **创建问卷**: 点击 **“创建新问卷”** 进入可视化编辑器，通过拖拽和配置构建你的问卷。
-5. **导入问卷**: 点击 **“导入问卷”** 上传一个符合规范的 `JSON` 文件。系统会通过友好模态框引导你确认问卷标题。
-6. **管理问卷**: 在管理中心，你可以看到所有创建和导入的问卷列表。
-7. **分享问卷**: 点击问卷卡片上的 **“分享”** 按钮，即可跳转至**专属分享页**，获取填写链接和二维码，方便你向目标受众分发。填写问卷页面位于 `/hub/answer/answer.html`。
-8. **查看结果**: 点击 **“查看结果”**，即可进入**结果分析页** (`/hub/toolchain/results.html`)，在线浏览所有提交数据。数据将以对齐的表格形式呈现，并支持**一键导出为 CSV 和 JSON 文件**。
+1.  访问你部署好的项目，点击右上角或工具中心进入**登录/注册**页面。
+2.  注册并登录你的账户。
+3.  系统将自动跳转到**问卷管理中心** (`/hub/toolchain/management.html`)。
+4.  **创建问卷**: 点击 **“创建新问卷”** 进入可视化编辑器，通过拖拽和配置构建你的问卷。
+5.  **导入问卷**: 点击 **“导入问卷”** 上传一个符合规范的 `JSON` 文件。系统会通过友好模态框引导你确认问卷标题。
+6.  **管理问卷**: 在管理中心，你可以看到所有创建和导入的问卷列表。
+7.  **分享问卷**: 点击问卷卡片上的 **“分享”** 按钮，即可跳转至**专属分享页**，获取填写链接和二维码，方便你向目标受众分发。填写问卷页面位于 `/hub/answer/answer.html`。
+8.  **查看结果**: 点击 **“查看结果”**，即可进入**结果分析页** (`/hub/toolchain/results.html`)，在线浏览所有提交数据。数据将以对齐的表格形式呈现，并支持**一键导出为 CSV 和 JSON 文件**。
 
 ### 方式二：静态单问卷部署 (旧版/特定场景)
 
 如果你只需要一个简单的、无需登录的静态问卷，且不涉及多问卷管理，可以沿用传统方式：
 
-1. 在本地项目中，直接修改 `public/questions.json` 文件，定义你的问卷结构。
-2. **（可选）** 如果需要启用“找回链接”功能，请确保问卷中添加一个用于**收集用户邮箱的问题**（其 `id` 为 `q_email`）。
-3. 将修改后的代码重新部署到 Vercel。访问 `https://your-app-url/survey.html` 即为你的问卷填写页面。
+1.  在本地项目中，直接修改 `public/questions.json` 文件，定义你的问卷结构。
+2.  **（可选）** 如果需要启用“找回链接”功能，请确保问卷中添加一个用于**收集用户邮箱的问题**（其 `id` 为 `q_email`）。
+3.  将修改后的代码重新部署到 Vercel。访问 `https://your-app-url/survey.html` 即为你的问卷填写页面。
 
 ---
 
@@ -183,6 +187,7 @@ SurveyKit 致力于保障用户数据的隐私与安全。我们相信透明是�
 / (项目根目录)
 ├── public/                 # Vercel 部署的静态文件根目录
 │   ├── index.html, survey.html, etc.
+│   ├── contact.html      # 🆕 交互式联系我们页面
 │   ├── search.html         # 全局搜索页
 │   ├── hub/
 │   │   ├── hub.html        # 工具中心入口
@@ -190,7 +195,7 @@ SurveyKit 致力于保障用户数据的隐私与安全。我们相信透明是�
 │   │   ├── custom-questions/ # 可视化问卷编辑器
 │   │   ├── answer/
 │   │   │   ├── answer.html # 问卷填写页 (公开访问)
-│   │   │   └── submission-result.html # 🆕 问卷提交结果页 (简洁，成功/失败提示)
+│   │   │   └── submission-result.html # 问卷提交结果页 (简洁)
 │   │   └── toolchain/
 │   │       ├── management.html # 问卷管理中心 (需登录)
 │   │       ├── results.html    # 问卷结果查看页 (需登录，高可视化)
@@ -207,10 +212,10 @@ SurveyKit 致力于保障用户数据的隐私与安全。我们相信透明是�
 │   ├── auth.mjs            # 用户认证 (登录/注册)
 │   ├── surveys.mjs         # 问卷列表管理 (用户问卷列表、删除问卷)
 │   ├── upload-survey.mjs   # 上传/创建新问卷
-│   ├── survey-details.mjs  # 🆕 获取单个问卷详情 (公开，供 answer.html 使用)
-│   ├── submissions.mjs     # 🆕 提交问卷答案
-│   ├── get-results.mjs     # 🆕 获取问卷所有提交结果 (需授权)
-│   ├── get-public-survey.mjs # 获取公开问卷信息 (如 questions.json)
+│   ├── survey-details.mjs  # 获取单个问卷详情 (公开)
+│   ├── submissions.mjs     # 提交问卷答案
+│   ├── get-results.mjs     # 获取问卷所有提交结果 (需授权)
+│   ├── get-public-survey.mjs # 获取公开问卷信息 (旧版)
 │   ├── save.mjs            # (旧版) 保存单问卷答案
 │   ├── get-survey.mjs      # (旧版) 获取单问卷答案
 │   ├── analyze-mbti.mjs    # AI人格分析
@@ -246,12 +251,12 @@ SurveyKit 致力于保障用户数据的隐私与安全。我们相信透明是�
 
 欢迎所有形式的贡献！无论你是想修复一个 Bug，实现一个新功能，还是仅仅改进一下文档，我们都非常欢迎。
 
-1. **Fork** 这个仓库到你的 GitHub 账户。
-2. 克隆你 Fork 的仓库到本地 (`git clone YOUR_FORK_URL`)。
-3. 创建你的功能分支 (`git checkout -b feature/AmazingFeature`)。
-4. 在你的分支上进行更改并提交 (`git commit -m 'Add some AmazingFeature'`)。
-5. 推送到你的远程分支 (`git push origin feature/AmazingFeature`)。
-6. **开启一个 Pull Request**，描述你的更改和动机。
+1.  **Fork** 这个仓库到你的 GitHub 账户。
+2.  克隆你 Fork 的仓库到本地 (`git clone YOUR_FORK_URL`)。
+3.  创建你的功能分支 (`git checkout -b feature/AmazingFeature`)。
+4.  在你的分支上进行更改并提交 (`git commit -m 'Add some AmazingFeature'`)。
+5.  推送到你的远程分支 (`git push origin feature/AmazingFeature`)。
+6.  **开启一个 Pull Request**，描述你的更改和动机。
 
 ---
 

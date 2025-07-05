@@ -1,0 +1,235 @@
+@keyframes title-gradient-animation {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+#contact-hero .section-title {
+    background: linear-gradient(90deg, #a78bfa, #f472b6, #f9a8d4, #a78bfa);
+    background-size: 250% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: title-gradient-animation 8s ease-in-out infinite;
+    padding-bottom: 0.5rem;
+}
+
+@keyframes card-entry {
+    from {
+        opacity: 0;
+        transform: translateY(30px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.contact-card-wrapper {
+    perspective: 1000px;
+    animation: card-entry 0.6s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+    animation-delay: var(--animation-delay, 0s);
+}
+
+.contact-card {
+    position: relative;
+    padding: 2.5rem 1.5rem;
+    background: rgba(30, 41, 59, 0.5);
+    border-radius: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.37);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    cursor: pointer;
+    text-align: center;
+    overflow: hidden;
+    will-change: transform;
+    transition: transform 0.1s ease-out, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    min-height: 220px;
+    color: white;
+    transform-style: preserve-3d;
+}
+
+.contact-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 200%;
+    height: 100%;
+    background: conic-gradient(from 180deg at 50% 50%, rgba(167, 139, 250, 0.8) 0deg, rgba(244, 114, 182, 0.8) 60deg, rgba(251, 146, 60, 0.8) 120deg, rgba(52, 211, 153, 0.8) 180deg, rgba(96, 165, 250, 0.8) 240deg, rgba(192, 132, 252, 0.8) 300deg, rgba(167, 139, 250, 0.8) 360deg);
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    animation: rotate-glow 6s linear infinite paused;
+    z-index: -1;
+}
+
+.contact-card:hover::after {
+    opacity: 1;
+    animation-play-state: running;
+}
+
+@keyframes rotate-glow {
+    from { transform: translateX(-50%) rotate(0deg); }
+    to { transform: translateX(-50%) rotate(360deg); }
+}
+
+.contact-card-inner {
+    position: relative;
+    width: calc(100% - 4px);
+    height: calc(100% - 4px);
+    background: rgb(24, 24, 27);
+    border-radius: 0.875rem; /* 1rem - 2px */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    padding: 2.5rem 1.5rem;
+    z-index: 1;
+}
+
+.contact-card:active {
+    transform: scale(0.96);
+    transition: transform 0.1s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.contact-card-icon {
+    font-size: 2.5rem;
+    filter: drop-shadow(0 0 12px currentColor);
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), filter 0.4s ease;
+}
+
+.contact-card:hover .contact-card-icon {
+    transform: scale(1.15) translateY(-6px);
+    filter: drop-shadow(0 0 20px currentColor);
+}
+
+.contact-card-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #fff;
+    transition: color 0.3s ease;
+}
+
+.contact-card-value {
+    font-size: 0.9rem;
+    color: #94a3b8;
+    word-break: break-all;
+    transition: color 0.3s ease;
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(10, 10, 20, 0.8);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.modal-overlay:not(.hidden) {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.modal-content {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    background: rgba(30, 41, 59, 0.7);
+    border-radius: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 2rem;
+    text-align: center;
+    width: auto;
+    min-width: 280px;
+    max-width: calc(100vw - 4rem);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    transform: scale(0.95);
+    opacity: 0;
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease-in-out;
+}
+
+.modal-overlay:not(.hidden) .modal-content {
+    transform: scale(1);
+    opacity: 1;
+}
+
+#modal-qrcode-img {
+    max-width: 280px;
+    max-height: 60vh;
+    height: auto;
+}
+
+.account-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: rgba(15, 23, 42, 0.5);
+    border-radius: 0.5rem;
+    padding: 0.5rem 0.5rem 0.5rem 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.modal-action-btn {
+    display: flex;
+    align-items: center;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #cbd5e1;
+    font-size: 0.875rem;
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem;
+    border: 1px solid transparent;
+    transition: all 0.2s ease-in-out;
+    cursor: pointer;
+}
+
+.modal-action-btn:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+.modal-action-btn:active {
+    transform: scale(0.95);
+}
+
+.modal-action-btn.copied {
+    background-color: #22c55e;
+    color: #fff;
+    cursor: default;
+}
+
+.modal-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    color: #94a3b8;
+    font-size: 2rem;
+    cursor: pointer;
+    line-height: 1;
+    transition: color 0.3s, transform 0.3s;
+    z-index: 10;
+}
+
+.modal-close:hover {
+    color: #fff;
+    transform: rotate(90deg) scale(1.1);
+}
