@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SurveyKit</title>
+    <title>SurveyKit - 多用户智能问卷SaaS平台</title>
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
 
     <script src="https://cdn.tailwindcss.com"></script>
@@ -71,16 +71,36 @@
     </header>
     
     <main>
-        <section class="animated-section relative text-center pt-20 pb-24 md:pt-28 md:pb-32 overflow-hidden">
+        <section class="animated-section relative pt-20 pb-24 md:pt-28 md:pb-32 overflow-hidden">
             <div class="container mx-auto px-4 relative z-10">
-                <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">SurveyKit</h1>
-                <p class="text-2xl md:text-3xl lg:text-4xl font-semibold text-slate-300 mt-4" data-text="多用户智能问卷SaaS平台"></p>
-                <p class="max-w-3xl mx-auto text-lg md:text-xl text-slate-300 mb-8" data-text="为个人与团队打造，支持多用户、多问卷管理，并由 AI 驱动深度人格分析。"></p>
-                <p class="hero-tagline reveal-scale-in">它不仅仅是一个表单，更是一次探索和分享思想的仪式。</p>
-                <div class="mt-12 flex justify-center gap-4 flex-wrap">
-                    <a href="hub/login.html" class="primary-btn reveal-scale-in" style="--animation-delay: 0.1s;">🚀 登录/注册</a>
-                    <a href="survey.html" class="secondary-btn reveal-scale-in" style="--animation-delay: 0.2s;">✨ 直接开始</a>
-                    <a href="hub/hub.html" class="tertiary-btn cta-btn reveal-scale-in">🛠️ 工具中心</a>
+                <div class="grid lg:grid-cols-2 gap-12 items-center">
+                    <div class="text-center lg:text-left">
+                        <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">SurveyKit</h1>
+                        <p class="text-2xl md:text-3xl lg:text-4xl font-semibold text-slate-300 mt-4" data-text="多用户智能问卷SaaS平台"></p>
+                        <p class="max-w-xl mx-auto lg:mx-0 mt-6 text-lg md:text-xl text-slate-300 mb-8" data-text="为个人与团队打造，支持多用户、多问卷管理，并由 AI 驱动深度人格分析。"></p>
+                        <p class="hero-tagline reveal-scale-in">它不仅仅是一个表单，更是一次探索和分享思想的仪式。</p>
+                        <div class="mt-12 flex justify-center lg:justify-start gap-4 flex-wrap">
+                            <a href="hub/login.html" class="primary-btn reveal-scale-in" style="--animation-delay: 0.1s;">🚀 登录/注册</a>
+                            <a href="survey.html" class="secondary-btn reveal-scale-in" style="--animation-delay: 0.2s;">✨ 直接开始</a>
+                        </div>
+                    </div>
+                    <div class="hidden lg:block mockup-browser-wrapper reveal-from-right">
+                        <div class="mockup-browser tilt-card">
+                           <div class="mockup-header">
+                                <div></div><div></div><div></div>
+                           </div>
+                           <div class="mockup-body p-6">
+                               <h3 class="font-bold text-white text-lg mb-2">MBTI 人格分析报告</h3>
+                               <p class="text-sm text-indigo-300 mb-4">分析对象: <span class="font-mono">User_1a2b3c</span> | 模型: <span class="font-mono">doubao-seed-1-6-thinking-250615</span></p>
+                               <div class="space-y-3 text-slate-400 text-sm">
+                                   <p><strong class="text-slate-200">人格类型:</strong> ENFP (探险家)</p>
+                                   <p><strong class="text-slate-200">核心特质:</strong> 热情、富有想象力、善于交际。</p>
+                                   <div class="h-2 w-full bg-slate-700 rounded-full overflow-hidden mt-1"><div class="h-full bg-gradient-to-r from-pink-500 to-orange-400" style="width: 85%;"></div></div>
+                                   <p>您的回答展现出强烈的探索精神和对新可能性的渴望。您乐于与人沟通，并能从中获得能量...</p>
+                               </div>
+                           </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="scroll-down-indicator"></div>
@@ -117,40 +137,36 @@
         
         <section class="animated-section py-16 md:py-24 bg-slate-900/30 backdrop-blur-md">
             <div class="container mx-auto px-4">
-                <div class="text-center mb-16">
-                    <h2 class="section-title text-gradient" data-text="一切所需，尽在掌握 ✨"></h2>
-                    <p class="section-subtitle" data-text="我们提供从问卷设计、分发、数据聚合到智能分析的全链路工具。"></p>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    <div class="feature-card tilt-card reveal-from-up">
-                        <div class="feature-icon bg-indigo-500"><i class="fa fa-users"></i></div>
-                        <h3 class="font-semibold text-lg mb-2 text-white">多用户问卷管理</h3>
-                        <p class="text-slate-400 text-sm">安全的账户系统，提供个人问卷中心，轻松创建、编辑、追踪和管理你的多份问卷。</p>
+                <div class="grid lg:grid-cols-2 gap-16 items-center">
+                    <div class="reveal-from-left text-center lg:text-left">
+                        <h2 class="section-title text-gradient" data-text="一切所需，尽在掌握 ✨"></h2>
+                        <p class="section-subtitle mx-auto lg:mx-0 mb-8" data-text="我们提供从问卷设计、分发、数据聚合到智能分析的全链路工具。"></p>
+                        <ul class="space-y-4 text-slate-300 feature-list-alt">
+                            <li class="reveal-from-left" style="--animation-delay: 0.1s;"><i class="fa fa-check-circle"></i><span><strong>多用户管理:</strong> 安全的账户系统，提供个人问卷中心。</span></li>
+                            <li class="reveal-from-left" style="--animation-delay: 0.2s;"><i class="fa fa-check-circle"></i><span><strong>AI 驱动洞察:</strong> 基于大模型生成专属 MBTI 风格人格报告。</span></li>
+                            <li class="reveal-from-left" style="--animation-delay: 0.3s;"><i class="fa fa-check-circle"></i><span><strong>聚合与导出:</strong> 在线聚合结果，一键导出 CSV/JSON。</span></li>
+                            <li class="reveal-from-left" style="--animation-delay: 0.4s;"><i class="fa fa-check-circle"></i><span><strong>专属链接分享:</strong> 生成唯一链接和二维码，轻松分发。</span></li>
+                            <li class="reveal-from-left" style="--animation-delay: 0.5s;"><i class="fa fa-check-circle"></i><span><strong>开源安全:</strong> 项目完全开源，可在您自己的服务器部署。</span></li>
+                        </ul>
                     </div>
-                    <div class="feature-card tilt-card reveal-from-up" style="--animation-delay: 0.05s;">
-                        <div class="feature-icon bg-pink-500"><i class="fa fa-wrench"></i></div>
-                        <h3 class="font-semibold text-lg mb-2 text-white">一站式工具中心</h3>
-                        <p class="text-slate-400 text-sm">集可视化编辑器、主题定制器、JSON校验器于一体，满足从新手到专家的一切需求。</p>
-                    </div>
-                    <div class="feature-card tilt-card reveal-from-up" style="--animation-delay: 0.1s;">
-                        <div class="feature-icon bg-green-500"><i class="fa fa-magic"></i></div>
-                        <h3 class="font-semibold text-lg mb-2 text-white">AI 驱动人格洞察</h3>
-                        <p class="text-slate-400 text-sm">基于火山方舟大模型，为问卷结果生成专属 MBTI 风格人格报告，发掘数据背后的故事。</p>
-                    </div>
-                    <div class="feature-card tilt-card reveal-from-up" style="--animation-delay: 0.15s;">
-                        <div class="feature-icon bg-amber-500"><i class="fa fa-bar-chart"></i></div>
-                        <h3 class="font-semibold text-lg mb-2 text-white">结果聚合与导出</h3>
-                        <p class="text-slate-400 text-sm">在线聚合所有提交结果，以美观的表格呈现，并支持一键导出为 CSV 和 JSON 文件。</p>
-                    </div>
-                    <div class="feature-card tilt-card reveal-from-up" style="--animation-delay: 0.2s;">
-                        <div class="feature-icon bg-sky-500"><i class="fa fa-share-alt"></i></div>
-                        <h3 class="font-semibold text-lg mb-2 text-white">专属链接与分享</h3>
-                        <p class="text-slate-400 text-sm">每份问卷都生成唯一填写链接和实时二维码，方便你在任何渠道轻松分发和收集数据。</p>
-                    </div>
-                    <div class="feature-card tilt-card reveal-from-up" style="--animation-delay: 0.25s;">
-                        <div class="feature-icon bg-slate-500"><i class="fa fa-shield"></i></div>
-                        <h3 class="font-semibold text-lg mb-2 text-white">开源、安全、可控</h3>
-                        <p class="text-slate-400 text-sm">项目完全开源，采用行业标准安全实践，你可以放心使用或在自己的服务器上部署。</p>
+                    <div class="hidden lg:block mockup-browser-wrapper reveal-from-right">
+                         <div class="mockup-browser tilt-card">
+                           <div class="mockup-header"><div></div><div></div><div></div></div>
+                           <div class="mockup-body p-6">
+                               <h3 class="font-bold text-white text-lg mb-4">问卷: <span class="text-indigo-300">团队默契度调查</span></h3>
+                               <div class="flex items-center justify-between text-sm text-slate-400 border-b border-slate-600 pb-2 mb-3">
+                                   <span>问题 1/15</span>
+                                   <span><i class="fa fa-users mr-1"></i> 37 人已提交</span>
+                               </div>
+                               <p class="text-slate-200 mb-4">你通常如何处理团队中的意见分歧？</p>
+                               <div class="space-y-3">
+                                   <div class="option-bar"><div style="width: 25%"></div><span>A. 坚持己见，说服他人</span></div>
+                                   <div class="option-bar"><div style="width: 55%"></div><span>B. 寻求折中，达成共识</span></div>
+                                   <div class="option-bar"><div style="width: 15%"></div><span>C. 保持沉默，避免冲突</span></div>
+                                   <div class="option-bar"><div style="width: 5%"></div><span>D. 引入第三方协调</span></div>
+                               </div>
+                           </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -233,7 +249,7 @@
                 </div>
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     <blockquote class="testimonial-card tilt-card reveal-from-up">
-                        <p class="testimonial-text typewriter-target" data-text='"W Gaming, W Platform. This AI analysis is like my perfect flashbang, instantly reveals everything. The UI is cleaner than my headshots. GGWP."'>"W Gaming, W Platform. This AI analysis is like my perfect flashbang, instantly reveals everything. The UI is cleaner than my headshots. GGWP."</p>
+                        <p class="testimonial-text typewriter-target" data-text='"W Gaming, W Platform. This AI analysis is like my perfect flashbang, instantly reveals everything. The UI is cleaner than my headshots. GGWP."'></p>
                         <footer class="testimonial-author">
                             <img src="./assets/images/donk.png" alt="donk头像" class="testimonial-avatar">
                             <div>
@@ -243,7 +259,7 @@
                         </footer>
                     </blockquote>
                      <blockquote class="testimonial-card tilt-card reveal-from-up" style="--animation-delay: 0.1s;">
-                        <p class="testimonial-text typewriter-target" data-text='"I have seen many platforms, but the precision and customization here... it is like a perfectly placed prefire. The data export is crucial for my analysis. It just works."'>"I have seen many platforms, but the precision and customization here... it is like a perfectly placed prefire. The data export is crucial for my analysis. It just works."</p>
+                        <p class="testimonial-text typewriter-target" data-text='"I have seen many platforms, but the precision and customization here... it is like a perfectly placed prefire. The data export is crucial for my analysis. It just works."'></p>
                         <footer class="testimonial-author">
                             <img src="./assets/images/niko.png" alt="NiKo头像" class="testimonial-avatar">
                             <div>
@@ -253,7 +269,7 @@
                         </footer>
                     </blockquote>
                      <blockquote class="testimonial-card tilt-card reveal-from-up" style="--animation-delay: 0.2s;">
-                        <p class="testimonial-text typewriter-target" data-text='"Calm, efficient, and powerful. Using SurveyKit feels like clutching a 1v5. Everything is under control. The clean design helps me focus, just like in-game. This is magnifique."'>"Calm, efficient, and powerful. Using SurveyKit feels like clutching a 1v5. Everything is under control. The clean design helps me focus, just like in-game. C'est magnifique."</p>
+                        <p class="testimonial-text typewriter-target" data-text='"Calm, efficient, and powerful. Using SurveyKit feels like clutching a 1v5. Everything is under control. The clean design helps me focus, just like in-game. C\'est magnifique."'></p>
                         <footer class="testimonial-author">
                             <img src="./assets/images/zywoo.png" alt="ZywOo头像" class="testimonial-avatar">
                             <div>

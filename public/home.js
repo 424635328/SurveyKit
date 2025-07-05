@@ -160,30 +160,35 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const fullText = textElement.getAttribute('data-text');
         let typewriterTimeout;
+        textElement.innerHTML = fullText;
 
-        card.addEventListener('mouseenter', () => {
-            clearTimeout(typewriterTimeout);
-            textElement.innerHTML = '';
-            textElement.classList.add('is-typing');
-            
-            let i = 0;
-            function typeCharacter() {
-                if (i < fullText.length) {
-                    textElement.innerHTML += fullText.charAt(i);
-                    i++;
-                    typewriterTimeout = setTimeout(typeCharacter, 25); // Typing speed
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    clearTimeout(typewriterTimeout);
+                    textElement.innerHTML = '';
+                    textElement.classList.add('is-typing');
+                    
+                    let i = 0;
+                    function typeCharacter() {
+                        if (i < fullText.length) {
+                            textElement.innerHTML += fullText.charAt(i);
+                            i++;
+                            typewriterTimeout = setTimeout(typeCharacter, 25);
+                        } else {
+                            textElement.classList.remove('is-typing');
+                        }
+                    }
+                    typeCharacter();
                 } else {
+                    clearTimeout(typewriterTimeout);
+                    textElement.innerHTML = fullText;
                     textElement.classList.remove('is-typing');
                 }
-            }
-            typeCharacter();
-        });
+            });
+        }, { threshold: 0.6 });
 
-        card.addEventListener('mouseleave', () => {
-            clearTimeout(typewriterTimeout);
-            textElement.innerHTML = fullText;
-            textElement.classList.remove('is-typing');
-        });
+        observer.observe(card);
     });
   }
   
@@ -238,7 +243,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let activeIndex = -1;
 
     const searchIndex = [
-        { category: "主要功能", title: "可视化问卷编辑器", description: "通过图形界面创建、编辑和导出你的专属问卷。", url: './hub/custom-questions/index.html', icon: 'fa-edit' },
+        { category: "主要功能", title: "可视化问卷编辑器", description: "通过图形界面创建、编辑和导出你的专属问卷。", url: './hub/custom-questions/custom-questions.html', icon: 'fa-edit' },
         { category: "主要功能", title: "AI 人格分析", description: "了解如何使用由火山方舟大模型驱动的 AI 人格分析功能。", url: './mbti.html', icon: 'fa-android' },
         { category: "导航", title: "工具中心", description: '一站式访问所有核心工具，包括编辑器、预览器和校验器。', url: './hub/hub.html', icon: 'fa-wrench' },
         { category: "导航", title: "帮助文档", description: '查找关于如何使用、部署和定制 SurveyKit 的详细指南。', url: './docs/help.html', icon: 'fa-book' },
@@ -269,13 +274,25 @@ document.addEventListener("DOMContentLoaded", () => {
     const renderResults = (results) => {
         searchResultsList.innerHTML = '';
         activeIndex = -1;
-        if (results.length === 0) {
-            const query = searchInput.value.trim();
-            searchPlaceholder.querySelector('p.font-medium').textContent = query ? '找不到结果' : '开始探索 SurveyKit';
-            searchPlaceholder.querySelector('p.text-sm').innerHTML = query ? `没有与 "<strong class="text-slate-300">${query}</strong>" 相关的结果` : '输入关键词查找您需要的功能';
-            searchPlaceholder.querySelector('i').className = query ? 'fa fa-search-minus fa-2x mb-3' : 'fa fa-compass fa-2x mb-3';
-            searchResultsList.appendChild(searchPlaceholder);
-        } else {
+        if (results.length === 0 && searchInput.value.trim()) {
+            searchPlaceholder.querySelector('p.font-medium').textContent = '找不到结果';
+            searchPlaceholder.querySelector('p.text-sm').innerHTML = `没有与 "<strong class="text-slate-300">${searchInput.value.trim()}</strong>" 相关的结果`;
+            searchPlaceholder.querySelector('i').className = 'fa fa-search-minus fa-2x mb-3';
+            if(searchPlaceholder.parentNode !== searchResultsList) {
+                searchResultsList.appendChild(searchPlaceholder);
+            }
+        } else if (results.length === 0){
+            searchPlaceholder.querySelector('p.font-medium').textContent = '开始探索 SurveyKit';
+            searchPlaceholder.querySelector('p.text-sm').innerHTML = '输入关键词查找您需要的功能';
+            searchPlaceholder.querySelector('i').className = 'fa fa-compass fa-2x mb-3';
+             if(searchPlaceholder.parentNode !== searchResultsList) {
+                searchResultsList.appendChild(searchPlaceholder);
+            }
+        }
+        else {
+            if(searchResultsList.contains(searchPlaceholder)){
+                searchResultsList.removeChild(searchPlaceholder);
+            }
             const groupedResults = results.reduce((acc, item) => {
                 (acc[item.category] = acc[item.category] || []).push(item);
                 return acc;
@@ -318,7 +335,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (items.length === 0) return;
         if (e.key === 'ArrowDown') { e.preventDefault(); activeIndex = (activeIndex + 1) % items.length; updateActiveItem(); }
         else if (e.key === 'ArrowUp') { e.preventDefault(); activeIndex = (activeIndex - 1 + items.length) % items.length; updateActiveItem(); }
-        else if (e.key === 'Enter') { e.preventDefault(); items[activeIndex]?.click(); }
+        else if (e.key === 'Enter' && activeIndex > -1) { e.preventDefault(); items[activeIndex]?.click(); }
     });
 
     window.addEventListener('keydown', e => {
