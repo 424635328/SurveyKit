@@ -70,7 +70,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 </div>
                 <p class="text-xs text-slate-500">创建于: ${creationDate}</p>
                 <div class="survey-actions">
-                    <button class="action-btn share-btn"><i class="fa fa-share-alt"></i> 分享</button>
+                    <button class="action-btn distribute-btn"><i class="fa fa-share-alt"></i> 分享</button>
                     <a href="./results.html?id=${survey.id}" class="action-btn"><i class="fa fa-bar-chart"></i> 查看结果</a>
                     <button class="action-btn download-btn"><i class="fa fa-download"></i> 下载问卷</button>
                     <button class="action-btn delete-btn delete"><i class="fa fa-trash-o"></i> 删除</button>
@@ -103,7 +103,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function attachActionListeners() {
       document
-        .querySelectorAll(".share-btn")
+        .querySelectorAll(".distribute-btn")
         .forEach((button) =>
           button.addEventListener("click", handleShareClick)
         );
