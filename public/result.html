@@ -1,27 +1,31 @@
-<!-- public/result.html -->
 <!DOCTYPE html>
 <html lang="zh-CN">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>提交结果 - SurveyKit</title>
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="result.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
-
 <body>
+
+    <div class="background-container">
+        <div class="aurora"></div>
+        <canvas id="star-canvas"></canvas>
+    </div>
+
     <header class="navbar">
-        <div class="navbar-brand">
-            <a href="/">SurveyKit</a>
-        </div>
+        <a href="index.html" class="navbar-brand">
+            <img src="favicon.ico" alt="SurveyKit Logo" class="logo-glow">
+            <span class="text-glow">SurveyKit</span>
+        </a>
         <div id="status-display" class="status-display">
             <p class="loading">
-                <i class="fas fa-spinner fa-spin"></i> 正在处理你的提交...
+                <i class="fas fa-spinner fa-spin"></i> 正在校验你的时空坐标...
             </p>
         </div>
     </header>
@@ -29,71 +33,80 @@
     <main class="main-content">
         <div class="result-container">
 
-            <div id="personality-card" class="section-card fade-in-element" style="display: none;">
+            <div id="personality-card" class="section-card" style="display: none;">
                 <div class="card-header">
-                    <span class="card-icon">🎭</span>
-                    <h3>你的专属人格画像</h3>
+                    <span class="card-icon text-glow"><i class="fa-solid fa-user-astronaut"></i></span>
+                    <h3 class="text-glow">你的专属人格画像</h3>
                 </div>
-                <p id="personality-tag" class="personality-tag"></p>
-                <p id="personality-desc" class="personality-desc"></p>
-                <p id="secondary-personality" class="secondary-personality" style="display: none;"></p>
+                <div class="card-body">
+                    <p id="personality-tag" class="personality-tag"></p>
+                    <p id="personality-desc" class="personality-desc"></p>
+                    <p id="secondary-personality" class="secondary-personality" style="display: none;"></p>
+                </div>
             </div>
 
-            <div id="egg-container" class="section-card fade-in-element" style="display: none;">
+            <div id="egg-container" class="section-card" style="display: none;">
                 <div class="card-header">
-                    <span class="card-icon">💡</span>
-                    <h3>来自问卷的彩蛋</h3>
+                    <span class="card-icon text-glow"><i class="fa-solid fa-meteor"></i></span>
+                    <h3 class="text-glow">来自数据流的彩蛋</h3>
                 </div>
-                <p id="egg-text" class="egg-text"></p>
-                <button id="reroll-egg-btn" class="reroll-btn" title="换一个看看">🎲 换一个</button>
+                <div class="card-body">
+                    <p id="egg-text" class="egg-text"></p>
+                    <button id="reroll-egg-btn" class="btn-secondary reroll-btn">
+                        <i class="fa-solid fa-dice"></i>
+                        <span>换一个看看</span>
+                    </button>
+                </div>
             </div>
 
-            <div id="actions-container" class="actions-container fade-in-element" style="display: none;">
+            <div id="actions-container" class="actions-container" style="display: none;">
                 <div class="action-card section-card">
-                    <h3>你的问卷档案</h3>
-                    <p>回顾你刚刚填写的所有答案，或进行人格分析。</p>
-
-                    <div
-                        class="my-link-section mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg text-blue-800 text-sm">
-                        <p class="font-bold mb-2">✨ 你的专属问卷链接已生成！</p>
-                        <p class="mb-3">请务必保存此链接，下次查看或分享你的问卷结果，需要凭此链接。</p>
-                        <div class="flex items-center space-x-2">
-                            <span id="exclusive-survey-link"
-                                class="bg-blue-100 text-blue-900 p-2 rounded-md break-all flex-grow text-xs sm:text-sm">
-                            </span>
-                            <button id="copy-exclusive-link-btn"
-                                class="btn-icon bg-blue-600 text-white p-2 rounded-md hover:bg-blue-700 transition-colors"
-                                aria-label="复制专属链接">
-                                <i class="fa fa-copy"></i>
-                            </button>
+                    <div class="card-header">
+                        <span class="card-icon text-glow"><i class="fa-solid fa-file-invoice"></i></span>
+                        <h3 class="text-glow">你的问卷档案</h3>
+                    </div>
+                    <div class="card-body">
+                        <p>回顾你刚刚穿越数据星河留下的所有印记。</p>
+                        <div class="my-link-section">
+                            <p class="link-title"><i class="fa-solid fa-key"></i> 你的专属时空信标</p>
+                            <div class="link-wrapper">
+                                <span id="exclusive-survey-link"></span>
+                                <button id="copy-exclusive-link-btn" aria-label="复制专属链接">
+                                    <i class="fa fa-copy"></i>
+                                </button>
+                            </div>
+                            <p class="link-desc">此信标包含密钥，请妥善保管，它是你返回此地的唯一凭证。</p>
                         </div>
-                        <p class="mt-3 text-xs text-gray-600">此链接包含密钥，请勿随意分享给他人，除非您希望对方直接访问。</p>
+                        <button id="viewMySubmissionBtn" class="btn-primary"><i class="fa-solid fa-eye"></i>查看我的完整提交</button>
+                        <button id="goToMbtiAnalysisBtn" class="btn-primary mbti-btn"><i class="fa-solid fa-brain"></i>启动深度人格分析</button>
                     </div>
-
-                    <button id="viewMySubmissionBtn" class="primary-action-btn mt-4">查看我的完整提交 ↗</button>
-                    <button id="goToMbtiAnalysisBtn" class="primary-action-btn mbti-btn">深入分析我的MBTI 🤖</button>
                 </div>
-                <div class="action-card section-card">
-                    <h3>默契度大挑战</h3>
-                    <p>输入TA的问卷专属链接，或一键生成你的对比链接发给TA！</p>
 
-                    <div class="compare-form">
-                        <input type="text" id="compareLinkInput"
-                            placeholder="粘贴对方的问卷链接或点击下方按钮生成对比链接"
-                            autocomplete="off">
-                        <button id="startCompareBtn" class="primary-action-btn">开始对比</button>
+                <div class="action-card section-card">
+                    <div class="card-header">
+                        <span class="card-icon text-glow"><i class="fa-solid fa-people-arrows"></i></span>
+                        <h3 class="text-glow">默契度大挑战</h3>
                     </div>
-                    <button id="generateCompareLinkBtn" class="secondary-action-btn">🔗 生成我的对比链接</button>
+                    <div class="card-body">
+                        <p>输入另一位时空旅人的信标，或生成你的信标链接发给TA！</p>
+                        <div class="compare-form">
+                            <input type="text" id="compareLinkInput" placeholder="在此粘贴对方的信标链接">
+                            <button id="startCompareBtn" class="btn-primary">开始同步</button>
+                        </div>
+                        <button id="generateCompareLinkBtn" class="btn-secondary"><i class="fa-solid fa-link"></i>生成我的对比信标</button>
+                    </div>
                 </div>
             </div>
 
-            <div class="back-action fade-in-element" style="display: none;">
-                <a href="/" class="secondary-action-link">‹ 返回首页再填一份</a>
+            <div class="back-action" style="display: none;">
+                <a href="index.html" class="back-link">
+                    <i class="fa-solid fa-chevron-left"></i>
+                    <span>返回母舰，再进行一次探索</span>
+                </a>
             </div>
         </div>
     </main>
 
     <script src="result.js"></script>
 </body>
-
 </html>
