@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>拓展中心 - SurveyKit</title>
+    <link rel="icon" href="../favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="index.css">
+</head>
+<body class="aurora-background">
+
+    <header class="sticky top-0 z-40">
+        <div class="container mx-auto px-4">
+            <div class="flex h-16 items-center justify-between">
+                <a href="index.html" class="flex items-center space-x-2 logo-container">
+                    <span class="text-indigo-400 text-2xl"><i class="fa fa-wpforms"></i></span>
+                    <span class="text-xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">SurveyKit</span>
+                </a>
+
+                <nav class="hidden md:flex items-center space-x-8">
+                    <a href="index.html" class="nav-link active"><i class="fa fa-home"></i> <span>首页</span></a>
+                    <a href="hub/hub.html" class="nav-link"><i class="fa fa-wrench"></i> <span>工具中心</span></a>
+                    <a href="docs/help.html" class="nav-link"><i class="fa fa-book"></i> <span>帮助文档</span></a>
+                    <a href="contact/contact.html" class="nav-link"><i class="fa fa-phone"></i> <span>Contact Us</span></a>
+                    <a href="https://github.com/424635328/SurveyKit" target="_blank" rel="noopener" class="nav-link"><i class="fa fa-github"></i> <span>GitHub</span></a>
+                </nav>
+
+                <div class="flex items-center space-x-4">
+                     <button id="search-toggle-button" type="button" class="hidden sm:flex items-center space-x-2 rounded-md bg-white/10 px-3 py-2 text-sm text-slate-400 hover:bg-white/20 hover:text-slate-200 transition-colors">
+                        <i class="fa fa-search"></i>
+                        <span>搜索</span>
+                        <kbd class="font-mono rounded bg-slate-900/50 border border-slate-600 px-1.5 py-1 text-xs">⌘Search</kbd>
+                    </button>
+                    <a href="hub/login.html" class="hidden sm:inline-block primary-btn-sm">登录/注册</a>
+                    <div class="md:hidden">
+                        <button id="menu-toggle" type="button" class="inline-flex items-center justify-center rounded-md p-2 text-slate-300 hover:bg-white/10 hover:text-white focus:outline-none" aria-controls="mobile-menu" aria-expanded="false">
+                            <span class="sr-only">打开主菜单</span>
+                            <i id="menu-icon" class="fa fa-bars text-2xl"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="mobile-menu" class="hidden md:hidden">
+            <div class="space-y-1 px-2 pb-3 pt-2">
+                <a href="index.html" class="nav-link-mobile active">首页</a>
+                <a href="hub/login.html" class="nav-link-mobile">登录/注册</a>
+                <a href="#" id="search-toggle-mobile" class="nav-link-mobile">搜索</a>
+                <a href="hub/hub.html" class="nav-link-mobile">工具中心</a>
+                <a href="docs/help.html" class="nav-link-mobile">帮助文档</a>
+                <a href="contact/contact.html">联系我们</a>
+                <a href="https://github.com/424635328/SurveyKit" target="_blank" rel="noopener" class="nav-link-mobile">GitHub</a>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero-section">
+            <div class="container">
+                <h1 class="section-heading" data-text="探索无限可能"></h1>
+                <p class="section-subheading" data-text="从独立的工具到富有生命力的平台，每一步拓展都为创造者赋予新的力量。"></p>
+            </div>
+        </section>
+
+        <section class="features-section">
+            <div class="container">
+                <h2 class="category-title" data-text="社区与生态"></h2>
+                <div class="card-grid">
+                    <a href="#" class="pili-card" style="--gradient-start: #8b5cf6; --gradient-end: #ec4899;">
+                        <p class="pili-card-subtitle" data-text="创作与分享"></p>
+                        <div class="pili-card-icon"><i class="fa fa-clone"></i></div>
+                        <h3 class="pili-card-title">模板中心</h3>
+                        <p class="pili-card-desc">告别空白页恐惧症。从精选模板开始，或分享你的杰作，激发社区的无限创造力。</p>
+                        <span class="pili-card-link">进入<i class="fa fa-arrow-right"></i></span>
+                    </a>
+                    <a href="#" class="pili-card" style="--gradient-start: #3b82f6; --gradient-end: #14b8a6;">
+                        <p class="pili-card-subtitle" data-text="灵感来源"></p>
+                        <div class="pili-card-icon"><i class="fa fa-star"></i></div>
+                        <h3 class="pili-card-title">案例展示</h3>
+                        <p class="pili-card-desc">见证创意的力量。这里汇集了使用SurveyKit构建的、最具启发性的真实案例与故事。</p>
+                        <span class="pili-card-link">进入<i class="fa fa-arrow-right"></i></span>
+                    </a>
+                    <a href="#" class="pili-card" style="--gradient-start: #f59e0b; --gradient-end: #ef4444;">
+                        <p class="pili-card-subtitle" data-text="知识拓展"></p>
+                        <div class="pili-card-icon"><i class="fa fa-pencil"></i></div>
+                        <h3 class="pili-card-title">博客洞察</h3>
+                        <p class="pili-card-desc">不止于工具。获取关于问卷设计、数据解读与用户心理的前沿思想与深度文章。</p>
+                        <span class="pili-card-link">进入<i class="fa fa-arrow-right"></i></span>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section class="features-section">
+            <div class="container">
+                <h2 class="category-title" data-text="商业与信任"></h2>
+                <div class="card-grid">
+                    <a href="#" class="pili-card" style="--gradient-start: #22c55e; --gradient-end: #84cc16;">
+                        <p class="pili-card-subtitle" data-text="选择你的计划"></p>
+                        <div class="pili-card-icon"><i class="fa fa-credit-card"></i></div>
+                        <h3 class="pili-card-title">定价计划</h3>
+                        <p class="pili-card-desc">为不同阶段的创造者量身定做。清晰透明的价值体系，助你解锁更强大的生产力。</p>
+                        <span class="pili-card-link">进入<i class="fa fa-arrow-right"></i></span>
+                    </a>
+                    <a href="#" class="pili-card" style="--gradient-start: #64748b; --gradient-end: #94a3b8;">
+                        <p class="pili-card-subtitle" data-text="透明合规"></p>
+                        <div class="pili-card-icon"><i class="fa fa-shield"></i></div>
+                        <h3 class="pili-card-title">法律中心</h3>
+                        <p class="pili-card-desc">信任基于透明。在此查阅我们的服务条款与隐私政策，了解我们如何保护你的权益。</p>
+                        <span class="pili-card-link">进入<i class="fa fa-arrow-right"></i></span>
+                    </a>
+                    <a href="#" class="pili-card" style="--gradient-start: #0ea5e9; --gradient-end: #6366f1;">
+                        <p class="pili-card-subtitle" data-text="实时监控"></p>
+                        <div class="pili-card-icon"><i class="fa fa-server"></i></div>
+                        <h3 class="pili-card-title">服务状态</h3>
+                        <p class="pili-card-desc">保持极致的透明度。实时查看所有服务的运行状态，重要通告与维护计划一目了然。</p>
+                        <span class="pili-card-link">进入<i class="fa fa-arrow-right"></i></span>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section class="features-section">
+            <div class="container">
+                <h2 class="category-title" data-text="开发者与集成"></h2>
+                <div class="card-grid">
+                    <a href="#" class="pili-card" style="--gradient-start: #d946ef; --gradient-end: #f43f5e;">
+                        <p class="pili-card-subtitle" data-text="无缝连接"></p>
+                        <div class="pili-card-icon"><i class="fa fa-plug"></i></div>
+                        <h3 class="pili-card-title">集成中心</h3>
+                        <p class="pili-card-desc">打破应用孤岛。将SurveyKit无缝接入你的工作流，与Notion、Slack等工具协同。</p>
+                        <span class="pili-card-link">进入<i class="fa fa-arrow-right"></i></span>
+                    </a>
+                    <a href="#" class="pili-card" style="--gradient-start: #f97316; --gradient-end: #eab308;">
+                        <p class="pili-card-subtitle" data-text="开放接口"></p>
+                        <div class="pili-card-icon"><i class="fa fa-code"></i></div>
+                        <h3 class="pili-card-title">API 文档</h3>
+                        <p class="pili-card-desc">为创造者赋能。查阅我们的开放API，将SurveyKit的强大能力构建到你的应用中。</p>
+                        <span class="pili-card-link">进入<i class="fa fa-arrow-right"></i></span>
+                    </a>
+                    <a href="../index.html" class="pili-card" style="--gradient-start: #a855f7; --gradient-end: #6d28d9;">
+                        <p class="pili-card-subtitle" data-text="快速导航"></p>
+                        <div class="pili-card-icon"><i class="fa fa-home"></i></div>
+                        <h3 class="pili-card-title">返回首页</h3>
+                        <p class="pili-card-desc">探索完毕？点击此处返回SurveyKit的主页，开始你的下一次创想之旅。</p>
+                        <span class="pili-card-link">进入<i class="fa fa-arrow-right"></i></span>
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+        <footer class="bg-slate-900/80 text-white py-12">
+        <div class="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center text-center md:text-left">
+            <div class="mb-6 md:mb-0">
+                <a href="index.html" class="flex items-center justify-center md:justify-start mb-2 space-x-2">
+                    <span class="text-indigo-400 text-2xl"><i class="fa fa-wpforms"></i></span>
+                    <span class="text-xl font-bold">SurveyKit</span>
+                </a>
+                <p class="text-slate-400 text-sm">© <span id="footer-year">2025</span> SurveyKit. All rights reserved.</p>
+            </div>
+            <div>
+                <a href="https://github.com/424635328/SurveyKit" target="_blank" rel="noopener" class="text-slate-400 hover:text-white transition-colors" aria-label="GitHub">
+                    <i class="fa fa-github text-2xl"></i>
+                </a>
+            </div>
+        </div>
+    </footer>
+    
+    <script src="index.js"></script>
+</body>
+</html>
