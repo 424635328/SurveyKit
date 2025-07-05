@@ -25,7 +25,50 @@
     </style>
 </head>
 <body class="aurora-background min-h-screen flex items-center justify-center p-4">
+        <header class="sticky top-0 z-40">
+        <div class="container mx-auto px-4">
+            <div class="flex h-16 items-center justify-between">
+                <a href="index.html" class="flex items-center space-x-2 logo-container">
+                    <span class="text-indigo-400 text-2xl"><i class="fa fa-wpforms"></i></span>
+                    <span class="text-xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">SurveyKit</span>
+                </a>
 
+                <nav class="hidden md:flex items-center space-x-8">
+                    <a href="index.html" class="nav-link active"><i class="fa fa-home"></i> <span>首页</span></a>
+                    <a href="hub/hub.html" class="nav-link"><i class="fa fa-wrench"></i> <span>工具中心</span></a>
+                    <a href="docs/help.html" class="nav-link"><i class="fa fa-book"></i> <span>帮助文档</span></a>
+                    <a href="contact/contact.html" class="nav-link"><i class="fa fa-phone"></i> <span>Contact Us</span></a>
+                    <a href="https://github.com/424635328/SurveyKit" target="_blank" rel="noopener" class="nav-link"><i class="fa fa-github"></i> <span>GitHub</span></a>
+                </nav>
+
+                <div class="flex items-center space-x-4">
+                     <button id="search-toggle-button" type="button" class="hidden sm:flex items-center space-x-2 rounded-md bg-white/10 px-3 py-2 text-sm text-slate-400 hover:bg-white/20 hover:text-slate-200 transition-colors">
+                        <i class="fa fa-search"></i>
+                        <span>搜索</span>
+                        <kbd class="font-mono rounded bg-slate-900/50 border border-slate-600 px-1.5 py-1 text-xs">⌘Search</kbd>
+                    </button>
+                    <a href="hub/login.html" class="hidden sm:inline-block primary-btn-sm">登录/注册</a>
+                    <div class="md:hidden">
+                        <button id="menu-toggle" type="button" class="inline-flex items-center justify-center rounded-md p-2 text-slate-300 hover:bg-white/10 hover:text-white focus:outline-none" aria-controls="mobile-menu" aria-expanded="false">
+                            <span class="sr-only">打开主菜单</span>
+                            <i id="menu-icon" class="fa fa-bars text-2xl"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="mobile-menu" class="hidden md:hidden">
+            <div class="space-y-1 px-2 pb-3 pt-2">
+                <a href="index.html" class="nav-link-mobile active">首页</a>
+                <a href="hub/login.html" class="nav-link-mobile">登录/注册</a>
+                <a href="#" id="search-toggle-mobile" class="nav-link-mobile">搜索</a>
+                <a href="hub/hub.html" class="nav-link-mobile">工具中心</a>
+                <a href="docs/help.html" class="nav-link-mobile">帮助文档</a>
+                <a href="contact/contact.html" class="nav-link-mobile">联系我们</a>
+                <a href="https://github.com/424635328/SurveyKit" target="_blank" rel="noopener" class="nav-link-mobile">GitHub</a>
+            </div>
+        </div>
+    </header>
     <div class="w-full max-w-md bg-slate-800/60 backdrop-blur-xl border border-slate-700 rounded-2xl p-8 shadow-2xl">
         <div class="text-center mb-8">
             <h1 class="text-3xl font-bold text-white mb-2">欢迎来到 SurveyKit</h1>
@@ -54,100 +97,23 @@
         </form>
         <p id="error-message" class="error-message text-center text-red-400 mt-4 text-sm font-medium opacity-0 transform -translate-y-2"></p>
     </div>
+        <footer class="bg-slate-900/80 text-white py-12">
+        <div class="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center text-center md:text-left">
+            <div class="mb-6 md:mb-0">
+                <a href="index.html" class="flex items-center justify-center md:justify-start mb-2 space-x-2">
+                    <span class="text-indigo-400 text-2xl"><i class="fa fa-wpforms"></i></span>
+                    <span class="text-xl font-bold">SurveyKit</span>
+                </a>
+                <p class="text-slate-400 text-sm">© <span id="footer-year">2025</span> SurveyKit. All rights reserved.</p>
+            </div>
+            <div>
+                <a href="https://github.com/424635328/SurveyKit" target="_blank" rel="noopener" class="text-slate-400 hover:text-white transition-colors" aria-label="GitHub">
+                    <i class="fa fa-github text-2xl"></i>
+                </a>
+            </div>
+        </div>
+    </footer>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const form = document.getElementById('auth-form');
-            const usernameInput = document.getElementById('username');
-            const usernameStatus = document.getElementById('username-status');
-            const usernameHint = document.getElementById('username-hint');
-            const passwordHint = document.getElementById('password-hint');
-            const submitBtn = document.getElementById('submit-btn');
-            const errorMessage = document.getElementById('error-message');
-            
-            let debounceTimer;
-            let isUserRegistered = null;
-
-            async function checkUsername() {
-                const username = usernameInput.value.trim();
-                usernameStatus.classList.remove('show', 'fa-check', 'fa-times', 'text-green-500', 'text-red-500');
-                usernameHint.textContent = '';
-                passwordHint.classList.remove('show');
-                submitBtn.textContent = '登录 / 注册';
-                isUserRegistered = null;
-
-                if (username.length < 3) return;
-
-                usernameStatus.classList.add('show', 'fa-spinner', 'fa-spin');
-
-                try {
-                    const response = await fetch(`/api/auth.mjs?username=${encodeURIComponent(username)}`);
-                    const result = await response.json();
-                    
-                    usernameStatus.classList.remove('fa-spinner', 'fa-spin');
-                    if (result.exists) {
-                        isUserRegistered = true;
-                        usernameStatus.classList.add('fa-check', 'text-green-500');
-                        usernameHint.textContent = '用户名已存在，请输入密码登录。';
-                        passwordHint.textContent = '请输入密码登录';
-                        submitBtn.textContent = '登录';
-                    } else {
-                        isUserRegistered = false;
-                        usernameStatus.classList.add('fa-check', 'text-green-500');
-                        usernameHint.textContent = '用户名可用！';
-                        passwordHint.textContent = '请输入密码完成注册';
-                        submitBtn.textContent = '注册';
-                    }
-                    passwordHint.classList.add('show');
-                } catch (error) {
-                    isUserRegistered = null;
-                    usernameStatus.classList.add('fa-times', 'text-red-500');
-                    usernameHint.textContent = '无法验证用户名';
-                }
-            }
-
-            usernameInput.addEventListener('input', () => {
-                clearTimeout(debounceTimer);
-                debounceTimer = setTimeout(checkUsername, 500);
-            });
-
-            form.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                submitBtn.disabled = true;
-                submitBtn.innerHTML = '<i class="fa fa-spinner fa-spin"></i>';
-                errorMessage.classList.remove('show');
-
-                const username = form.username.value;
-                const password = form.password.value;
-
-                try {
-                    const response = await fetch('/api/auth.mjs', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ username, password }),
-                    });
-
-                    const result = await response.json();
-
-                    if (!response.ok) {
-                        throw new Error(result.message || '操作失败');
-                    }
-                    
-                    localStorage.setItem('surveyKitToken', result.token);
-                    
-                    const urlParams = new URLSearchParams(window.location.search);
-                    const redirectUrl = urlParams.get('redirect') || './toolchain/management.html';
-                    window.location.href = redirectUrl;
-
-                } catch (error) {
-                    errorMessage.textContent = error.message;
-                    errorMessage.classList.add('show');
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = isUserRegistered ? '登录' : (isUserRegistered === false ? '注册' : '登录 / 注册');
-                }
-            });
-        });
-    </script>
-
+    <script src="login.js"></script>
 </body>
 </html>
