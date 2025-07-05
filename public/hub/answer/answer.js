@@ -1,306 +1,322 @@
 // public/hub/answer/answer.js
 document.addEventListener('DOMContentLoaded', () => {
-    function initMobileMenu() {
-        const menuToggle = document.getElementById('menu-toggle'), mobileMenu = document.getElementById('mobile-menu'), icon = menuToggle?.querySelector('i');
-        if (!menuToggle || !mobileMenu || !icon) return;
-        menuToggle.addEventListener('click', () => { mobileMenu.classList.toggle('hidden'); icon.classList.toggle('fa-bars'); icon.classList.toggle('fa-times'); });
-    }
-    function initHeaderScrollEffect() {
-        const header = document.querySelector('header');
-        if (!header) return;
-        const SCROLL_THRESHOLD = 50;
-        const toggleHeaderScrolledClass = () => { header.classList.toggle('header-scrolled', window.scrollY > SCROLL_THRESHOLD); };
-        toggleHeaderScrolledClass(); window.addEventListener('scroll', toggleHeaderScrolledClass, { passive: true });
-    }
-    function initScrollToTopButton() {
-        const scrollToTopBtn = document.getElementById('scrollToTopBtn');
-        if (!scrollToTopBtn) return;
-        const SCROLL_VISIBLE_THRESHOLD = 300;
-        const toggleButtonVisibility = () => {
-            if (window.scrollY > SCROLL_VISIBLE_THRESHOLD) { scrollToTopBtn.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-4'); scrollToTopBtn.classList.add('opacity-100', 'pointer-events-auto', 'translate-y-0'); } else { scrollToTopBtn.classList.remove('opacity-100', 'pointer-events-auto', 'translate-y-0'); scrollToTopBtn.classList.add('opacity-0', 'pointer-events-none', 'translate-y-4'); }
-        };
-        window.addEventListener('scroll', toggleButtonVisibility, { passive: true }); scrollToTopBtn.addEventListener('click', () => { window.scrollTo({ top: 0, behavior: 'smooth' }); }); toggleButtonVisibility();
-    }
-    function updateFooterYear() {
-        const currentYearFooter = document.getElementById('current-year-footer');
-        if (currentYearFooter) { currentYearFooter.textContent = new Date().getFullYear(); }
-    }
-
-    const toastContainer = document.getElementById('toast-container');
-    function showToast(message, type = 'info', duration = 3000) {
-        const toast = document.createElement('div');
-        toast.className = `toast-message toast-${type} opacity-0 translate-x-full transition-all duration-300 ease-out`;
-        toast.textContent = message;
-        
-        toastContainer.appendChild(toast);
-
-        void toast.offsetWidth; // Trigger reflow
-        toast.classList.remove('opacity-0', 'translate-x-full');
-        toast.classList.add('opacity-100', 'translate-x-0');
-
-        setTimeout(() => {
-            toast.classList.remove('opacity-100', 'translate-x-0');
-            toast.classList.add('opacity-0', 'translate-x-full');
-            setTimeout(() => toast.remove(), 300);
-        }, duration);
-    }
-
     const params = new URLSearchParams(window.location.search);
     const surveyId = params.get('id');
+
+    const surveyContainer = document.getElementById('survey-container');
     const surveyTitleElement = document.getElementById('survey-title');
     const surveyDescriptionElement = document.getElementById('survey-description');
     const loadingState = document.getElementById('loading-state');
-    const surveyForm = document.getElementById('survey-form'); 
-    const submitButton = document.getElementById('submit-survey-btn'); 
+    const surveyForm = document.getElementById('survey-form');
+    const surveyContent = document.getElementById('survey-content');
+    const progressBarContainer = document.getElementById('progress-bar-container');
+    const progressBar = document.getElementById('progress-bar');
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+    const submitButton = document.getElementById('submit-survey-btn');
+    const toastContainer = document.getElementById('toast-container');
+    const autosaveIndicator = document.getElementById('autosave-indicator');
+    const scrollToTopBtn = document.getElementById('scrollToTopBtn');
+    const scrollToBottomBtn = document.getElementById('scrollToBottomBtn');
+
+    let surveyData = {};
+    let surveyParts = [];
+    let currentPartIndex = 0;
+    let isReviewing = false;
+    let autosaveTimeout;
+    const localStorageKey = `survey_progress_${surveyId}`;
+
+    function escapeHtml(str) {
+        if (typeof str !== 'string') return str;
+        return str.replace(/[&<>"']/g, match => ({
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#39;'
+        }[match]));
+    }
+
+    function showToast(message, type = 'info', duration = 3000) {
+        const toast = document.createElement('div');
+        toast.className = `toast-message toast-${type}`;
+        toast.textContent = message;
+        toastContainer.appendChild(toast);
+        setTimeout(() => toast.classList.add('show'), 10);
+        setTimeout(() => {
+            toast.classList.remove('show');
+            setTimeout(() => toast.remove(), 300);
+        }, duration);
+    }
     
-    let currentSurveyData = null; 
+    function showAutosaveIndicator() {
+        if (autosaveTimeout) clearTimeout(autosaveTimeout);
+        autosaveIndicator.classList.add('opacity-100');
+        autosaveTimeout = setTimeout(() => { autosaveIndicator.classList.remove('opacity-100'); }, 2000);
+    }
+
+    function saveProgress() {
+        const formData = new FormData(surveyForm);
+        const data = {};
+        for (let [key, value] of formData.entries()) { data[key] = value; }
+        localStorage.setItem(localStorageKey, JSON.stringify(data));
+        showAutosaveIndicator();
+    }
+
+    function loadProgress() {
+        const savedData = JSON.parse(localStorage.getItem(localStorageKey) || '{}');
+        Object.keys(savedData).forEach(key => {
+            const el = surveyForm.querySelector(`[name="${key}"]`);
+            if (el) {
+                if (el.type === 'radio') {
+                    const radioToCheck = surveyForm.querySelector(`[name="${key}"][value="${savedData[key]}"]`);
+                    if (radioToCheck) radioToCheck.checked = true;
+                } else {
+                    el.value = savedData[key];
+                }
+            }
+        });
+        document.querySelectorAll('input[type="radio"]:checked').forEach(radio => {
+            radio.dispatchEvent(new Event('change', { bubbles: true }));
+        });
+    }
 
     function renderQuestion(question) {
-        let questionHtml = `
-            <div class="question-block p-4 border border-slate-700/50 rounded-lg bg-white/5 space-y-2">
-                <p class="font-medium text-slate-200 mb-3">${escapeHtml(question.text)} ${question.required ? '<span class="text-red-400">*</span>' : ''}</p>
-        `;
-
-        if (question.type === 'radio') {
-            question.options.forEach(option => {
-                const optionId = `q_${question.id}_${option.value.replace(/\W/g, '_')}`; // Safe ID
-                questionHtml += `
-                    <div class="flex items-center">
-                        <input type="radio" id="${optionId}" name="${question.id}" value="${escapeHtml(option.value)}" class="form-radio text-indigo-500 focus:ring-indigo-500 h-4 w-4 bg-slate-700 border-slate-600 cursor-pointer">
-                        <label for="${optionId}" class="ml-2 text-slate-300">${escapeHtml(option.label)}</label>
-                    </div>
-                `;
-            });
-            if (question.hasOther) {
-                const otherOptionId = `q_${question.id}_other_radio`;
-                const otherInputId = `q_${question.id}_other_text`;
-                questionHtml += `
-                    <div class="flex items-center">
-                        <input type="radio" id="${otherOptionId}" name="${question.id}" value="_other_" class="form-radio text-indigo-500 focus:ring-indigo-500 h-4 w-4 bg-slate-700 border-slate-600 cursor-pointer">
-                        <label for="${otherOptionId}" class="ml-2 text-slate-300">其他 (请说明)</label>
-                    </div>
-                    <input type="text" id="${otherInputId}" name="${question.id}_other" class="hidden w-full bg-slate-800 border border-slate-600 rounded-md p-2 text-white placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-indigo-500 mt-2" placeholder="请输入其他选项内容">
-                `;
-            }
-        } else if (question.type === 'text') {
-            questionHtml += `
-                <input type="text" id="${question.id}" name="${question.id}" class="w-full bg-slate-800 border border-slate-600 rounded-md p-2 text-white placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-indigo-500" placeholder="${escapeHtml(question.placeholder || '请输入您的回答')}" ${question.required ? 'required' : ''}>
-            `;
+        let questionHtml = `<div id="q-block-${question.id}" class="question-block p-4 rounded-lg bg-white/5 space-y-3 mb-6 transition-all duration-300"><label for="${question.id}" class="font-medium text-slate-200 mb-3 block">${escapeHtml(question.text)} ${question.required ? '<span class="text-red-400">*</span>' : ''}</label>`;
+        switch (question.type) {
+            case 'text':
+                questionHtml += `<input type="text" id="${question.id}" name="${question.id}" class="w-full bg-slate-800 border border-slate-600 rounded-md p-2 text-white placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-indigo-500">`;
+                break;
+            case 'radio':
+                question.options.forEach(opt => {
+                    const value = (typeof opt === 'object' && opt.value) ? opt.value : opt;
+                    const label = (typeof opt === 'object' && opt.label) ? opt.label : opt;
+                    const optionId = `q_${question.id}_${value.replace(/\W/g, '_')}`;
+                    questionHtml += `<div class="flex items-center"><input type="radio" id="${optionId}" name="${question.id}" value="${escapeHtml(value)}" class="form-radio text-indigo-500 focus:ring-indigo-500 h-4 w-4 bg-slate-700 border-slate-600 cursor-pointer"><label for="${optionId}" class="ml-3 text-slate-300 cursor-pointer">${escapeHtml(label)}</label></div>`;
+                });
+                if (question.hasOther) {
+                    questionHtml += `<div class="flex items-center"><input type="radio" id="q_${question.id}_other_radio" name="${question.id}" value="_other_" class="form-radio text-indigo-500 focus:ring-indigo-500 h-4 w-4 bg-slate-700 border-slate-600 cursor-pointer"><label for="q_${question.id}_other_radio" class="ml-3 text-slate-300 cursor-pointer">其他</label></div><input type="text" id="q_${question.id}_other_text" name="${question.id}_other" class="hidden w-full bg-slate-800 border border-slate-600 rounded-md p-2 text-white placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-indigo-500 mt-2" placeholder="请输入其他选项内容">`;
+                }
+                break;
+            case 'select':
+                questionHtml += `<select id="${question.id}" name="${question.id}" class="w-full custom-select bg-slate-800 border border-slate-600 rounded-md p-2 text-white focus:outline-none focus:ring-1 focus:ring-indigo-500"><option value="" disabled selected>${escapeHtml(question.placeholder || '请选择...')}</option>`;
+                question.options.forEach(opt => {
+                    const value = (typeof opt === 'object' && opt.value) ? opt.value : opt;
+                    const label = (typeof opt === 'object' && opt.label) ? opt.label : opt;
+                    questionHtml += `<option value="${escapeHtml(value)}">${escapeHtml(label)}</option>`;
+                });
+                questionHtml += `</select>`;
+                break;
         }
         questionHtml += `</div>`;
         return questionHtml;
     }
 
-    function attachOtherOptionListeners() {
-        document.querySelectorAll('#survey-form input[type="radio"][value="_other_"]').forEach(radio => {
-            radio.addEventListener('change', (e) => {
-                const otherInputId = `${e.target.name}_other_text`;
-                const otherInput = document.getElementById(otherInputId);
+    function renderCurrentPart() {
+        isReviewing = false;
+        const part = surveyParts[currentPartIndex];
+        let partHtml = `<fieldset class="survey-section"><legend class="text-xl font-semibold text-white mb-6 px-2 border-b-2 border-indigo-500/50 pb-2">${escapeHtml(part.legend)}</legend>`;
+        part.questions.forEach(question => { partHtml += renderQuestion(question); });
+        partHtml += `</fieldset>`;
+        surveyContent.innerHTML = partHtml;
+        loadProgress();
+        attachEventListenersForPart();
+        updateNavigation();
+        updateProgressBar();
+    }
+    
+    function renderReviewPage() {
+        isReviewing = true;
+        const allAnswers = collectAllAnswers(); // We still call it here to get data for display
+        let reviewHtml = `<div class="review-section space-y-6"><h3 class="text-2xl font-bold text-white text-center mb-6">回顾你的答案</h3>`;
+        surveyParts.forEach((part, index) => {
+            reviewHtml += `<div class="mb-4"><h4 class="text-lg font-semibold text-indigo-300 mb-3">${escapeHtml(part.legend)}</h4>`;
+            part.questions.forEach(q => {
+                let answerText = allAnswers[q.id] ? escapeHtml(allAnswers[q.id]) : '<i class="text-slate-400">未作答</i>';
+                reviewHtml += `<div class="review-answer-block p-4 rounded-md mb-3"><p class="font-medium text-slate-300 mb-2">${escapeHtml(q.text)}</p><div class="flex justify-between items-center"><p class="text-white text-lg">${answerText}</p><button type="button" class="edit-answer-btn text-indigo-400 hover:text-white text-sm" data-part-index="${index}">编辑</button></div></div>`;
+            });
+            reviewHtml += `</div>`;
+        });
+        reviewHtml += `</div>`;
+        surveyContent.innerHTML = reviewHtml;
+        updateNavigation();
+        updateProgressBar();
+        document.querySelectorAll('.edit-answer-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                currentPartIndex = parseInt(e.target.dataset.partIndex, 10);
+                renderCurrentPart();
+            });
+        });
+    }
+
+    function attachEventListenersForPart() {
+        surveyForm.addEventListener('input', saveProgress);
+        surveyForm.addEventListener('change', saveProgress);
+        document.querySelectorAll('input[type="radio"][name]').forEach(radio => {
+            radio.addEventListener('change', e => {
+                const name = e.target.name;
+                const otherInput = document.getElementById(`q_${name}_other_text`);
                 if (otherInput) {
-                    if (e.target.checked) {
-                        otherInput.classList.remove('hidden');
-                        otherInput.setAttribute('required', 'true');
-                        otherInput.focus();
-                    } else {
-                        otherInput.classList.add('hidden');
-                        otherInput.removeAttribute('required');
-                        otherInput.value = ''; 
-                    }
+                    const isOtherChecked = document.getElementById(`q_${name}_other_radio`).checked;
+                    otherInput.classList.toggle('hidden', !isOtherChecked);
+                    otherInput.required = isOtherChecked;
                 }
             });
         });
-
-        document.querySelectorAll('#survey-form input[type="radio"]:not([value="_other_"])').forEach(radio => {
-            radio.addEventListener('change', (e) => {
-                const otherInputId = `${e.target.name}_other_text`;
-                const otherInput = document.getElementById(otherInputId);
-                if (otherInput) {
-                    if (e.target.checked) {
-                        const otherRadio = document.getElementById(`${e.target.name}_other_radio`);
-                        if(otherRadio) otherRadio.checked = false;
-                        otherInput.classList.add('hidden');
-                        otherInput.removeAttribute('required');
-                        otherInput.value = '';
-                    }
+        document.querySelectorAll('input[type="text"]').forEach((input, index, allInputs) => {
+            input.addEventListener('keydown', e => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    const nextInput = allInputs[index + 1];
+                    if (nextInput) nextInput.focus(); else nextBtn.click();
                 }
             });
         });
     }
 
-    function collectAnswers() {
-        const answers = {};
-        let isValid = true; 
-
-        currentSurveyData.forEach(part => {
-            part.questions.forEach(question => {
-                const inputElement = surveyForm.querySelector(`[name="${question.id}"]`);
-                if (!inputElement && question.type !== 'radio') return; 
-
-                if (question.type === 'radio') {
-                    const selectedRadio = surveyForm.querySelector(`input[name="${question.id}"]:checked`);
-                    if (question.required && !selectedRadio) {
-                        showToast(`请回答问题：${question.text}`, 'warning');
-                        isValid = false;
-                        return;
-                    }
-                    if (selectedRadio) {
-                        if (selectedRadio.value === '_other_') {
-                            const otherTextInput = document.getElementById(`${question.id}_other_text`);
-                            if (otherTextInput) {
-                                if (question.required && otherTextInput.value.trim() === '') {
-                                    showToast(`请填写“其他”选项内容：${question.text}`, 'warning');
-                                    isValid = false;
-                                    otherTextInput.focus();
-                                    return;
-                                }
-                                answers[question.id] = otherTextInput.value.trim();
-                                answers[`${question.id}_other`] = otherTextInput.value.trim(); 
-                            }
-                        } else {
-                            answers[question.id] = selectedRadio.value;
-                            answers[`${question.id}_other`] = ''; 
-                        }
-                    } else {
-                         answers[question.id] = ''; 
-                         answers[`${question.id}_other`] = '';
-                    }
-                } else if (question.type === 'text') {
-                    const value = inputElement.value.trim();
-                    if (question.required && value === '') {
-                        showToast(`请填写问题：${question.text}`, 'warning');
-                        isValid = false;
-                        inputElement.focus();
-                        return;
-                    }
-                    answers[question.id] = value;
+    function validateCurrentPart() {
+        document.querySelectorAll('.input-error').forEach(el => el.classList.remove('input-error'));
+        const part = surveyParts[currentPartIndex];
+        for (const question of part.questions) {
+            let isValid = true; let el;
+            if (question.type === 'radio') {
+                const selected = surveyForm.querySelector(`input[name="${question.id}"]:checked`);
+                if (question.required && !selected) isValid = false;
+                if (selected && selected.value === '_other_') {
+                    el = document.getElementById(`q_${question.id}_other_text`);
+                    if (question.required && !el.value.trim()) isValid = false;
                 }
-            });
-        });
-
-        return isValid ? answers : null;
-    }
-
-    async function fetchSurveyData() {
-        if (!surveyId) {
-            surveyTitleElement.textContent = '错误：问卷ID缺失！';
-            surveyDescriptionElement.textContent = '请确保您通过有效的分享链接访问。';
-            loadingState.classList.add('hidden');
-            return;
-        }
-
-        try {
-            const response = await fetch(`/api/survey-details.mjs?id=${surveyId}`);
-            if (!response.ok) {
-                if (response.status === 404) {
-                    throw new Error('问卷未找到或已删除。');
-                }
-                throw new Error('无法加载问卷。');
-            }
-            const data = await response.json();
-            currentSurveyData = data.questions; 
-            
-            surveyTitleElement.textContent = data.title || '无标题问卷';
-            surveyDescriptionElement.textContent = data.description || ''; 
-
-            renderSurveyForm(currentSurveyData);
-
-        } catch (error) {
-            console.error('Error fetching survey:', error);
-            surveyTitleElement.textContent = '问卷加载失败';
-            surveyDescriptionElement.textContent = error.message || '请检查网络连接或稍后再试。';
-            loadingState.classList.add('hidden');
-            surveyForm.classList.add('hidden');
-            showToast(`加载失败: ${error.message}`, 'error');
-        }
-    }
-
-    function renderSurveyForm(parts) {
-        if (!parts || parts.length === 0) {
-            surveyTitleElement.textContent = '此问卷暂无问题。';
-            surveyDescriptionElement.textContent = '';
-            loadingState.classList.add('hidden');
-            surveyForm.classList.add('hidden');
-            return;
-        }
-
-        let formContentHtml = '';
-        parts.forEach(part => {
-            if (part.legend) {
-                formContentHtml += `<fieldset class="survey-section p-6 border border-slate-700/50 rounded-xl bg-white/5">
-                                        <legend class="text-lg font-semibold text-white mb-4 px-2">${escapeHtml(part.legend)}</legend>`;
             } else {
-                formContentHtml += `<fieldset class="survey-section p-6 border border-slate-700/50 rounded-xl bg-white/5">`;
+                el = document.getElementById(question.id);
+                if (question.required && !el.value.trim()) isValid = false;
             }
-            
-            if (part.questions && Array.isArray(part.questions)) {
-                part.questions.forEach(question => {
-                    formContentHtml += renderQuestion(question);
-                });
+            if (!isValid) {
+                showToast(`请回答: ${question.text}`, 'warning');
+                const block = document.getElementById(`q-block-${question.id}`);
+                block.classList.add('input-error');
+                block.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                return false;
             }
-            formContentHtml += `</fieldset>`;
+        }
+        return true;
+    }
+
+    function collectAllAnswers() {
+        const savedData = JSON.parse(localStorage.getItem(localStorageKey) || '{}');
+        const allAnswers = {};
+
+        surveyParts.flat().flatMap(p => p.questions).forEach(q => {
+            const questionId = q.id;
+            let answer = savedData[questionId] || '';
+
+            if (q.type === 'radio' && answer === '_other_') {
+                answer = savedData[`${questionId}_other`] || '';
+            }
+            allAnswers[questionId] = answer;
         });
 
-        const submitBtnPlaceholder = surveyForm.querySelector('#submit-survey-btn');
-        surveyForm.innerHTML = formContentHtml; 
-        surveyForm.appendChild(submitBtnPlaceholder); // Re-append submit button
+        return allAnswers;
+    }
 
-        loadingState.classList.add('hidden');
-        surveyForm.classList.remove('hidden');
-        attachOtherOptionListeners(); 
+    function updateNavigation() {
+        prevBtn.classList.toggle('hidden', currentPartIndex === 0 || isReviewing);
+        const isLastPart = currentPartIndex >= surveyParts.length - 1;
+        nextBtn.classList.toggle('hidden', isLastPart || isReviewing);
+        if (!isReviewing && isLastPart) {
+            nextBtn.classList.remove('hidden');
+            nextBtn.innerHTML = '完成并回顾答案 <i class="fa fa-check-square-o ml-2"></i>';
+        } else { nextBtn.innerHTML = '下一步 <i class="fa fa-arrow-right ml-2"></i>'; }
+        submitButton.classList.toggle('hidden', !isReviewing);
+    }
+    
+    function updateProgressBar() {
+        const totalSteps = surveyParts.length;
+        const currentStep = isReviewing ? totalSteps : currentPartIndex + 1;
+        const progress = totalSteps > 0 ? (currentStep / totalSteps) * 100 : 0;
+        progressBar.style.width = `${progress}%`;
+    }
+
+    function handleScrollButtons() {
+        const atTop = window.scrollY < 200;
+        const atBottom = (window.innerHeight + window.scrollY) >= document.body.offsetHeight - 200;
+        scrollToTopBtn.classList.toggle('visible', !atTop);
+        scrollToBottomBtn.classList.toggle('visible', !atBottom);
+    }
+    
+    function handleNext() {
+        if (validateCurrentPart()) {
+            if (currentPartIndex >= surveyParts.length - 1) { renderReviewPage(); } else { currentPartIndex++; renderCurrentPart(); }
+            surveyContainer.scrollIntoView({ behavior: 'smooth' });
+        }
+    }
+
+    function handlePrev() {
+        currentPartIndex--; renderCurrentPart();
+        surveyContainer.scrollIntoView({ behavior: 'smooth' });
     }
 
     async function handleSubmit(event) {
         event.preventDefault();
-        
         submitButton.disabled = true;
         submitButton.innerHTML = '<i class="fa fa-spinner fa-spin mr-3"></i> 提交中...';
-        showToast('正在提交问卷...', 'info');
-
-        const answers = collectAnswers();
-        if (!answers) { 
-            submitButton.disabled = false;
-            submitButton.innerHTML = '提交问卷';
-            return;
-        }
-
+        
+        const answers = collectAllAnswers();
+        
+        const submissionId = `sub_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+        sessionStorage.setItem(`survey_answers_${submissionId}`, JSON.stringify(answers));
+        
         try {
-            const response = await fetch('/api/submissions.mjs', { 
+            const response = await fetch('/api/submissions.mjs', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ surveyId: surveyId, answers: answers })
             });
-
-            const result = await response.json(); 
-
-            if (!response.ok) {
-                throw new Error(result.message || '提交失败');
-            }
-
-            const redirectUrl = `./submission-result.html?status=success&surveyId=${surveyId}&submissionId=${result.submissionId || ''}&message=${encodeURIComponent(result.message || '问卷提交成功！')}`;
-            window.location.href = redirectUrl;
-
+            const result = await response.json();
+            if (!response.ok) throw new Error(result.message || '提交失败');
+            localStorage.removeItem(localStorageKey);
+            window.location.href = `./submission-result.html?status=success&surveyId=${surveyId}&submissionId=${submissionId}`;
         } catch (error) {
-            console.error('Submission error:', error);
-            const redirectUrl = `./submission-result.html?status=error&message=${encodeURIComponent(error.message || '提交过程中发生未知错误。')}`;
-            window.location.href = redirectUrl;
-        } finally {
-            submitButton.disabled = false;
-            submitButton.innerHTML = '提交问卷';
+            window.location.href = `./submission-result.html?status=error&message=${encodeURIComponent(error.message)}`;
         }
     }
 
-    surveyForm.addEventListener('submit', handleSubmit);
-    function escapeHtml(str) {
-        if (typeof str !== 'string') return str; 
-        return str.replace(/[&<>"']/g, function(match) {
-            return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&apos;' }[match];
-        });
+    async function fetchSurveyData() {
+        if (!surveyId) {
+            surveyTitleElement.textContent = '错误：问卷ID缺失';
+            loadingState.classList.add('hidden');
+            return;
+        }
+        try {
+            const response = await fetch(`/api/survey-details.mjs?id=${surveyId}`);
+            if (!response.ok) throw new Error(response.status === 404 ? '问卷未找到。' : '加载问卷失败。');
+            surveyData = await response.json();
+            surveyParts = surveyData.questions || [];
+            if (surveyParts.length === 0) {
+                surveyTitleElement.textContent = '此问卷暂无问题';
+                loadingState.classList.add('hidden');
+                return;
+            }
+            surveyTitleElement.textContent = surveyData.title || '无标题问卷';
+            surveyDescriptionElement.textContent = surveyData.description || '';
+            loadingState.classList.add('hidden');
+            surveyForm.classList.remove('hidden');
+            progressBarContainer.classList.remove('hidden');
+            renderCurrentPart();
+        } catch (error) {
+            surveyTitleElement.textContent = '问卷加载失败';
+            surveyDescriptionElement.textContent = error.message;
+            loadingState.classList.add('hidden');
+            showToast(error.message, 'error');
+        }
     }
-
-    initMobileMenu();
-    initHeaderScrollEffect();
-    initScrollToTopButton();
-    updateFooterYear();
-
+    
+    nextBtn.addEventListener('click', handleNext);
+    prevBtn.addEventListener('click', handlePrev);
+    surveyForm.addEventListener('submit', handleSubmit);
+    scrollToTopBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+    scrollToBottomBtn.addEventListener('click', () => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }));
+    window.addEventListener('scroll', handleScrollButtons, { passive: true });
+    
+    handleScrollButtons();
     fetchSurveyData();
 });

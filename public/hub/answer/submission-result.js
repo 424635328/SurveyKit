@@ -1,65 +1,136 @@
-// public/hub/answer/submission-result.js
 document.addEventListener('DOMContentLoaded', () => {
-    function initMobileMenu() {
-        const menuToggle = document.getElementById('menu-toggle'), mobileMenu = document.getElementById('mobile-menu'), icon = menuToggle?.querySelector('i');
-        if (!menuToggle || !mobileMenu || !icon) return;
-        menuToggle.addEventListener('click', () => { mobileMenu.classList.toggle('hidden'); icon.classList.toggle('fa-bars'); icon.classList.toggle('fa-times'); });
-    }
-    function initHeaderScrollEffect() {
-        const header = document.querySelector('header');
-        if (!header) return;
-        const SCROLL_THRESHOLD = 50;
-        const toggleHeaderScrolledClass = () => { header.classList.toggle('header-scrolled', window.scrollY > SCROLL_THRESHOLD); };
-        toggleHeaderScrolledClass(); window.addEventListener('scroll', toggleHeaderScrolledClass, { passive: true });
-    }
-    function initScrollToTopButton() {
-        const scrollToTopBtn = document.getElementById('scrollToTopBtn');
-        if (!scrollToTopBtn) return;
-        const SCROLL_VISIBLE_THRESHOLD = 300;
-        const toggleButtonVisibility = () => {
-            if (window.scrollY > SCROLL_VISIBLE_THRESHOLD) { scrollToTopBtn.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-4'); scrollToTopBtn.classList.add('opacity-100', 'pointer-events-auto', 'translate-y-0'); } else { scrollToTopBtn.classList.remove('opacity-100', 'pointer-events-auto', 'translate-y-0'); scrollToTopBtn.classList.add('opacity-0', 'pointer-events-none', 'translate-y-4'); }
-        };
-        window.addEventListener('scroll', toggleButtonVisibility, { passive: true }); scrollToTopBtn.addEventListener('click', () => { window.scrollTo({ top: 0, behavior: 'smooth' }); }); toggleButtonVisibility();
-    }
-    function updateFooterYear() {
-        const currentYearFooter = document.getElementById('current-year-footer');
-        if (currentYearFooter) { currentYearFooter.textContent = new Date().getFullYear(); }
-    }
+    const params = new URLSearchParams(window.location.search);
+    const status = params.get('status');
+    const message = params.get('message');
+    const surveyId = params.get('surveyId');
+    const submissionId = params.get('submissionId');
 
-    // 获取DOM元素
     const statusIcon = document.getElementById('status-icon');
     const statusTitle = document.getElementById('status-title');
     const statusMessage = document.getElementById('status-message');
-    const backToHomeBtn = document.getElementById('back-to-home-btn');
+    const aiAnalyzeBtn = document.getElementById('ai-analyze-btn');
+    const exportButtonsContainer = document.getElementById('export-buttons');
+    
+    const screenshotOverlay = document.getElementById('screenshot-overlay');
+    const imageRenderArea = document.getElementById('image-render-area');
 
-    // 从URL获取参数 (虽然 surveyId 和 submissionId 仍可获取，但页面不再使用它们)
-    const params = new URLSearchParams(window.location.search);
-    const status = params.get('status'); // 'success' or 'error'
-    const message = params.get('message'); // 错误消息或自定义成功消息
+    let surveyDataCache = null;
+    let answersCache = null;
 
-    function renderResultPage() {
-        if (status === 'success') {
-            statusIcon.innerHTML = '<i class="fa fa-check-circle text-green-400 text-6xl"></i>';
-            statusTitle.textContent = '问卷提交成功！';
-            statusMessage.textContent = message || '感谢您的参与，您的回答已成功保存。';
-            
-        } else {
-            statusIcon.innerHTML = '<i class="fa fa-times-circle text-red-400 text-6xl"></i>';
-            statusTitle.textContent = '问卷提交失败！';
-            statusMessage.textContent = message || '抱歉，提交过程中发生错误。请稍后再试。';
-        }
+    async function prepareExportData() {
+        if (surveyDataCache && answersCache) return { surveyData: surveyDataCache, answers: answersCache };
 
-        backToHomeBtn.onclick = () => {
-            window.location.href = '../../index.html';
-        };
+        const answersJson = sessionStorage.getItem(`survey_answers_${submissionId}`);
+        if (!answersJson) throw new Error('无法找到您的答案，请勿刷新页面后下载。');
+
+        const answers = JSON.parse(answersJson);
+        const response = await fetch(`/api/survey-details.mjs?id=${surveyId}`);
+        if (!response.ok) throw new Error('无法获取问卷详情。');
+        
+        const surveyData = await response.json();
+        surveyDataCache = surveyData;
+        answersCache = answers;
+        return { surveyData, answers };
     }
 
-    // 初始化通用UI
-    initMobileMenu();
-    initHeaderScrollEffect();
-    initScrollToTopButton();
-    updateFooterYear();
+    function triggerDownload(blob, filename) {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+    
+    async function handleExport(format, button) {
+        const originalText = button.innerHTML;
+        button.disabled = true;
+        button.innerHTML = '<i class="fa fa-spinner fa-spin"></i>';
 
-    // 渲染结果页面
-    renderResultPage();
+        try {
+            const { surveyData, answers } = await prepareExportData();
+            const filenameBase = `${surveyData.title}_我的答案`;
+
+            if (format === 'json' || format === 'csv' || format === 'xlsx') {
+                if (format === 'json') {
+                    const jsonBlob = new Blob([JSON.stringify({ survey: surveyData, answers: answers }, null, 2)], { type: 'application/json' });
+                    triggerDownload(jsonBlob, `${filenameBase}.json`);
+                } else {
+                    const dataForSheet = surveyData.questions.flatMap(part => 
+                        part.questions.map(q => ({
+                            'Section': part.legend,
+                            'Question': q.text,
+                            'Answer': answers[q.id] || 'N/A'
+                        }))
+                    );
+                    const ws = XLSX.utils.json_to_sheet(dataForSheet);
+                    const wb = XLSX.utils.book_new();
+                    XLSX.utils.book_append_sheet(wb, ws, 'Answers');
+                    XLSX.writeFile(wb, `${filenameBase}.${format}`);
+                }
+            } else if (format === 'image') {
+                let renderHtml = `<h1 style="font-size: 24px; font-weight: bold; margin-bottom: 20px; text-align: center; color: #e2e8f0;">${surveyData.title}</h1>`;
+                surveyData.questions.forEach(part => {
+                    renderHtml += `<h2 style="font-size: 18px; font-weight: bold; margin-top: 20px; margin-bottom: 10px; border-bottom: 1px solid #475569; padding-bottom: 5px; color: #cbd5e1;">${part.legend}</h2>`;
+                    part.questions.forEach(q => {
+                        const answer = answers[q.id] || 'N/A';
+                        renderHtml += `<div style="margin-bottom: 15px;"><p style="font-weight: bold; margin-bottom: 5px; color: #94a3b8;">${q.text}</p><p style="padding: 8px; background-color: #1e293b; border-radius: 4px; color: #e2e8f0; border: 1px solid #334155;">${answer}</p></div>`;
+                    });
+                });
+                imageRenderArea.innerHTML = renderHtml;
+                
+                screenshotOverlay.classList.remove('hidden');
+                screenshotOverlay.classList.add('flex');
+
+                await new Promise(resolve => requestAnimationFrame(resolve));
+                
+                try {
+                    const canvas = await html2canvas(imageRenderArea, {
+                        scale: 2,
+                        backgroundColor: '#0f172a',
+                        useCORS: true,
+                    });
+                    const imageBlob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+                    triggerDownload(imageBlob, `${filenameBase}.png`);
+                } finally {
+                    screenshotOverlay.classList.add('hidden');
+                    screenshotOverlay.classList.remove('flex');
+                    imageRenderArea.innerHTML = '';
+                }
+            }
+        } catch (error) {
+            alert('导出失败: ' + error.message);
+        } finally {
+            button.disabled = false;
+            button.innerHTML = originalText;
+        }
+    }
+
+    function renderPage() {
+        if (status === 'success') {
+            statusIcon.innerHTML = `<i class="fa fa-check-circle text-green-400"></i>`;
+            statusTitle.textContent = '提交成功！';
+            statusMessage.textContent = '感谢您的参与，您的回答已成功记录。';
+            
+            if (surveyId && submissionId) {
+                aiAnalyzeBtn.classList.remove('hidden');
+                exportButtonsContainer.classList.remove('hidden');
+                aiAnalyzeBtn.onclick = () => { window.location.href = `../../analyze.html?id=${submissionId}`; };
+                exportButtonsContainer.querySelectorAll('.export-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => handleExport(e.currentTarget.dataset.format, e.currentTarget));
+                });
+            }
+        } else {
+            statusIcon.innerHTML = `<i class="fa fa-times-circle text-red-400"></i>`;
+            statusTitle.textContent = '提交失败';
+            statusMessage.textContent = decodeURIComponent(message || '发生未知错误，请稍后再试。');
+        }
+    }
+    
+    document.querySelector('header').innerHTML = `<div class="container mx-auto px-4 py-4 flex justify-between items-center"><div class="flex items-center space-x-2"><span class="text-indigo-500 text-2xl"><i class="fa fa-wpforms"></i></span><a href="../../index.html" class="text-xl font-bold bg-gradient-to-r from-indigo-500 to-purple-600 bg-clip-text text-transparent">SurveyKit</a></div></div>`;
+    document.querySelector('footer').innerHTML = `<div class="container mx-auto px-4"><div class="flex justify-center"><p>© ${new Date().getFullYear()} SurveyKit</p></div></div>`;
+    
+    renderPage();
 });

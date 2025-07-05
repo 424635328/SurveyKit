@@ -7,8 +7,7 @@
   <title>填写问卷 - SurveyKit</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="answer.css"> 
-  <link rel="stylesheet" href="../toolchain/management.css">
+  <link rel="stylesheet" href="answer.css">
 </head>
 <body class="font-sans text-gray-800 min-h-screen flex flex-col aurora-background">
 
@@ -17,6 +16,10 @@
       <div class="flex items-center space-x-2">
         <span class="text-indigo-500 text-2xl"><i class="fa fa-wpforms"></i></span>
         <a href="../../index.html" class="text-xl font-bold bg-gradient-to-r from-indigo-500 to-purple-600 bg-clip-text text-transparent">SurveyKit</a>
+      </div>
+      <div id="autosave-indicator" class="text-sm text-slate-400 opacity-0 transition-opacity duration-500 flex items-center">
+        <i class="fa fa-check-circle mr-2 text-green-400"></i>
+        <span>进度已自动保存</span>
       </div>
       <nav class="hidden md:flex items-center space-x-8">
         <a href="../../index.html" class="text-gray-600 hover:text-indigo-500">首页</a>
@@ -32,24 +35,31 @@
         <a href="../../index.html" class="text-gray-600 hover:text-indigo-500 py-2 flex items-center"><i class="fa fa-home mr-2"></i> 首页</a>
         <a href="../hub.html" class="text-gray-600 hover:text-indigo-500 py-2 flex items-center"><i class="fa fa-wrench mr-2"></i> 工具中心</a>
         <a href="../../docs/help.html" class="text-gray-600 hover:text-indigo-500 py-2 flex items-center"><i class="fa fa-book mr-2"></i> 帮助文档</a>
-        <a href="https://github.com/424635328/SurveyKit" rel="noopener" target="_blank" class="text-gray-600 hover:text-indigo-500 py-2 flex items-center"><i class="fa fa-github mr-2"></i> GitHub</a>
       </div>
     </div>
   </header>
 
   <main class="flex-grow container mx-auto px-4 py-12 md:py-20">
-    <div id="survey-form-container" class="max-w-3xl mx-auto p-6 md:p-8 rounded-xl shadow-xl backdrop-blur-lg bg-white/10 border border-white/20">
-        <h2 id="survey-title" class="text-3xl md:text-4xl font-bold mb-4 text-white text-shadow text-center">加载中...</h2>
-        <p id="survey-description" class="text-slate-300 text-center mb-8"></p>
+    <div id="survey-container" class="max-w-3xl mx-auto p-6 md:p-8 rounded-xl shadow-xl backdrop-blur-lg bg-white/10 border border-white/20">
+        <h2 id="survey-title" class="text-3xl md:text-4xl font-bold mb-2 text-white text-shadow text-center">加载中...</h2>
+        <p id="survey-description" class="text-slate-300 text-center mb-6"></p>
+
+        <div id="progress-bar-container" class="w-full bg-slate-700/50 rounded-full h-2.5 mb-8 hidden">
+            <div id="progress-bar" class="bg-gradient-to-r from-indigo-400 to-purple-500 h-2.5 rounded-full transition-all duration-500" style="width: 0%"></div>
+        </div>
         
         <div id="loading-state" class="text-center text-slate-300 text-lg py-12">
             <i class="fa fa-spinner fa-spin mr-3"></i> 正在加载问卷...
         </div>
 
-        <form id="survey-form" class="hidden space-y-8">
-            <button type="submit" id="submit-survey-btn" class="w-full create-survey-btn mt-10">提交问卷</button>
+        <form id="survey-form" class="hidden">
+            <div id="survey-content" class="relative"></div>
+            <div id="navigation-controls" class="flex justify-between items-center mt-10">
+                <button type="button" id="prev-btn" class="secondary-action-btn hidden"><i class="fa fa-arrow-left mr-2"></i> 上一步</button>
+                <button type="button" id="next-btn" class="create-survey-btn hidden">下一步 <i class="fa fa-arrow-right ml-2"></i></button>
+                <button type="submit" id="submit-survey-btn" class="w-full create-survey-btn hidden">确认并提交问卷</button>
+            </div>
         </form>
-        
     </div>
   </main>
   
@@ -59,7 +69,8 @@
     <div class="container mx-auto px-4"><div class="flex justify-center"><p>© <span id="current-year-footer"></span> SurveyKit</p></div></div>
   </footer>
 
-  <button id="scrollToTopBtn" class="fixed bottom-6 right-6 bg-indigo-600 text-white p-3 rounded-full shadow-lg opacity-0 pointer-events-none transition-all duration-300 transform translate-y-4 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 z-50" aria-label="Scroll to top"><i class="fa fa-arrow-up text-lg"></i></button>
+  <button id="scrollToTopBtn" class="scroll-btn fixed bottom-20 right-6" aria-label="Scroll to top"><i class="fa fa-arrow-up text-lg"></i></button>
+  <button id="scrollToBottomBtn" class="scroll-btn fixed bottom-6 right-6" aria-label="Scroll to bottom"><i class="fa fa-arrow-down text-lg"></i></button>
   
   <script src="answer.js" defer></script>
 </body>
