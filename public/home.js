@@ -1,4 +1,3 @@
-// file: public/home.js
 document.addEventListener("DOMContentLoaded", () => {
   const isReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
@@ -150,14 +149,50 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  function initPageAnimations() {
-    document.querySelectorAll('.typewriter-target').forEach(el => {
-        if (el.dataset.text) {
-            el.textContent = el.dataset.text;
-            el.removeAttribute('data-text');
-        }
-    });
+  function initTypewriterEffect() {
+    if (isTouchDevice || isReducedMotion) return;
 
+    const testimonialCards = document.querySelectorAll('.testimonial-card');
+
+    testimonialCards.forEach(card => {
+        const textElement = card.querySelector('.typewriter-target');
+        if (!textElement) return;
+
+        const fullText = textElement.getAttribute('data-text');
+        let typewriterTimeout;
+        textElement.innerHTML = fullText;
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    clearTimeout(typewriterTimeout);
+                    textElement.innerHTML = '';
+                    textElement.classList.add('is-typing');
+                    
+                    let i = 0;
+                    function typeCharacter() {
+                        if (i < fullText.length) {
+                            textElement.innerHTML += fullText.charAt(i);
+                            i++;
+                            typewriterTimeout = setTimeout(typeCharacter, 25);
+                        } else {
+                            textElement.classList.remove('is-typing');
+                        }
+                    }
+                    typeCharacter();
+                } else {
+                    clearTimeout(typewriterTimeout);
+                    textElement.innerHTML = fullText;
+                    textElement.classList.remove('is-typing');
+                }
+            });
+        }, { threshold: 0.6 });
+
+        observer.observe(card);
+    });
+  }
+  
+  function initPageAnimations() {
     const wrapText = (el) => {
       if (!el || !el.dataset.text || el.childElementCount > 0) return;
       const words = el.dataset.text.match(/[\w']+|[\u4e00-\u9fa5]|\S/g) || [];
@@ -176,6 +211,7 @@ document.addEventListener("DOMContentLoaded", () => {
             el.innerHTML = "";
         });
         section.querySelectorAll("[class*='reveal-']").forEach(el => el.classList.remove("is-visible"));
+        
     };
 
     if ('IntersectionObserver' in window && !isReducedMotion) {
@@ -191,7 +227,7 @@ document.addEventListener("DOMContentLoaded", () => {
       document.querySelectorAll('.animated-section').forEach(section => observer.observe(section));
     } else {
       document.querySelectorAll("[data-text]").forEach(el => el.textContent = el.dataset.text);
-      document.querySelectorAll("[class*='reveal-'], [data-text], .typewriter-target").forEach(el => el.classList.add("is-visible"));
+      document.querySelectorAll("[class*='reveal-'], [data-text]").forEach(el => el.classList.add("is-visible"));
     }
   }
   
@@ -313,6 +349,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   initBaseInteractions();
   initAdvancedVisuals();
+  initTypewriterEffect();
   initPageAnimations();
   initSearch();
 });
