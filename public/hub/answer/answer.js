@@ -91,10 +91,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 question.options.forEach(opt => {
                     const value = (typeof opt === 'object' && opt.value) ? opt.value : opt;
                     const label = (typeof opt === 'object' && opt.label) ? opt.label : opt;
-                    questionHtml += `<div class="flex items-center"><input type="radio" id="q_${question.id}_${value.replace(/\W/g, '_')}" name="${question.id}" value="${escapeHtml(value)}" class="form-radio"><label for="q_${question.id}_${value.replace(/\W/g, '_')}" class="ml-3 text-slate-300 cursor-pointer">${escapeHtml(label)}</label></div>`;
+                    questionHtml += `<label class="radio-option-label"><input type="radio" id="q_${question.id}_${value.replace(/\W/g, '_')}" name="${question.id}" value="${escapeHtml(value)}" class="form-radio"><span class="ml-3 text-slate-300">${escapeHtml(label)}</span></label>`;
                 });
                 if (question.hasOther) {
-                    questionHtml += `<div class="flex items-center"><input type="radio" id="q_${question.id}_other_radio" name="${question.id}" value="_other_" class="form-radio"><label for="q_${question.id}_other_radio" class="ml-3 text-slate-300 cursor-pointer">其他</label></div><input type="text" id="q_${question.id}_other_text" name="${question.id}_other" class="hidden w-full form-input mt-2" placeholder="请输入其他选项内容">`;
+                    questionHtml += `<label class="radio-option-label"><input type="radio" id="q_${question.id}_other_radio" name="${question.id}" value="_other_" class="form-radio"><span class="ml-3 text-slate-300">其他</span></label><input type="text" id="q_${question.id}_other_text" name="${question.id}_other" class="hidden w-full form-input mt-2" placeholder="请输入其他选项内容">`;
                 }
                 break;
             case 'select':
@@ -212,6 +212,7 @@ document.addEventListener('DOMContentLoaded', () => {
         previewModal.classList.remove('hidden');
         setTimeout(() => {
             previewModalContent.classList.remove('opacity-0', '-translate-y-4');
+            editAnswersBtn.focus();
         }, 10);
     }
     
@@ -301,6 +302,12 @@ document.addEventListener('DOMContentLoaded', () => {
             loadingState.classList.add('hidden');
             surveyForm.classList.remove('hidden');
             submitButton.classList.remove('hidden');
+
+            document.querySelectorAll('.question-block').forEach((block, index) => {
+                setTimeout(() => {
+                    block.classList.add('visible');
+                }, index * 75);
+            });
             
             attachEventListeners();
             loadProgress();

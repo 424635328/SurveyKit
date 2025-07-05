@@ -1,3 +1,5 @@
+/* public/hub/answer/answer.css */
+
 body {
   font-family: "Inter", sans-serif;
   color: #e2e8f0;
@@ -15,25 +17,45 @@ body {
   animation: aurora-flow 20s ease infinite;
 }
 @keyframes aurora-flow {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
-.text-shadow {
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
 header {
   transition: all 0.3s ease-in-out;
   background-color: rgba(15, 23, 42, 0.6);
   backdrop-filter: blur(16px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
+
+/* --- 问题和表单样式 --- */
+.question-block {
+  border: 1px solid transparent;
+  transition: all 0.3s ease-in-out;
+  opacity: 0; /* 初始不可见，为动画做准备 */
+}
+.question-block.visible {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+.question-block:focus-within {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  border-color: rgba(99, 102, 241, 0.5);
+  box-shadow: 0 0 15px rgba(99, 102, 241, 0.2);
+}
+
 .form-input {
   background-color: rgb(15 23 42 / 0.8);
   border: 1px solid #475569;
@@ -47,6 +69,27 @@ header {
   border-color: #6366f1;
   box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.4);
 }
+
+/* 单选选项样式优化 */
+.radio-option-label {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.radio-option-label:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.radio-option-label:has(input:checked) {
+  background-color: rgba(99, 102, 241, 0.2);
+  border-color: rgba(99, 102, 241, 0.6);
+}
+
 .form-radio {
   appearance: none;
   display: inline-block;
@@ -58,7 +101,6 @@ header {
   width: 1rem;
   color: #6366f1;
   background-color: #334155;
-  cursor: pointer;
 }
 .form-radio:checked {
   background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3ccircle cx='8' cy='8' r='3'/%3e%3c/svg%3e");
@@ -68,177 +110,100 @@ header {
   border-color: transparent;
   background-color: currentColor;
 }
+
+/* 颜色和范围选择器 */
 .form-color-picker {
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  width: 3.5rem;
-  height: 2.5rem;
-  padding: 0;
-  border: none;
-  border-radius: 0.375rem;
-  cursor: pointer;
-  background-color: transparent;
+  -webkit-appearance: none; -moz-appearance: none; appearance: none;
+  width: 3.5rem; height: 2.5rem; padding: 0;
+  border: none; border-radius: 0.375rem; cursor: pointer; background-color: transparent;
 }
-.form-color-picker::-webkit-color-swatch-wrapper {
-  padding: 0;
-}
-.form-color-picker::-webkit-color-swatch {
-  border: 1px solid #475569;
-  border-radius: 0.375rem;
-}
+.form-color-picker::-webkit-color-swatch-wrapper { padding: 0; }
+.form-color-picker::-webkit-color-swatch { border: 1px solid #475569; border-radius: 0.375rem; }
+
 .form-range {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 100%;
-  height: 0.5rem;
-  border-radius: 0.25rem;
-  background: #334155;
-  outline: none;
-  opacity: 0.9;
-  transition: opacity .2s;
+  -webkit-appearance: none; appearance: none;
+  width: 100%; height: 0.5rem; border-radius: 0.25rem;
+  background: #334155; outline: none; opacity: 0.9; transition: opacity .2s;
 }
-.form-range:hover {
-  opacity: 1;
-}
+.form-range:hover { opacity: 1; }
 .form-range::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 1.25rem;
-  height: 1.25rem;
-  border-radius: 50%;
-  background: #818cf8;
-  cursor: pointer;
-  border: 2px solid #e0e7ff;
+  -webkit-appearance: none; appearance: none;
+  width: 1.25rem; height: 1.25rem; border-radius: 50%;
+  background: #818cf8; cursor: pointer; border: 2px solid #e0e7ff;
   box-shadow: 0 0 5px rgba(129, 140, 248, 0.5);
 }
 .form-range::-moz-range-thumb {
-  width: 1.25rem;
-  height: 1.25rem;
-  border-radius: 50%;
-  background: #818cf8;
-  cursor: pointer;
-  border: 2px solid #e0e7ff;
+  width: 1.25rem; height: 1.25rem; border-radius: 50%;
+  background: #818cf8; cursor: pointer; border: 2px solid #e0e7ff;
   box-shadow: 0 0 5px rgba(129, 140, 248, 0.5);
 }
+
+/* 错误状态 */
 .input-error {
-  box-shadow: 0 0 0 2px #ef4444;
+  box-shadow: 0 0 0 2px #ef4444 !important;
   border-radius: 0.5rem;
+  animation: shake 0.4s ease-in-out;
 }
 .question-block.input-error {
   background-color: rgba(239, 68, 68, 0.1);
 }
+
+/* 按钮和弹窗 */
 .create-survey-btn, .secondary-action-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.75rem 1.5rem;
-  font-size: 1rem;
-  font-weight: 600;
-  border-radius: 0.5rem;
-  text-decoration: none;
-  transition: all 0.3s;
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 0.75rem 1.5rem; font-size: 1rem; font-weight: 600;
+  border-radius: 0.5rem; text-decoration: none; transition: all 0.3s;
   box-shadow: 0 4px 15px rgba(165, 180, 252, 0.1);
-  border: 1px solid transparent;
-  cursor: pointer;
+  border: 1px solid transparent; cursor: pointer;
 }
 .create-survey-btn:disabled, .secondary-action-btn:disabled {
-    cursor: not-allowed;
-    opacity: 0.7;
+  cursor: not-allowed; opacity: 0.7;
 }
 .create-survey-btn {
-  color: white;
-  background: linear-gradient(to right, #6366f1, #a855f7);
+  color: white; background: linear-gradient(to right, #6366f1, #a855f7);
 }
 .secondary-action-btn {
-  color: #e2e8f0;
-  background-color: rgba(255, 255, 255, 0.1);
+  color: #e2e8f0; background-color: rgba(255, 255, 255, 0.1);
   border-color: rgba(255, 255, 255, 0.2);
 }
-.create-survey-btn:hover, .secondary-action-btn:hover {
+.create-survey-btn:hover:not(:disabled), .secondary-action-btn:hover:not(:disabled) {
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(165, 180, 252, 0.2);
 }
 .toast-container {
-  position: fixed;
-  top: 1rem;
-  right: 1rem;
-  z-index: 1001;
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  max-width: 20rem;
-  width: 100%;
+  position: fixed; top: 1rem; right: 1rem; z-index: 1001;
+  display: flex; flex-direction: column; gap: 0.75rem;
+  max-width: 20rem; width: 100%;
 }
 .toast-message {
-  padding: 0.75rem 1.25rem;
-  border-radius: 0.5rem;
-  font-size: 0.9rem;
-  font-weight: 500;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-  min-width: 200px;
-  text-align: center;
-  opacity: 0;
-  transform: translateX(100%);
-  transition: opacity 0.3s ease, transform 0.3s ease;
+  padding: 0.75rem 1.25rem; border-radius: 0.5rem; font-size: 0.9rem;
+  font-weight: 500; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  min-width: 200px; text-align: center; opacity: 0;
+  transform: translateX(100%); transition: opacity 0.3s ease, transform 0.3s ease;
 }
-.toast-message.show {
-  opacity: 1;
-  transform: translateX(0);
-}
+.toast-message.show { opacity: 1; transform: translateX(0); }
 .toast-success { background-color: #22c55e; color: white; }
 .toast-error { background-color: #ef4444; color: white; }
 .toast-info { background-color: #3b82f6; color: white; }
 .toast-warning { background-color: #f59e0b; color: white; }
+
 .scroll-btn {
-  position: fixed;
-  bottom: 1.5rem;
-  right: 1.5rem;
-  width: 3rem;
-  height: 3rem;
-  border-radius: 50%;
-  background-color: rgba(15, 23, 42, 0.7);
-  color: white;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  opacity: 0;
-  visibility: hidden;
+  position: fixed; width: 3rem; height: 3rem; border-radius: 50%;
+  background-color: rgba(15, 23, 42, 0.7); color: white;
+  border: 1px solid rgba(255, 255, 255, 0.2); display: flex;
+  align-items: center; justify-content: center; cursor: pointer;
+  transition: all 0.3s ease; opacity: 0; visibility: hidden;
   transform: translateY(10px);
 }
-.scroll-btn.visible {
-  opacity: 1;
-  visibility: visible;
-  transform: translateY(0);
-}
-.scroll-btn:hover {
-  background-color: #6366f1;
-}
-#scrollToTopBtn {
-  bottom: 5.5rem;
-}
-#preview-modal-content {
-  transition: opacity 0.3s ease, transform 0.3s ease;
-}
-#close-preview-btn {
-  font-size: 2rem;
-  line-height: 1;
-  font-weight: bold;
-}
-#preview-answers-list::-webkit-scrollbar {
-  width: 8px;
-}
-#preview-answers-list::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 10px;
-}
-#preview-answers-list::-webkit-scrollbar-thumb {
-  background: #475569;
-  border-radius: 10px;
-}
-#preview-answers-list::-webkit-scrollbar-thumb:hover {
-  background: #6366f1;
-}
+.scroll-btn.visible { opacity: 1; visibility: visible; transform: translateY(0); }
+.scroll-btn:hover { background-color: #6366f1; }
+#scrollToTopBtn { bottom: 5.5rem; right: 1.5rem; }
+#scrollToBottomBtn { bottom: 1.5rem; right: 1.5rem; }
+
+#preview-modal-content { transition: opacity 0.3s ease, transform 0.3s ease; }
+#close-preview-btn { font-size: 2rem; line-height: 1; font-weight: bold; }
+
+#preview-answers-list::-webkit-scrollbar { width: 8px; }
+#preview-answers-list::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
+#preview-answers-list::-webkit-scrollbar-thumb { background: #475569; border-radius: 10px; }
+#preview-answers-list::-webkit-scrollbar-thumb:hover { background: #6366f1; }
