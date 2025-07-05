@@ -3,14 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SurveyKit</title>
+    <title>SurveyKit - 多用户智能问卷SaaS平台</title>
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="home.css">
     
@@ -18,52 +19,38 @@
         #search-modal { transition: opacity 0.2s ease-in-out; }
         #search-modal-panel { transition: transform 0.2s ease-in-out, opacity 0.2s ease-in-out; }
         body.search-open { overflow: hidden; }
-        .search-result-item {
-            transition: background-color 0.15s ease-in-out;
-        }
-        .search-result-item.active {
-            background-color: #eef2ff;
-            color: #4338ca;
-        }
-        .search-result-item.active .result-item-desc,
-        .search-result-item.active .result-item-icon {
-            color: #4f46e5;
-        }
+        .search-result-item { transition: background-color 0.15s ease-in-out; }
+        .search-result-item.active { background-color: #3730a3; color: #e0e7ff; }
+        .search-result-item.active .result-item-desc, .search-result-item.active .result-item-icon { color: #c7d2fe; }
     </style>
 </head>
-<body class="font-sans bg-slate-50 text-slate-800">
+<body class="font-sans text-slate-200 aurora-background">
+    <canvas id="constellation-canvas"></canvas>
 
-    <header class="sticky top-0 z-40 bg-white/80 backdrop-blur-md shadow-sm">
+    <header class="sticky top-0 z-40">
         <div class="container mx-auto px-4">
             <div class="flex h-16 items-center justify-between">
-                <a href="index.html" class="flex items-center space-x-2">
-                    <span class="text-indigo-600 text-2xl"><i class="fa fa-wpforms"></i></span>
-                    <span class="text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">SurveyKit</span>
+                <a href="index.html" class="flex items-center space-x-2 logo-container">
+                    <span class="text-indigo-400 text-2xl"><i class="fa fa-wpforms"></i></span>
+                    <span class="text-xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">SurveyKit</span>
                 </a>
 
                 <nav class="hidden md:flex items-center space-x-8">
-                    <a href="index.html" class="text-indigo-600 font-medium flex items-center space-x-2">
-                        <i class="fa fa-home"></i> <span>首页</span>
-                    </a>
-                    <a href="hub/hub.html" class="nav-link">
-                        <i class="fa fa-wrench"></i> <span>工具中心</span>
-                    </a>
-                    <a href="docs/help.html" class="nav-link">
-                        <i class="fa fa-book"></i> <span>帮助文档</span>
-                    </a>
-                    <a href="https://github.com/424635328/SurveyKit" target="_blank" rel="noopener" class="nav-link">
-                        <i class="fa fa-github"></i> <span>GitHub</span>
-                    </a>
+                    <a href="index.html" class="nav-link active"><i class="fa fa-home"></i> <span>首页</span></a>
+                    <a href="hub/hub.html" class="nav-link"><i class="fa fa-wrench"></i> <span>工具中心</span></a>
+                    <a href="docs/help.html" class="nav-link"><i class="fa fa-book"></i> <span>帮助文档</span></a>
+                    <a href="https://github.com/424635328/SurveyKit" target="_blank" rel="noopener" class="nav-link"><i class="fa fa-github"></i> <span>GitHub</span></a>
                 </nav>
 
-                <div class="flex items-center space-x-2">
-                    <button id="search-toggle-button" type="button" class="hidden md:flex items-center space-x-2 rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-500 hover:border-slate-400 hover:text-slate-800 transition-colors">
+                <div class="flex items-center space-x-4">
+                     <button id="search-toggle-button" type="button" class="hidden sm:flex items-center space-x-2 rounded-md bg-white/10 px-3 py-2 text-sm text-slate-400 hover:bg-white/20 hover:text-slate-200 transition-colors">
                         <i class="fa fa-search"></i>
                         <span>搜索...</span>
-                        <kbd class="ml-2 rounded bg-slate-100 px-1.5 py-0.5 text-xs font-mono">⌘K</kbd>
+                        <kbd class="font-mono rounded bg-slate-900/50 border border-slate-600 px-1.5 py-1 text-xs">⌘K</kbd>
                     </button>
+                    <a href="hub/login.html" class="hidden sm:inline-block primary-btn-sm">登录/注册</a>
                     <div class="md:hidden">
-                        <button id="menu-toggle" type="button" class="inline-flex items-center justify-center rounded-md p-2 text-slate-600 hover:bg-slate-100 hover:text-indigo-600 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500" aria-controls="mobile-menu" aria-expanded="false">
+                        <button id="menu-toggle" type="button" class="inline-flex items-center justify-center rounded-md p-2 text-slate-300 hover:bg-white/10 hover:text-white focus:outline-none" aria-controls="mobile-menu" aria-expanded="false">
                             <span class="sr-only">打开主菜单</span>
                             <i id="menu-icon" class="fa fa-bars text-2xl"></i>
                         </button>
@@ -71,9 +58,10 @@
                 </div>
             </div>
         </div>
-        <div id="mobile-menu" class="hidden md:hidden border-t border-slate-200">
+        <div id="mobile-menu" class="hidden md:hidden">
             <div class="space-y-1 px-2 pb-3 pt-2">
                 <a href="index.html" class="nav-link-mobile active">首页</a>
+                <a href="hub/login.html" class="nav-link-mobile">登录/注册</a>
                 <a href="#" id="search-toggle-mobile" class="nav-link-mobile">搜索</a>
                 <a href="hub/hub.html" class="nav-link-mobile">工具中心</a>
                 <a href="docs/help.html" class="nav-link-mobile">帮助文档</a>
@@ -83,83 +71,243 @@
     </header>
     
     <main>
-        <section class="animated-section relative text-center pt-16 pb-20 md:pt-24 md:pb-28 overflow-hidden">
-            <div class="hero-background"></div>
+        <section class="animated-section relative text-center pt-20 pb-24 md:pt-28 md:pb-32 overflow-hidden">
             <div class="container mx-auto px-4 relative z-10">
-                <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 text-slate-900" data-text="探索深度自我，连接真实你我"></h1>
-                <p class="max-w-3xl mx-auto text-lg md:text-xl text-slate-600" data-text="一站式智能问卷与人格分析平台，助力你发现潜能，理解他人"></p>
-                <div class="mt-10 flex justify-center gap-4 flex-wrap">
-                    <a href="survey.html" class="primary-btn fade-in-element">🚀 立即开始填写问卷</a>
-                    <a href="mbti.html" class="secondary-btn fade-in-element">🤖 直接进行AI分析</a>
+                <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">SurveyKit</h1>
+                <p class="text-2xl md:text-3xl lg:text-4xl font-semibold text-slate-300 mt-4" data-text="多用户智能问卷SaaS平台"></p>
+                <p class="max-w-3xl mx-auto text-lg md:text-xl text-slate-300 mb-8" data-text="为个人与团队打造，支持多用户、多问卷管理，并由 AI 驱动深度人格分析。"></p>
+                <p class="hero-tagline reveal-scale-in">它不仅仅是一个表单，更是一次探索和分享思想的仪式。</p>
+                <div class="mt-12 flex justify-center gap-4 flex-wrap">
+                    <a href="hub/login.html" class="primary-btn reveal-scale-in" style="--animation-delay: 0.1s;">🚀 登录/注册</a>
+                    <a href="survey.html" class="secondary-btn reveal-scale-in" style="--animation-delay: 0.2s;">✨ 直接开始</a>
+                    <a href="hub/hub.html" class="tertiary-btn cta-btn reveal-scale-in">🛠️ 工具中心</a>
                 </div>
             </div>
-            <div id="scroll-down-indicator" class="absolute bottom-8 left-1/2 -translate-x-1/2 fade-in-element">
-                <i class="fa fa-chevron-down"></i>
-            </div>
+            <div class="scroll-down-indicator"></div>
         </section>
 
-        <section class="animated-section py-16 md:py-24 bg-white">
+        <section class="animated-section py-16 md:py-24">
             <div class="container mx-auto px-4">
-                <div class="text-center mb-12">
-                    <h2 class="section-title" data-text="核心亮点 ✨"></h2>
-                    <p class="section-subtitle" data-text="我们精心设计了多项创新功能，让你的问卷体验从填写到分析，都充满惊喜与深度"></p>
+                <div class="text-center mb-16">
+                    <h2 class="section-title text-gradient" data-text="强大的 All-in-One 工具中心"></h2>
+                    <p class="section-subtitle" data-text="我们为您准备了从设计到部署所需的一切，开箱即用。"></p>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div class="tool-card tilt-card reveal-from-up">
+                        <div class="tool-card-icon bg-indigo-500"><i class="fa fa-pencil-square-o"></i></div>
+                        <h3 class="tool-card-title">可视化编辑器</h3>
+                        <p class="tool-card-desc">通过直观的图形界面，实时预览并构建您的问卷。支持导入/导出标准JSON，无缝衔接您的工作流。</p>
+                        <a href="hub/custom-questions/custom-questions.html" class="tool-card-link">进入编辑器 <i class="fa fa-arrow-right"></i></a>
+                    </div>
+                    <div class="tool-card tilt-card reveal-from-up" style="--animation-delay: 0.1s;">
+                        <div class="tool-card-icon bg-pink-500"><i class="fa fa-android"></i></div>
+                        <h3 class="tool-card-title">AI 人格分析</h3>
+                        <p class="tool-card-desc">提交问卷后，由火山方舟大模型驱动的 AI 将即时生成一份详尽、专业的 MBTI 风格人格报告。</p>
+                         <a href="mbti.html" class="tool-card-link">体验 AI 分析 <i class="fa fa-arrow-right"></i></a>
+                    </div>
+                    <div class="tool-card tilt-card reveal-from-up" style="--animation-delay: 0.2s;">
+                        <div class="tool-card-icon bg-teal-500"><i class="fa fa-paint-brush"></i></div>
+                        <h3 class="tool-card-title">主题定制器</h3>
+                        <p class="tool-card-desc">实时调整问卷的主色调、背景、字体等，一键生成主题 CSS，打造您的专属品牌风格。</p>
+                        <a href="hub/toolchain/customizer.html" class="tool-card-link">打开定制器 <i class="fa fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section class="animated-section py-16 md:py-24 bg-slate-900/30 backdrop-blur-md">
+            <div class="container mx-auto px-4">
+                <div class="text-center mb-16">
+                    <h2 class="section-title text-gradient" data-text="一切所需，尽在掌握 ✨"></h2>
+                    <p class="section-subtitle" data-text="我们提供从问卷设计、分发、数据聚合到智能分析的全链路工具。"></p>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    <div class="feature-card fade-in-element">
-                        <div class="feature-icon"><i class="fa fa-magic"></i></div>
-                        <h3 class="font-semibold text-lg mb-2">AI 人格洞察</h3>
-                        <p class="text-slate-600 text-sm">借助火山方舟大模型，为你生成独一无二的MBTI风格人格报告，将数据转化为富有洞察力的故事</p>
+                    <div class="feature-card tilt-card reveal-from-up">
+                        <div class="feature-icon bg-indigo-500"><i class="fa fa-users"></i></div>
+                        <h3 class="font-semibold text-lg mb-2 text-white">多用户问卷管理</h3>
+                        <p class="text-slate-400 text-sm">安全的账户系统，提供个人问卷中心，轻松创建、编辑、追踪和管理你的多份问卷。</p>
                     </div>
-                    <div class="feature-card fade-in-element">
-                        <div class="feature-icon"><i class="fa fa-paint-brush"></i></div>
-                        <h3 class="font-semibold text-lg mb-2">问卷高度定制</h3>
-                        <p class="text-slate-600 text-sm">核心 `questions.json` 文件让你像编辑文本文档一样，轻松修改、增加或重组问题</p>
+                    <div class="feature-card tilt-card reveal-from-up" style="--animation-delay: 0.05s;">
+                        <div class="feature-icon bg-pink-500"><i class="fa fa-wrench"></i></div>
+                        <h3 class="font-semibold text-lg mb-2 text-white">一站式工具中心</h3>
+                        <p class="text-slate-400 text-sm">集可视化编辑器、主题定制器、JSON校验器于一体，满足从新手到专家的一切需求。</p>
                     </div>
-                    <div class="feature-card fade-in-element">
-                        <div class="feature-icon"><i class="fa fa-users"></i></div>
-                        <h3 class="font-semibold text-lg mb-2">趣味默契比拼</h3>
-                        <p class="text-slate-600 text-sm">邀请朋友参与，即时对比问卷结果，直观呈现彼此的共同点与独特火花，增进了解</p>
+                    <div class="feature-card tilt-card reveal-from-up" style="--animation-delay: 0.1s;">
+                        <div class="feature-icon bg-green-500"><i class="fa fa-magic"></i></div>
+                        <h3 class="font-semibold text-lg mb-2 text-white">AI 驱动人格洞察</h3>
+                        <p class="text-slate-400 text-sm">基于火山方舟大模型，为问卷结果生成专属 MBTI 风格人格报告，发掘数据背后的故事。</p>
                     </div>
-                    <div class="feature-card fade-in-element">
-                        <div class="feature-icon"><i class="fa fa-puzzle-piece"></i></div>
-                        <h3 class="font-semibold text-lg mb-2">沉浸式UX体验</h3>
-                        <p class="text-slate-600 text-sm">全览式题号导航、题目流式输出、自动草稿、双重进度反馈，告别传统问卷的疲劳感</p>
+                    <div class="feature-card tilt-card reveal-from-up" style="--animation-delay: 0.15s;">
+                        <div class="feature-icon bg-amber-500"><i class="fa fa-bar-chart"></i></div>
+                        <h3 class="font-semibold text-lg mb-2 text-white">结果聚合与导出</h3>
+                        <p class="text-slate-400 text-sm">在线聚合所有提交结果，以美观的表格呈现，并支持一键导出为 CSV 和 JSON 文件。</p>
                     </div>
-                    <div class="feature-card fade-in-element">
-                        <div class="feature-icon"><i class="fa fa-sliders"></i></div>
-                        <h3 class="font-semibold text-lg mb-2">动态交互艺术</h3>
-                        <p class="text-slate-600 text-sm">告别单调！单选、下拉、颜色选择、滑块等多样交互形式，让你的表达更自由</p>
+                    <div class="feature-card tilt-card reveal-from-up" style="--animation-delay: 0.2s;">
+                        <div class="feature-icon bg-sky-500"><i class="fa fa-share-alt"></i></div>
+                        <h3 class="font-semibold text-lg mb-2 text-white">专属链接与分享</h3>
+                        <p class="text-slate-400 text-sm">每份问卷都生成唯一填写链接和实时二维码，方便你在任何渠道轻松分发和收集数据。</p>
                     </div>
-                    <div class="feature-card fade-in-element">
-                        <div class="feature-icon"><i class="fa fa-file-text-o"></i></div>
-                        <h3 class="font-semibold text-lg mb-2">优雅结果呈现</h3>
-                        <p class="text-slate-600 text-sm">将数据渲染成精美的访谈录，支持一键跳转AI分析、纯文本导出与密码保护</p>
+                    <div class="feature-card tilt-card reveal-from-up" style="--animation-delay: 0.25s;">
+                        <div class="feature-icon bg-slate-500"><i class="fa fa-shield"></i></div>
+                        <h3 class="font-semibold text-lg mb-2 text-white">开源、安全、可控</h3>
+                        <p class="text-slate-400 text-sm">项目完全开源，采用行业标准安全实践，你可以放心使用或在自己的服务器上部署。</p>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section class="animated-section relative text-center py-16 md:py-24 overflow-hidden">
+        <section id="workflow-section" class="animated-section py-16 md:py-32 relative">
+             <div class="container mx-auto px-4 relative z-10">
+                <div class="text-center mb-20">
+                    <h2 class="section-title text-gradient" data-text="简单四步，释放创想力 🚀"></h2>
+                    <p class="section-subtitle" data-text="直观的工作流，让你专注于问题本身，而非繁琐的工具操作。"></p>
+                </div>
+                <div class="workflow-grid">
+                    <div id="workflow-svg-container">
+                        <svg id="workflow-svg" width="100%" height="100%" viewBox="0 0 1000 300" preserveAspectRatio="none">
+                            <path id="workflow-path" d="M 100,50 Q 250,50 300,150 T 500,250 Q 600,280 700,250 T 900,50" stroke="rgba(255,255,255,0.2)" stroke-width="2" fill="none" />
+                            <path id="workflow-path-progress" d="M 100,50 Q 250,50 300,150 T 500,250 Q 600,280 700,250 T 900,50" stroke="url(#line-gradient)" stroke-width="3" fill="none" stroke-linecap="round"/>
+                            <defs>
+                                <linearGradient id="line-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                    <stop offset="0%" stop-color="#a78bfa" />
+                                    <stop offset="100%" stop-color="#f472b6" />
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                    </div>
+                    <div class="workflow-step reveal-from-up">
+                        <div class="workflow-icon">1</div>
+                        <h3 class="font-bold text-lg mb-2 text-white">注册/登录</h3>
+                        <p class="text-slate-400 text-sm">创建一个安全账户，进入你的个人工作空间。</p>
+                    </div>
+                    <div class="workflow-step reveal-from-up" style="--animation-delay: 0.1s;">
+                        <div class="workflow-icon">2</div>
+                        <h3 class="font-bold text-lg mb-2 text-white">创建或导入</h3>
+                        <p class="text-slate-400 text-sm">使用可视化编辑器或直接导入JSON，构建问卷。</p>
+                    </div>
+                    <div class="workflow-step reveal-from-up" style="--animation-delay: 0.2s;">
+                        <div class="workflow-icon">3</div>
+                        <h3 class="font-bold text-lg mb-2 text-white">分享与分发</h3>
+                        <p class="text-slate-400 text-sm">获取专属链接和二维码，轻松分发给目标人群。</p>
+                    </div>
+                    <div class="workflow-step reveal-from-up" style="--animation-delay: 0.3s;">
+                        <div class="workflow-icon">4</div>
+                        <h3 class="font-bold text-lg mb-2 text-white">分析与导出</h3>
+                        <p class="text-slate-400 text-sm">在线查看聚合数据，或将结果导出深入分析。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="animated-section py-16 md:py-24">
+            <div class="container mx-auto px-4">
+                <div class="text-center mb-16">
+                    <h2 class="section-title text-gradient" data-text="为每一位创造者而生"></h2>
+                    <p class="section-subtitle" data-text="无论你是个人、团队还是开发者，SurveyKit 都能满足你的独特需求。"></p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="audience-card tilt-card reveal-from-left">
+                        <div class="audience-icon text-purple-400"><i class="fa fa-user"></i></div>
+                        <h3 class="font-bold text-xl text-white mb-2">个人用户</h3>
+                        <p class="text-slate-400">快速创建有趣的心理测试、朋友间的默契问答，或用于个人研究项目。AI 人格分析为你带来无限乐趣。</p>
+                    </div>
+                    <div class="audience-card tilt-card reveal-from-up" style="--animation-delay: 0.1s;">
+                        <div class="audience-icon text-sky-400"><i class="fa fa-users"></i></div>
+                        <h3 class="font-bold text-xl text-white mb-2">团队与企业</h3>
+                        <p class="text-slate-400">进行客户满意度调查、市场调研、团队内部反馈。安全的多用户系统和数据导出功能，让协作与分析更高效。</p>
+                    </div>
+                    <div class="audience-card tilt-card reveal-from-right" style="--animation-delay: 0.2s;">
+                        <div class="audience-icon text-green-400"><i class="fa fa-code"></i></div>
+                        <h3 class="font-bold text-xl text-white mb-2">开发者</h3>
+                        <p class="text-slate-400">项目完全开源，技术栈现代。你可以轻松进行二次开发，或将其作为学习 Serverless 与 SaaS 开发的绝佳范例。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="animated-section py-16 md:py-24">
+             <div class="container mx-auto px-4">
+                <div class="text-center mb-16">
+                    <h2 class="section-title text-gradient" data-text="顶级选手，一致推荐"></h2>
+                    <p class="section-subtitle" data-text="听听CS界的GOAT们怎么说。"></p>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <blockquote class="testimonial-card tilt-card reveal-from-up">
+                        <p class="testimonial-text typewriter-target" data-text='"W Gaming, W Platform. This AI analysis is like my perfect flashbang, instantly reveals everything. The UI is cleaner than my headshots. GGWP."'>"W Gaming, W Platform. This AI analysis is like my perfect flashbang, instantly reveals everything. The UI is cleaner than my headshots. GGWP."</p>
+                        <footer class="testimonial-author">
+                            <img src="./assets/images/donk.png" alt="donk头像" class="testimonial-avatar">
+                            <div>
+                                <cite class="font-bold text-white not-italic">Danil 'donk' Kryshkovets</cite>
+                                <span class="text-slate-400 text-sm">现象级天才</span>
+                            </div>
+                        </footer>
+                    </blockquote>
+                     <blockquote class="testimonial-card tilt-card reveal-from-up" style="--animation-delay: 0.1s;">
+                        <p class="testimonial-text typewriter-target" data-text='"I have seen many platforms, but the precision and customization here... it is like a perfectly placed prefire. The data export is crucial for my analysis. It just works."'>"I have seen many platforms, but the precision and customization here... it is like a perfectly placed prefire. The data export is crucial for my analysis. It just works."</p>
+                        <footer class="testimonial-author">
+                            <img src="./assets/images/niko.png" alt="NiKo头像" class="testimonial-avatar">
+                            <div>
+                                <cite class="font-bold text-white not-italic">Nikola 'NiKo' Kovač</cite>
+                                <span class="text-slate-400 text-sm">传奇步枪手</span>
+                            </div>
+                        </footer>
+                    </blockquote>
+                     <blockquote class="testimonial-card tilt-card reveal-from-up" style="--animation-delay: 0.2s;">
+                        <p class="testimonial-text typewriter-target" data-text='"Calm, efficient, and powerful. Using SurveyKit feels like clutching a 1v5. Everything is under control. The clean design helps me focus, just like in-game. This is magnifique."'>"Calm, efficient, and powerful. Using SurveyKit feels like clutching a 1v5. Everything is under control. The clean design helps me focus, just like in-game. C'est magnifique."</p>
+                        <footer class="testimonial-author">
+                            <img src="./assets/images/zywoo.png" alt="ZywOo头像" class="testimonial-avatar">
+                            <div>
+                                <cite class="font-bold text-white not-italic">Mathieu 'ZywOo' Herbaut</cite>
+                                <span class="text-slate-400 text-sm">天选之子</span>
+                            </div>
+                        </footer>
+                    </blockquote>
+                </div>
+            </div>
+        </section>
+
+        <section class="animated-section py-16 md:py-24 bg-slate-900/50">
+            <div class="container mx-auto px-4">
+                 <div class="text-center mb-12">
+                    <h2 class="section-title text-white text-shadow" data-text="强大的技术栈，可靠的基石"></h2>
+                    <p class="section-subtitle text-slate-400" data-text="我们选用业界领先的技术，确保平台的稳定、安全与高效。"></p>
+                </div>
+                <div class="max-w-4xl mx-auto bg-black/20 p-6 md:p-8 rounded-2xl border border-white/10">
+                    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6 text-center">
+                        <div class="tech-item"><img src="https://img.shields.io/badge/-JavaScript-F7DF1E?logo=javascript&logoColor=black&style=for-the-badge" alt="JavaScript"></div>
+                        <div class="tech-item"><img src="https://img.shields.io/badge/-TailwindCSS-06B6D4?logo=tailwindcss&logoColor=white&style=for-the-badge" alt="TailwindCSS"></div>
+                        <div class="tech-item"><img src="https://img.shields.io/badge/-Node.js-339933?logo=node.js&logoColor=white&style=for-the-badge" alt="Node.js"></div>
+                        <div class="tech-item"><img src="https://img.shields.io/badge/-Vercel-000000?logo=vercel&logoColor=white&style=for-the-badge" alt="Vercel"></div>
+                        <div class="tech-item"><img src="https://img.shields.io/badge/-Redis-DC382D?logo=redis&logoColor=white&style=for-the-badge" alt="Redis"></div>
+                        <div class="tech-item"><img src="https://img.shields.io/badge/-JWT-000000?logo=jsonwebtokens&logoColor=white&style=for-the-badge" alt="JWT"></div>
+                        <div class="tech-item"><img src="https://img.shields.io/badge/-bcrypt-6C42F1?logo=bcrypt&logoColor=white&style=for-the-badge" alt="bcrypt"></div>
+                        <div class="tech-item"><img src="https://img.shields.io/badge/-Volcano_Ark-CF2E2D.svg?logo=volvo&logoColor=white&style=for-the-badge" alt="Volcano Ark"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="animated-section relative text-center py-20 md:py-28 overflow-hidden">
             <div class="cta-background"></div>
             <div class="relative z-10 container mx-auto px-4">
-                <h2 class="section-title text-white" data-text="准备好开始你的探索了吗？"></h2>
-                <p class="section-subtitle text-indigo-200" data-text="无论是深入了解自己，还是与朋友发现共鸣，SurveyKit 都将是你的理想选择。"></p>
-                <div class="mt-10 flex justify-center gap-4 flex-wrap">
-                    <a href="survey.html" class="primary-btn fade-in-element">📝 开始你的第一份问卷</a>
-                    <a href="hub/hub.html" class="secondary-btn-on-dark fade-in-element">🔍 探索更多工具</a>
+                <h2 class="section-title text-white text-shadow" data-text="准备好构建你的下一份杰作了吗？"></h2>
+                <p class="section-subtitle text-orange-200" data-text="立即免费注册，体验完整的问卷创建、分发与分析流程。"></p>
+                <div class="mt-12 flex justify-center gap-4 flex-wrap">
+                    <a href="hub/login.html" class="primary-btn cta-btn reveal-scale-in">🚀 免费开始使用</a>
+                    <a href="survey.html" class="secondary-btn on-dark reveal-scale-in" style="--animation-delay: 0.1s;">✨ 直接体验问卷</a>
                 </div>
             </div>
         </section>
     </main>
 
-    <footer class="bg-slate-800 text-white py-10">
+    <footer class="bg-slate-900/80 text-white py-12">
         <div class="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center text-center md:text-left">
             <div class="mb-6 md:mb-0">
                 <a href="index.html" class="flex items-center justify-center md:justify-start mb-2 space-x-2">
-                    <span class="text-indigo-500 text-2xl"><i class="fa fa-wpforms"></i></span>
+                    <span class="text-indigo-400 text-2xl"><i class="fa fa-wpforms"></i></span>
                     <span class="text-xl font-bold">SurveyKit</span>
                 </a>
-                <p class="text-slate-400 text-sm">© 2025 SurveyKit. All rights reserved.</p>
+                <p class="text-slate-400 text-sm">© <span id="footer-year">2025</span> SurveyKit. All rights reserved.</p>
             </div>
             <div>
                 <a href="https://github.com/424635328/SurveyKit" target="_blank" rel="noopener" class="text-slate-400 hover:text-white transition-colors" aria-label="GitHub">
@@ -168,40 +316,42 @@
             </div>
         </div>
     </footer>
-
+    
     <div id="search-modal" class="hidden fixed inset-0 z-50 opacity-0" aria-labelledby="search-modal-title" role="dialog" aria-modal="true">
-        <div id="search-backdrop" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm"></div>
+        <div id="search-backdrop" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm"></div>
         <div class="flex items-start justify-center min-h-full p-4 text-center sm:p-6 md:pt-[10vh]">
-            <div id="search-modal-panel" class="relative w-full max-w-xl transform-gpu overflow-hidden rounded-2xl bg-white shadow-2xl scale-95 opacity-0">
+            <div id="search-modal-panel" class="relative w-full max-w-xl transform-gpu overflow-hidden rounded-2xl bg-slate-800 border border-slate-700 shadow-2xl scale-95 opacity-0">
                 <div class="p-2">
                     <div class="relative">
                         <span class="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
                             <i class="fa fa-search text-xl"></i>
                         </span>
-                        <input type="search" id="search-input" placeholder="搜索功能、文档... (⌘K)" class="w-full rounded-lg border-0 bg-slate-100 py-3.5 pl-12 pr-4 text-lg text-slate-800 placeholder-slate-400 focus:bg-white focus:ring-2 focus:ring-indigo-500">
+                        <input type="search" id="search-input" placeholder="搜索功能、文档... (⌘K)" class="w-full rounded-lg border-0 bg-slate-900/50 py-3.5 pl-12 pr-4 text-lg text-slate-200 placeholder-slate-500 focus:bg-slate-900 focus:ring-2 focus:ring-indigo-500">
                     </div>
                 </div>
-                
-                <div id="search-results-list" class="max-h-[50vh] overflow-y-auto border-t border-slate-200">
-                    <div id="search-placeholder" class="p-10 text-center text-slate-400">
+                <div id="search-results-list" class="max-h-[50vh] overflow-y-auto border-t border-slate-700">
+                    <div id="search-placeholder" class="p-10 text-center text-slate-500">
                         <i class="fa fa-compass fa-2x mb-3"></i>
-                        <p class="font-medium text-slate-500">开始探索 SurveyKit</p>
+                        <p class="font-medium text-slate-400">开始探索 SurveyKit</p>
                         <p class="text-sm">输入关键词查找您需要的功能</p>
                     </div>
                 </div>
-
-                <div class="border-t border-slate-100 bg-slate-50 p-2 text-xs text-slate-500 flex justify-between items-center">
-                    <span class="text-indigo-600 font-semibold flex items-center">
-                        <i class="fa fa-wpforms mr-1.5"></i> SurveyKit Search
+                <div class="border-t border-slate-700 bg-slate-800/50 p-2 text-xs text-slate-400 flex justify-between items-center">
+                    <span class="font-semibold flex items-center bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
+                        <i class="fa fa-wpforms mr-1.5 text-indigo-400"></i> SurveyKit Search
                     </span>
                     <span>
-                        <kbd class="font-mono rounded bg-white px-1.5 py-1 shadow-sm">Esc</kbd> 关闭
+                        <kbd class="font-mono rounded bg-slate-700 px-1.5 py-1 shadow-sm">Esc</kbd> 关闭
                     </span>
                 </div>
             </div>
         </div>
     </div>
     
+    <button id="scrollToTopBtn" class="fixed bottom-6 right-6 bg-indigo-600 text-white w-12 h-12 flex items-center justify-center rounded-full shadow-lg opacity-0 pointer-events-none transition-all duration-300 transform translate-y-4 hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-slate-900 z-50" aria-label="Scroll to top">
+        <i class="fa fa-arrow-up text-lg"></i>
+    </button>
+
     <script src="home.js"></script>
 </body>
 </html>
