@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const errorMessage = document.getElementById('error-message');
 
     let debounceTimer;
-    let isUserRegistered = null; // null: unknown, true: registered, false: not registered
+    let isUserRegistered = null; 
 
     const token = localStorage.getItem('surveyKitToken');
     if (token) {
@@ -79,7 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             confirmPasswordGroup.classList.remove('show');
             confirmPasswordGroup.classList.add('hidden');
-            confirmPasswordInput.value = ''; // Clear confirm password on hide
+            confirmPasswordInput.value = '';
             hideHint(confirmPasswordHint);
         }
     }
@@ -155,7 +155,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (strength === '强') {
             passwordSuggestionsText.textContent = '密码强度极佳！';
         }
-        return score >= 3; // Minimum password score for validity
+        return score >= 3;
     }
 
     function validateUsernameInput(username) {
@@ -203,7 +203,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 isUserRegistered = false;
                 setStatusIcon(usernameStatus, 'success');
                 setHint(usernameHint, '用户名可用，请注册。');
-                showConfirmPasswordGroup(true); // Show confirm password for registration
+                showConfirmPasswordGroup(true);
             }
         } catch (error) {
             isUserRegistered = null;
@@ -212,7 +212,7 @@ document.addEventListener('DOMContentLoaded', () => {
             showConfirmPasswordGroup(false);
         } finally {
             updateSubmitButtonText();
-            validatePasswordInput(); // Re-validate password state after username check
+            validatePasswordInput();
         }
     }
 
@@ -221,7 +221,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const confirmPassword = confirmPasswordInput.value.trim();
         let isValid = evaluatePasswordStrength(password);
 
-        if (isUserRegistered === false) { // Registration mode
+        if (isUserRegistered === false) {
             if (password.length > 0 && confirmPassword.length > 0 && password !== confirmPassword) {
                 setHint(confirmPasswordHint, '两次输入的密码不一致。', true);
                 isValid = false;
