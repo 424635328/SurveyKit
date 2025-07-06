@@ -82,42 +82,42 @@ body {
 
 #password-strength {
     opacity: 0;
-    height: 0;
+    max-height: 0;
     overflow: hidden;
-    transition: opacity 0.3s ease-in-out, height 0.3s ease-in-out, transform 0.3s ease-in-out;
+    transition: opacity 0.3s ease-in-out, max-height 0.3s ease-in-out, transform 0.3s ease-in-out;
     transform: translateY(1rem);
 }
 
 #password-strength.show {
     opacity: 1;
-    height: auto; /* Allow content to define height */
+    max-height: 100px;
     transform: translateY(0);
 }
 
 #password-strength .bar-container {
-    background-color: rgba(255, 255, 255, 0.1); /* Lighter background for the bar */
+    background-color: rgba(255, 255, 255, 0.1);
 }
 
 #password-strength .bar {
     border-radius: inherit;
 }
 
-.strength-weak .bar { background-color: #ef4444; } /* Red */
-.strength-medium .bar { background-color: #f97316; } /* Orange */
-.strength-strong .bar { background-color: #22c55e; } /* Green */
+.strength-weak .bar { background-color: #ef4444; }
+.strength-medium .bar { background-color: #f97316; }
+.strength-strong .bar { background-color: #22c55e; }
 
 .strength-weak .strength-text { color: #ef4444; }
 .strength-medium .strength-text { color: #f97316; }
 .strength-strong .strength-text { color: #22c55e; }
 
 
-#password-hint, #username-hint, #confirm-password-hint {
+#username-hint, #confirm-password-hint {
     transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
-    height: auto; /* Allow content to define height */
-    min-height: 1rem; /* Ensure consistent spacing */
+    height: auto;
+    min-height: 1rem;
 }
 
-#password-hint.show, #username-hint.show, #confirm-password-hint.show {
+#username-hint.show, #confirm-password-hint.show {
     opacity: 1;
     transform: translateY(0);
 }
@@ -133,14 +133,14 @@ body {
 
 #confirm-password-group {
     opacity: 0;
-    height: 0;
+    max-height: 0;
     overflow: hidden;
-    transition: opacity 0.3s ease-in-out, height 0.3s ease-in-out;
+    transition: opacity 0.3s ease-in-out, max-height 0.3s ease-in-out;
 }
 
 #confirm-password-group.show {
     opacity: 1;
-    height: auto; /* Allow content to define height */
+    max-height: 100px;
     overflow: visible;
 }
 
@@ -217,16 +217,4 @@ body {
 
 .primary-btn-sm:hover {
     background-color: #4338ca;
-}
-
-#mobile-menu {
-    background: rgba(15, 23, 42, 0.95);
-    backdrop-filter: blur(10px);
-    padding-bottom: 1rem;
-    position: absolute;
-    width: 100%;
-    left: 0;
-    top: 4rem;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-    z-index: 30;
 }

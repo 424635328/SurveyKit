@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const errorMessage = document.getElementById('error-message');
 
     let debounceTimer;
-    let isUserRegistered = null; 
+    let isUserRegistered = null;
 
     const token = localStorage.getItem('surveyKitToken');
     if (token) {
@@ -41,25 +41,28 @@ document.addEventListener('DOMContentLoaded', () => {
     function hideHint(element) {
         element.style.opacity = '0';
         element.style.transform = 'translateY(1rem)';
+        element.classList.remove('show');
         setTimeout(() => element.textContent = '', 300);
     }
 
     function setStatusIcon(iconElement, type) {
         iconElement.classList.remove('fa-check', 'fa-times', 'fa-spinner', 'fa-spin', 'text-green-500', 'text-red-500');
-        iconElement.classList.add('show');
         if (type === 'loading') {
-            iconElement.classList.add('fa-spinner', 'fa-spin');
+            iconElement.classList.add('fa-spinner', 'fa-spin', 'show');
         } else if (type === 'success') {
-            iconElement.classList.add('fa-check', 'text-green-500');
+            iconElement.classList.add('fa-check', 'text-green-500', 'show');
         } else if (type === 'error') {
-            iconElement.classList.add('fa-times', 'text-red-500');
+            iconElement.classList.add('fa-times', 'text-red-500', 'show');
         } else {
             iconElement.classList.remove('show');
         }
     }
 
     function clearErrorMessage() {
-        hideHint(errorMessage);
+        errorMessage.style.opacity = '0';
+        errorMessage.style.transform = 'translateY(2rem)';
+        errorMessage.classList.remove('show');
+        setTimeout(() => errorMessage.textContent = '', 300);
     }
 
     function updateSubmitButtonText() {
@@ -126,20 +129,20 @@ document.addEventListener('DOMContentLoaded', () => {
             strength = '';
             barWidth = 0;
             hideHint(passwordStrength);
-        } else if (score < 3) {
-            strength = '弱';
-            barWidth = 33;
-            barColorClass = 'strength-weak';
-            passwordStrength.classList.add('show');
-        } else if (score < 5) {
-            strength = '中';
-            barWidth = 66;
-            barColorClass = 'strength-medium';
-            passwordStrength.classList.add('show');
         } else {
-            strength = '强';
-            barWidth = 100;
-            barColorClass = 'strength-strong';
+            if (score < 3) {
+                strength = '弱';
+                barWidth = 33;
+                barColorClass = 'strength-weak';
+            } else if (score < 5) {
+                strength = '中';
+                barWidth = 66;
+                barColorClass = 'strength-medium';
+            } else {
+                strength = '强';
+                barWidth = 100;
+                barColorClass = 'strength-strong';
+            }
             passwordStrength.classList.add('show');
         }
 
@@ -150,12 +153,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
         passwordStrengthBar.style.width = `${barWidth}%`;
         passwordStrengthText.textContent = `强度：${strength}`;
-        passwordSuggestionsText.textContent = suggestions.length > 0 ? `建议：${suggestions.join(' ')}` : '';
-
+        
         if (strength === '强') {
             passwordSuggestionsText.textContent = '密码强度极佳！';
+        } else {
+            passwordSuggestionsText.textContent = suggestions.length > 0 ? `建议：${suggestions.join(' ')}` : '';
         }
-        return score >= 3;
+        
+        const isStrongEnough = score >= 3; 
+        return isStrongEnough;
     }
 
     function validateUsernameInput(username) {
@@ -174,8 +180,6 @@ document.addEventListener('DOMContentLoaded', () => {
             setStatusIcon(usernameStatus, 'error');
             return false;
         }
-        setHint(usernameHint, '验证中...', false);
-        setStatusIcon(usernameStatus, 'loading');
         return true;
     }
 
@@ -189,26 +193,33 @@ document.addEventListener('DOMContentLoaded', () => {
             showConfirmPasswordGroup(false);
             return;
         }
+        
+        setHint(usernameHint, '验证中...', false);
+        setStatusIcon(usernameStatus, 'loading');
 
         try {
             const response = await fetch(`/api/auth.mjs?username=${encodeURIComponent(username)}`);
             const result = await response.json();
 
-            if (result.exists) {
-                isUserRegistered = true;
-                setStatusIcon(usernameStatus, 'success');
-                setHint(usernameHint, '用户名已存在，请登录。');
-                showConfirmPasswordGroup(false);
+            if (response.ok) {
+                if (result.exists) {
+                    isUserRegistered = true;
+                    setStatusIcon(usernameStatus, 'success');
+                    setHint(usernameHint, '用户名已存在，请登录。');
+                    showConfirmPasswordGroup(false);
+                } else {
+                    isUserRegistered = false;
+                    setStatusIcon(usernameStatus, 'success');
+                    setHint(usernameHint, '用户名可用，请注册。');
+                    showConfirmPasswordGroup(true);
+                }
             } else {
-                isUserRegistered = false;
-                setStatusIcon(usernameStatus, 'success');
-                setHint(usernameHint, '用户名可用，请注册。');
-                showConfirmPasswordGroup(true);
+                throw new Error(result.message || `服务器错误: ${response.status}`);
             }
         } catch (error) {
             isUserRegistered = null;
             setStatusIcon(usernameStatus, 'error');
-            setHint(usernameHint, '无法验证用户名，请稍后再试。', true);
+            setHint(usernameHint, `无法验证用户名：${error.message}，请稍后再试。`, true);
             showConfirmPasswordGroup(false);
         } finally {
             updateSubmitButtonText();
@@ -217,21 +228,26 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function validatePasswordInput() {
-        const password = passwordInput.value.trim();
-        const confirmPassword = confirmPasswordInput.value.trim();
-        let isValid = evaluatePasswordStrength(password);
+        let isStrengthValid = evaluatePasswordStrength(passwordInput.value.trim());
 
-        if (isUserRegistered === false) {
+        let isConfirmMatch = true;
+        if (isUserRegistered === false) { 
+            const password = passwordInput.value.trim();
+            const confirmPassword = confirmPasswordInput.value.trim();
             if (password.length > 0 && confirmPassword.length > 0 && password !== confirmPassword) {
                 setHint(confirmPasswordHint, '两次输入的密码不一致。', true);
-                isValid = false;
-            } else if (confirmPassword.length === 0 && password.length > 0) {
+                isConfirmMatch = false;
+            } else if (password.length > 0 && confirmPassword.length === 0) {
                 setHint(confirmPasswordHint, '请再次输入密码进行确认。', true);
-                isValid = false;
+                isConfirmMatch = false;
             } else {
                 hideHint(confirmPasswordHint);
             }
+        } else {
+            hideHint(confirmPasswordHint);
         }
+        
+        const isValid = isStrengthValid && isConfirmMatch;
         return isValid;
     }
 
@@ -239,14 +255,14 @@ document.addEventListener('DOMContentLoaded', () => {
         clearTimeout(debounceTimer);
         clearErrorMessage();
         const username = usernameInput.value.trim();
-        if (username.length >= 3 && username.length <= 20) {
+
+        const isValidLength = username.length >= 3 && username.length <= 20;
+
+        if (isValidLength) {
             debounceTimer = setTimeout(checkUsernameExistence, 500);
         } else {
             validateUsernameInput(username);
-            isUserRegistered = null;
             updateSubmitButtonText();
-            showConfirmPasswordGroup(false);
-            hideHint(passwordStrength);
         }
     });
 
@@ -268,13 +284,34 @@ document.addEventListener('DOMContentLoaded', () => {
         const password = passwordInput.value.trim();
         const confirmPassword = confirmPasswordInput.value.trim();
 
-        if (!validateUsernameInput(username) || !validatePasswordInput(password)) {
-            setHint(errorMessage, '请检查您的用户名和密码格式。', true);
+        const isUsernameFormatValid = validateUsernameInput(username);
+        if (!isUsernameFormatValid) {
+            setHint(errorMessage, '用户名格式不正确，请检查。', true);
             return;
         }
 
-        if (isUserRegistered === false && password !== confirmPassword) {
-            setHint(errorMessage, '注册时两次输入的密码不一致。', true);
+        const isPasswordStrengthValid = evaluatePasswordStrength(password);
+        let passwordsMatch = true;
+        if (isUserRegistered === false) {
+             if (password.length > 0 && confirmPassword.length > 0 && password !== confirmPassword) {
+                passwordsMatch = false;
+            } else if (password.length > 0 && confirmPassword.length === 0) {
+                passwordsMatch = false;
+            }
+        }
+
+        if (!isPasswordStrengthValid || !passwordsMatch) {
+            if (!isPasswordStrengthValid) {
+                setHint(errorMessage, '密码强度不足，请包含大写字母、小写字母或特殊字符以加强。', true);
+            } else { 
+                setHint(errorMessage, '两次输入的密码不一致，请检查。', true);
+            }
+            return;
+        }
+        
+        if (isUserRegistered === null) {
+            setHint(errorMessage, '请等待用户名验证完成再提交。', true);
+            checkUsernameExistence(); 
             return;
         }
 
@@ -291,7 +328,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const result = await response.json();
 
             if (!response.ok) {
-                throw new Error(result.message || '操作失败');
+                throw new Error(result.message || '操作失败，请重试');
             }
 
             localStorage.setItem('surveyKitToken', result.token);
