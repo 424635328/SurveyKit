@@ -21,11 +21,11 @@
     "html2canvas": "^1.4.1",
     "jose": "^6.0.11",
     "jsonwebtoken": "^9.0.2",
-    "openai": "^5.8.2",
+    "openai": "^5.8.3",
     "resend": "^4.6.0",
-    "tencentcloud-sdk-nodejs": "^4.1.67",
-    "vercel": "^44.2.11",
-    "zod": "^3.25.71"
+    "tencentcloud-sdk-nodejs": "^4.1.72",
+    "vercel": "^44.2.13",
+    "zod": "^3.25.76"
   },
   "keywords": [],
   "author": "LemmOn YellOw",
