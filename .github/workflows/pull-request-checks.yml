@@ -1,0 +1,46 @@
+# .github/workflows/pull-request-checks.yml
+
+name: 'CI: Pull Request Checks'
+
+on:
+  # 当有 PR 指向 main 分支时触发
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  # 任务一：运行单元测试和集成测试
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # 根据你的项目类型选择合适的设置
+      # 示例：Node.js 项目
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18' # 使用你项目的 Node.js 版本
+          cache: 'npm' # 缓存依赖，加快构建速度
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run tests
+        run: npm test # 确保你的 package.json 中有 "test" 脚本
+
+  # 任务二：等待 Vercel 部署预览完成
+  # Vercel 会自动发布它的状态，我们只需等待即可
+  vercel-preview:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Waiting for Vercel deployment to complete
+        uses: patrickwyler/wait-for-vercel-preview@v1.3.1
+        id: wait-for-vercel-preview
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          # 这是一个超时设置，如果 Vercel 在 5 分钟内没有完成部署，此步骤将失败
+          max_timeout: 300 
+          # 可选：如果你的 Vercel 项目名和仓库名不同，可以在这里指定
+          # vercel_project_name: "your-vercel-project-name"

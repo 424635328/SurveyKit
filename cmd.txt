@@ -5,7 +5,24 @@ git checkout main
 git pull origin main
 
 # 3. 创建一个名为 test 的新分支，并立即切换过去
-git checkout -b test
+git checkout test
+
+./sync
+
+git pull origin test
+
+git add .
+
+git commit -m "commit message"
 
 # 将 test 分支推送到远程仓库 origin，并设置上游跟踪 (-u)
 git push -u origin test
+
+git branch -d test
+
+git push origin --delete test
+
+git checkout main
+
+
+
