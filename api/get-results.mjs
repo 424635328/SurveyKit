@@ -51,13 +51,13 @@ export default async function handler(req, res) {
     if (!validation.success) {
       return res.status(400).json({ message: '请求参数无效', errors: validation.error.errors });
     }
-    const surveyId = validation.data.id; // 获取验证后的 surveyId
+    const surveyId = validation.data.id;
 
     // 验证用户是否有权查看此问卷的结果
     const surveyData = await kv.get(surveyId);
     // 确保问卷存在且属于当前登录用户
     if (!surveyData || surveyData.owner !== user.username) {
-        return res.status(404).json({ message: '问卷未找到或您没有权限查看。' }); // 使用 404 不泄露问卷是否存在
+        return res.status(404).json({ message: '问卷未找到或您没有权限查看。' });
     }
 
     // 1. 根据 submissions.mjs 的存储方式，首先获取所有提交的 ID

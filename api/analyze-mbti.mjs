@@ -13,7 +13,6 @@ const ratelimit = new Ratelimit({
   prefix: "ratelimit:mbti_analysis",
 });
 
-// === 修改开始: 更新Zod Schema以包含submissionId ===
 const AnalyzeSchema = z.object({
     submissionId: z.string().startsWith('sub_', { message: "无效的提交ID格式" }).optional(),
     surveyId: z.string().startsWith('survey_', { message: "无效的问卷ID格式" }).optional(),
@@ -22,7 +21,6 @@ const AnalyzeSchema = z.object({
 }).refine(data => data.submissionId || data.surveyId || data.answersText, {
     message: "请求体中必须包含 'submissionId'、'surveyId' 或 'answersText' 中的任意一个。",
 });
-// === 修改结束 ===
 
 export default async function handler(request, response) {
   if (request.method !== "POST") {
@@ -58,14 +56,10 @@ export default async function handler(request, response) {
     return response.status(400).json({ message: `请求参数不合法: ${firstError.message}` });
   }
 
-  // === 修改开始: 从请求体中解构出 submissionId ===
   const { submissionId, surveyId, answersText } = validationResult.data;
-  // === 修改结束 ===
   let finalAnswersText = "";
 
   try {
-    // --- 数据获取逻辑 (优先处理 submissionId) ---
-    // === 新增开始: 根据 submissionId 获取数据 ===
     if (submissionId) {
         console.log(`Fetching answers by submission ID: ${submissionId}`);
         const submissionKey = `submission:${submissionId}`;
@@ -85,16 +79,14 @@ export default async function handler(request, response) {
         
         try {
              finalAnswersText = Object.entries(answersData)
-                                .map(([question, answer]) => `- ${question}: ${answer}`) // 格式化为 "问题: 答案"
+                                .map(([question, answer]) => `- ${question}: ${answer}`)
                                 .join("\n");
              console.log(`Successfully formatted answers for submission ID: ${submissionId}`);
         } catch (formatError) {
             console.error(`Formatting answers failed for submission ID ${submissionId}:`, { data: answersData, error: formatError });
             throw new Error(`问卷答案数据格式化失败: ${formatError.message}`);
         }
-    // === 新增结束 ===
-    } else if (surveyId) { // 修改: 变为 else if
-        // ... (原有的 surveyId 逻辑保持不变)
+    } else if (surveyId) {
         const storedData = await kv.hgetall(`survey:${surveyId}`);
 
         if (!storedData || storedData.data === undefined || storedData.data === null) {
@@ -143,11 +135,10 @@ export default async function handler(request, response) {
             throw new Error(`问卷数据格式化失败: ${formatError.message}`);
         }
 
-    } else if (answersText) { // 修改: 变为 else if
+    } else if (answersText) { 
       finalAnswersText = answersText;
       console.log("Using answersText provided directly.");
     } else {
-       // 这个分支理论上不会被执行，因为Zod的.refine已经做了检查
        console.error("Neither submissionId, surveyId, nor answersText was provided.");
        return response.status(400).json({ message: "请求体中必须包含 'submissionId'、'surveyId' 或 'answersText'。" });
     }
@@ -157,10 +148,7 @@ export default async function handler(request, response) {
          throw new Error("提取到的问卷答案内容过少，无法进行有效分析。");
     }
 
-    // --- AI 调用逻辑 (保持不变) ---
     const prompt = `你是一位专业的MBTI人格分析师。请严格根据提供的问卷答案，分析出答题者的MBTI人格类型。你的回答必须 **严格地** 是一个格式正确的 **JSON** 对象，**除了 JSON 对象之外，不包含任何其他文本、前缀、后缀或Markdown标记（如 \`\`\`json\`\`\` 或任何解释性文字）**。这个 **JSON** 对象的结构必须如下：{"mbti_type": "（例如：INFJ，仅四个字母）","type_name": "（例如：提倡者）","tagline": "（用一句简短、诗意的话总结这个人格。）","analysis_report": ["（第一段分析：结合具体答案作为论据。）","（第二段分析：描述这种人格类型的主要特点、优点和潜在挑战。）","（第三段分析：提供一条真诚、个性化的发展建议。）"]}请确保 analysis_report 是一个字符串数组，每个元素是一个段落。以下是用户的问卷答案：\n---\n${finalAnswersText}\n---`;
-    // ... 后续代码完全相同，无需修改 ...
-    // ...
     const payload = {
       model: MODEL_ID,
       messages: [{ role: "user", content: prompt }],
