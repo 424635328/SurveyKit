@@ -1,0 +1,47 @@
+# .github/workflows/create-sync-pr.yml
+
+name: 'Sync: Create PR from test to main'
+
+# 触发条件
+on:
+  schedule:
+    # 北京时间每周一上午 9 点（UTC 时间凌晨 1 点）运行
+    - cron: '0 1 * * 1'
+  workflow_dispatch: # 允许手动触发
+
+jobs:
+  # 第一部分：创建或更新 Pull Request
+  create_pull_request:
+    runs-on: ubuntu-latest
+    outputs:
+      # 输出 PR 号码，供后续任务使用
+      pr_number: ${{ steps.cpr.outputs.pull-request-number }}
+    steps:
+      - name: Create Pull Request from test to main
+        id: cpr
+        uses: peter-evans/create-pull-request@v4
+        with:
+          # 使用 GitHub App 的 Token，权限更安全
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "chore: sync test branch to main"
+          title: "🤖 Sync: Merge `test` into `main`"
+          body: |
+            This is an automated PR to sync changes from the `test` branch to `main`.
+            
+            **Review carefully before merging!**
+            
+            - Vercel preview will be available below.
+            - All checks must pass before this can be merged.
+          head: test  # 源分支
+          base: main  # 目标分支
+          labels: "automated-pr, sync" # 自动给 PR 打上标签，方便过滤
+          assignees: "424635328" # 自动指派给你自己审查
+          reviewers: "424635328" # 自动请求你审查
+          draft: false # 创建一个可直接审查的 PR，而不是草稿
+          update: true # 如果已存在相同的PR，则更新它而不是创建新的
+
+  # 第二部分：在 PR 上运行检查 (测试和构建)
+  # 注意：这个 job 会因为 PR 的创建而自动触发，我们这里定义它，确保它被正确执行
+  # 我们需要另一个工作流文件来处理 PR 事件，这样更符合 GitHub Actions 的设计模式
+  # 这里只是一个示例，真正的检查应该在一个监听 pull_request 事件的工作流中
+  # 我们将在下面创建这个文件
