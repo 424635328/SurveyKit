@@ -1,0 +1,11 @@
+# 1. 切换到你的主分支（你的仓库主分支名为 main）
+git checkout main
+
+# 2. 从 GitHub 拉取最新的更新，确保你的本地 main 分支和远程一致
+git pull origin main
+
+# 3. 创建一个名为 test 的新分支，并立即切换过去
+git checkout -b test
+
+# 将 test 分支推送到远程仓库 origin，并设置上游跟踪 (-u)
+git push -u origin test
