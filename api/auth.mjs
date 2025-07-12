@@ -15,7 +15,6 @@ const JWT_SECRET = process.env.JWT_SECRET;
 const SALT_ROUNDS = 10;
 
 async function handlePost(req, res) {
-    // Vercel Dev Serverless functions populate req.body automatically
     const body = req.body; 
     
     const validation = UserSchema.safeParse(body);
@@ -52,7 +51,7 @@ async function handleGet(req, res) {
 
     try {
         UsernameCheckSchema.parse(username);
-    } catch (e) {
+    } catch {
         return res.status(400).json({ exists: false, message: '用户名格式无效' });
     }
     
