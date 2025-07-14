@@ -1,5 +1,3 @@
-# .github/workflows/create-sync-pr.yml
-
 name: 'Sync: Create PR from test to main'
 
 # 触发条件
@@ -14,9 +12,12 @@ jobs:
   create_pull_request:
     runs-on: ubuntu-latest
     outputs:
-      # 输出 PR 号码，供后续任务使用
+      # 输出 PR 号码，供后续任务使用 (在本工作流中，此输出不直接被消费，但保留无妨)
       pr_number: ${{ steps.cpr.outputs.pull-request-number }}
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4 # 👈 添加这一行，将代码库检出
+
       - name: Create Pull Request from test to main
         id: cpr
         uses: peter-evans/create-pull-request@v4
@@ -35,13 +36,11 @@ jobs:
           head: test  # 源分支
           base: main  # 目标分支
           labels: "automated-pr, sync" # 自动给 PR 打上标签，方便过滤
-          assignees: "424635328" # 自动指派给你自己审查
-          reviewers: "424635328" # 自动请求你审查
+          assignees: "424635328" # 自动指派给你自己审查 (请替换为你的 GitHub 用户名或 ID)
+          reviewers: "424635328" # 自动请求你审查 (请替换为你的 GitHub 用户名或 ID)
           draft: false # 创建一个可直接审查的 PR，而不是草稿
           update: true # 如果已存在相同的PR，则更新它而不是创建新的
 
-  # 第二部分：在 PR 上运行检查 (测试和构建)
-  # 注意：这个 job 会因为 PR 的创建而自动触发，我们这里定义它，确保它被正确执行
-  # 我们需要另一个工作流文件来处理 PR 事件，这样更符合 GitHub Actions 的设计模式
-  # 这里只是一个示例，真正的检查应该在一个监听 pull_request 事件的工作流中
-  # pull_request_checks
+# 注意：关于 PR 上的检查 (测试和构建)
+# 这一部分应该在另一个工作流文件 (例如 `.github/workflows/pull-request-checks.yml`) 中定义，
+# 监听 `pull_request` 事件。GitHub Actions 会自动触发它，不需要在此处显式地链接或调用。
