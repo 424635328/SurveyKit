@@ -1,5 +1,7 @@
 // public/mbti.js
 
+/* global XLSX */ 
+
 document.addEventListener("DOMContentLoaded", () => {
   const dropZone = document.getElementById("drop-zone");
   const uploadBtn = document.getElementById("uploadBtn");
@@ -152,10 +154,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const prefixToIdMap = new Map();
       for (const id in questionMap) {
-          const qText = String(questionMap[id] || "").trim();
-          if (qText.length > 0) {
-              const prefix = qText.substring(0, Math.min(qText.length, 40));
-              prefixToIdMap.set(prefix, id);
+          if (Object.hasOwn(questionMap, id)) { 
+              const qText = String(questionMap[id] || "").trim();
+              if (qText.length > 0) {
+                  const prefix = qText.substring(0, Math.min(qText.length, 40));
+                  prefixToIdMap.set(prefix, id);
+              }
           }
       }
       console.log("TXT Parser: Prefix to ID Map:", prefixToIdMap);
@@ -215,8 +219,8 @@ document.addEventListener("DOMContentLoaded", () => {
           }
 
           for (const key in finalData) {
-              if (Object.prototype.hasOwnProperty.call(finalData, key)) {
-                  if (key.startsWith('q') || (window.questionMap && window.questionMap.hasOwnProperty(key))) {
+              if (Object.hasOwn(finalData, key)) {
+                  if (key.startsWith('q') || (window.questionMap && Object.hasOwn(window.questionMap, key))) {
                        answers[key] = finalData[key];
                    }
               }
@@ -250,8 +254,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
            if (idKey && answerKey) {
                 jsonFromSheet.forEach(row => {
-                    const id = row.hasOwnProperty(idKey) ? row[idKey] : undefined;
-                    const answer = row.hasOwnProperty(answerKey) ? row[answerKey] : undefined;
+                    const id = Object.hasOwn(row, idKey) ? row[idKey] : undefined;
+                    const answer = Object.hasOwn(row, answerKey) ? row[answerKey] : undefined;
 
                     if (id && answer !== undefined && answer !== null) {
                         answers[String(id).trim()] = answer;
@@ -297,9 +301,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const formattedLines = [];
       for (const qId in questionMap) {
-          if (Object.prototype.hasOwnProperty.call(questionMap, qId)) {
+          if (Object.hasOwn(questionMap, qId)) {
               const qText = questionMap[qId];
-              const answer = answers.hasOwnProperty(qId) && answers[qId] !== undefined && answers[qId] !== null ? answers[qId] : "未回答";
+              const answer = Object.hasOwn(answers, qId) && answers[qId] !== undefined && answers[qId] !== null ? answers[qId] : "未回答";
               formattedLines.push(`- ${qText}: ${answer}`);
           }
       }
@@ -312,25 +316,20 @@ document.addEventListener("DOMContentLoaded", () => {
       const extension = file.name.split(".").pop().toLowerCase();
       let answers;
 
-      let fileContent;
-       try {
-           fileContent = await new Promise((resolve, reject) => {
-               const reader = new FileReader();
-               reader.onload = (event) => resolve(event.target.result);
-               reader.onerror = (error) => {
-                   console.error("FileReader error:", error);
-                   reject(new Error(`文件读取失败: ${error.message}`));
-               };
+      const fileContent = await new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = (event) => resolve(event.target.result);
+          reader.onerror = (error) => {
+              console.error("FileReader error:", error);
+              reject(new Error(`文件读取失败: ${error.message}`));
+          };
 
-               if (["xlsx", "xls", "csv"].includes(extension)) {
-                   reader.readAsArrayBuffer(file);
-               } else { // json, txt, etc.
-                   reader.readAsText(file);
-               }
-           });
-       } catch (error) {
-           throw error;
-       }
+          if (["xlsx", "xls", "csv"].includes(extension)) {
+              reader.readAsArrayBuffer(file);
+          } else { // json, txt, etc.
+              reader.readAsText(file);
+          }
+      });
 
 
       try {
@@ -429,7 +428,6 @@ document.addEventListener("DOMContentLoaded", () => {
         if (currentLoadingInterval) clearInterval(currentLoadingInterval);
          currentLoadingInterval = null;
         uiManager.displayMessage(error.message || "分析过程中发生未知错误。", 'error');
-      } finally {
       }
     };
 
