@@ -33,7 +33,7 @@ body {
   top: 0; left: 0; right: 0; bottom: 0;
   background: linear-gradient(135deg, #1b3a8e, #33862e, #9b2a8e, #2a9a98, #9c5930);
   background-size: 400% 400%;
-  animation: aurora-flow 25s ease infinite;
+  /* animation: aurora-flow 25s ease infinite; 控制背景颜色移动 */
   z-index: -3;
 }
 #constellation-canvas {
