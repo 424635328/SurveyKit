@@ -1,3 +1,5 @@
+# .github/workflows/bot.yml
+
 name: Enhanced Multi-Purpose Bot
 
 on:

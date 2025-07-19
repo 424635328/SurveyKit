@@ -1,46 +1,68 @@
-name: 'Sync: Create PR from test to main'
+# .github/workflows/create-sync-pr.yml
+# 终极优化版：创建从 test 到 main 的同步 PR
+# 修正点：
+# - 增加了获取当前日期的步骤，用于 PR 标题
+# - 修改了 checkout 逻辑，以适应 create-pull-request@v6 的新用法
+# - 移除了在新版本中已废弃的 'head' 和 'update' 参数
 
-# 触发条件
+name: 'Sync: Create or Update Release PR'
+
 on:
   schedule:
     # 北京时间每周一上午 9 点（UTC 时间凌晨 1 点）运行
     - cron: '0 1 * * 1'
   workflow_dispatch: # 允许手动触发
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  # 第一部分：创建或更新 Pull Request
   create_pull_request:
     runs-on: ubuntu-latest
-    outputs:
-      # 输出 PR 号码，供后续任务使用 (在本工作流中，此输出不直接被消费，但保留无妨)
-      pr_number: ${{ steps.cpr.outputs.pull-request-number }}
+    permissions:
+      contents: write
+      pull-requests: write
+
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4 # 👈 添加这一行，将代码库检出
-
-      - name: Create Pull Request from test to main
-        id: cpr
-        uses: peter-evans/create-pull-request@v4
+      # 👇 修复点 1 & 2: 不再检出默认分支，而是直接检出作为源分支的 'test'
+      - name: Checkout 'test' branch
+        uses: actions/checkout@v4
         with:
-          # 使用 GitHub App 的 Token，权限更安全
-          token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: "chore: sync test branch to main"
-          title: "🤖 Sync: Merge `test` into `main`"
-          body: |
-            This is an automated PR to sync changes from the `test` branch to `main`.
-            
-            **Review carefully before merging!**
-            
-            - Vercel preview will be available below.
-            - All checks must pass before this can be merged.
-          head: test  # 源分支
-          base: main  # 目标分支
-          labels: "automated-pr, sync" # 自动给 PR 打上标签，方便过滤
-          assignees: "424635328" # 自动指派给你自己审查 (请替换为你的 GitHub 用户名或 ID)
-          reviewers: "424635328" # 自动请求你审查 (请替换为你的 GitHub 用户名或 ID)
-          draft: false # 创建一个可直接审查的 PR，而不是草稿
-          update: true # 如果已存在相同的PR，则更新它而不是创建新的
+          ref: 'test'
 
-# 注意：关于 PR 上的检查 (测试和构建)
-# 这一部分应该在另一个工作流文件 (例如 `.github/workflows/pull-request-checks.yml`) 中定义，
-# 监听 `pull_request` 事件。GitHub Actions 会自动触发它，不需要在此处显式地链接或调用。
+      # 👇 修复点 1: 新增步骤，获取当前日期
+      - name: Get current date
+        id: date
+        run: echo "date=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
+
+      - name: Create or Update Pull Request from test to main
+        id: cpr
+        uses: peter-evans/create-pull-request@v6
+        with:
+          # 无需手动指定 token
+          commit-message: "chore(release): sync test branch to main"
+          # 使用上一步生成的日期
+          title: "🚀 Release: Sync `test` to `main` for ${{ steps.date.outputs.date }}"
+          body: |
+            This is an automated weekly PR to sync changes from the `test` branch to `main`.
+            
+            Please review the changes carefully before merging. All automated checks must pass.
+            
+            * **Source Branch:** `test`
+            * **Target Branch:** `main`
+            
+            > **Note:** This PR will be updated automatically if new commits are pushed to the `test` branch.
+          # 👇 修复点 2: 'base' 参数仍然需要，用来指定目标分支
+          base: main
+          # 👇 修复点 2 & 3: 移除已废弃的 'head' 和 'update' 参数
+          labels: "release, automated-pr"
+          assignees: "424635328"
+          reviewers: "424635328"
+          draft: false
+
+      - name: Output PR Information
+        if: steps.cpr.outputs.pull-request-number
+        run: |
+          echo "Pull Request Number: ${{ steps.cpr.outputs.pull-request-number }}"
+          echo "Pull Request URL: ${{ steps.cpr.outputs.pull-request-url }}"

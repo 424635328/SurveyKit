@@ -1,24 +1,41 @@
+# .github/ISSUE_TEMPLATE/bug_report.yml
+
 name: 🐛 Bug 报告 (Bug Report)
-about: 报告项目中发现的错误或异常行为。
+description: 报告项目中发现的错误或异常行为，以帮助我们提升产品质量和稳定性。
 
 labels:
   - bug
-  - needs triage
+  - needs triage # 初步分类，待进一步评估
 
 body:
   - type: markdown
     attributes:
       value: |
-        感谢您花时间帮助我们改进项目！
+        ### 感谢您帮助我们改进项目！
 
-        请尽量详细地填写以下信息，以便我们更容易理解和解决问题。
+        请仔细、准确地填写以下信息。您的详细报告对于我们高效诊断和解决问题至关重要。
+        **请避免在报告中包含任何敏感的用户数据或生产环境信息。**
+
+  - type: textarea
+    id: problem-summary
+    attributes:
+      label: 📢 问题概述
+      description: 请用一两句话清晰、简洁地描述您遇到的问题。这将作为问题的标题和核心摘要。
+      placeholder: 例如：当用户尝试上传大文件时，文件上传功能崩溃并显示服务器错误。
+      render: markdown
+    validations:
+      required: true
 
   - type: textarea
     id: description
     attributes:
-      label: 问题描述
-      description: 请清晰、简洁地描述您遇到的问题。
-      placeholder: 例如：当执行某个特定操作时，应用崩溃并显示错误信息。
+      label: 📝 详细问题描述
+      description: 请详细描述您观察到的具体异常行为、错误现象及其对系统功能或用户体验的影响。请避免在此处包含重现步骤或预期行为。
+      placeholder: |
+        例如：
+        用户通过Web界面上传大于10MB的文件时，进度条会卡住，然后浏览器显示“ERR_CONNECTION_CONNECTION_RESET”错误。
+        日志显示后端服务在处理请求时抛出了“OutOfMemoryError”。
+        这导致所有用户无法上传大型文件，严重影响了数据同步功能。
       render: markdown
     validations:
       required: true
@@ -26,23 +43,52 @@ body:
   - type: textarea
     id: reproduction
     attributes:
-      label: 重现步骤
-      description: 请提供详细的步骤，以便我们能够重现此问题。清晰的步骤是解决问题的关键。
+      label: 🔄 重现步骤
+      description: 请提供能够稳定重现此问题的**详细且最小化**的步骤。请假定我们对您的环境不熟悉。
       placeholder: |
-        1. 前往 '...'
-        2. 点击 '....'
-        3. 滚动到 '....'
-        4. 发现问题...
+        1. 登录系统，访问 '文件上传' 页面。
+        2. 点击 '选择文件' 按钮。
+        3. 选择一个大小约为 15MB 的 PDF 文件。
+        4. 点击 '上传'。
+        5. 观察到上传进度条卡住，浏览器显示连接错误。
       render: markdown
+    validations:
+      required: true
+
+  - type: dropdown
+    id: frequency
+    attributes:
+      label: 发生频率
+      description: 该问题发生的频率如何？
+      options:
+        - 总是 (100% 重现)
+        - 频繁 (70% - 99% 重现)
+        - 有时 (20% - 69% 重现)
+        - 很少 (小于 20% 重现)
+        - 仅发生一次
+    validations:
+      required: true
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: 严重程度
+      description: 该问题对功能或用户的影响程度？
+      options:
+        - 💥 阻碍 (Blocker) - 核心功能完全不可用，影响大量用户，无 workaround。
+        - 🔥 关键 (Critical) - 核心功能受严重影响，有 workaround 但不理想，或数据可能丢失。
+        - ⚠️ 主要 (Major) - 主要功能受影响，但有 workaround，或次要功能完全不可用。
+        - ℹ️ 次要 (Minor) - 少量功能受影响，不影响核心流程，或用户体验略有下降。
+        - ✨ 美观 (Cosmetic) - 界面或文字显示问题，不影响功能。
     validations:
       required: true
 
   - type: textarea
     id: expected
     attributes:
-      label: 预期行为
-      description: 您期望在这种情况下发生什么？
-      placeholder: 例如：我期望应用能够正常完成操作，而不是崩溃。
+      label: ✅ 预期行为
+      description: 您期望在这种情况下，系统应该如何响应？请描述正常的操作流程或正确的输出。
+      placeholder: 例如：我期望大文件能够正常上传成功，并收到上传完成的通知。
       render: markdown
     validations:
       required: true
@@ -50,57 +96,79 @@ body:
   - type: textarea
     id: error-messages
     attributes:
-      label: 错误信息和日志 (如果适用)
-      description: 请复制并粘贴任何相关的错误信息、终端输出或日志。请使用代码块 (\`\`\`) 包裹以保持格式。
+      label: 🚨 错误信息和日志 (如果适用)
+      description: 请复制并粘贴任何相关的错误信息、终端输出、堆栈跟踪或日志片段。**请务必使用三反引号 (\`\`\`) 包裹代码块以保持格式。** 如果日志过长，请提供链接或摘要。
+      placeholder: |
+        ```
+        [2023-10-26 10:30:00.123] ERROR com.example.service.FileUploader - OutOfMemoryError: Java heap space
+        at com.example.service.FileUploader.upload(FileUploader.java:150)
+        ... (更多堆栈信息)
+        ```
       render: markdown
 
   - type: textarea
     id: screenshots
     attributes:
-      label: 截图或录屏 (如果适用)
-      description: 如果可能，请提供截图或短视频链接。这能非常直观地帮助我们理解问题。
+      label: 📸 截图或录屏 (如果适用)
+      description: 如果可能，请提供问题界面的截图或短视频链接。这能最直观地帮助我们理解问题。请注意遮盖任何敏感信息。
+      placeholder: 例如：请直接拖拽图片到这里，或提供一个图片/视频链接。
+      render: markdown
 
   - type: input
     id: os
     attributes:
-      label: 操作系统
-      placeholder: 例如：Windows 11, macOS Sonoma, Ubuntu 22.04
+      label: 🖥️ 操作系统
+      placeholder: 例如：Windows 11, macOS Sonoma 14.0, Ubuntu 22.04 LTS
     validations:
       required: true
 
   - type: input
+    id: browser
+    attributes:
+      label: 🌐 浏览器 (如果适用)
+      placeholder: 例如：Chrome 118.0.5993.88, Firefox 119.0, Edge 118.0.2088.46
+    validations:
+      required: false # 不是所有项目都运行在浏览器中
+
+  - type: input
     id: version
     attributes:
-      label: 项目版本
-      description: 请提供您所使用的项目版本号。如果是从代码构建，请提供 Commit Hash (可使用 `git rev-parse HEAD` 获取)。
-      placeholder: 例如：v1.2.3 或 a1b2c3d
+      label: 🚀 项目版本
+      description: 请提供您所使用的项目版本号 (例如：v1.2.3) 或 Commit Hash (例如：`a1b2c3d`)。如果您从源码构建，请提供 `git rev-parse HEAD` 的输出。
+      placeholder: 例如：v1.2.3 或 a1b2c3d4e5f6
     validations:
       required: true
 
   - type: textarea
     id: environment
     attributes:
-      label: 运行环境 (如果适用)
-      description: 请描述您的运行环境，例如：浏览器和版本、Node.js 版本、或任何相关的依赖库版本。
+      label: ⚙️ 运行环境 / 相关依赖 (如果适用)
+      description: 请详细描述您的运行环境，例如：Node.js 版本、Docker 版本、数据库类型和版本、其他相关依赖库的精确版本号等。
       placeholder: |
-        - 浏览器: Chrome 108.0
         - Node.js: v18.12.1
-        - 其他相关库: library-x v2.5.0
+        - Docker: v24.0.6
+        - 数据库: PostgreSQL 14.5
+        - 依赖库: react-router-dom v6.0.0
       render: markdown
 
   - type: textarea
     id: additional-context
     attributes:
-      label: 其他上下文信息
-      description: 您认为对理解和解决问题有帮助的任何其他信息。
+      label: ➕ 其他上下文信息
+      description: 您认为对理解和解决问题有帮助的任何其他信息或观察。例如：问题是否在特定网络环境下发生？是否有其他用户报告过类似问题？您尝试过哪些解决方法？
+      render: markdown
 
   - type: checkboxes
     id: confirmation
     attributes:
-      label: 确认事项
-      description: 在提交之前，请确认您已完成以下操作。
+      label: ✅ 确认事项
+      description: 在提交之前，请确认您已完成以下操作：
       options:
-        - label: 我已在现有的 Issues 中搜索，没有发现重复的报告。
+        - label: 我已在现有 Issues 中搜索，确认没有重复的问题报告。
           required: true
-        - label: 我已阅读并理解了项目的贡献指南 (CONTRIBUTING.md)。
-          required: false # 可选，因为不是所有项目都有这个文件
+        - label: 我已尝试在最新版本（或开发分支）中验证此问题是否仍然存在。
+          required: false # 对于外部贡献者，这可能不切实际
+        - label: 我已阅读并理解了项目的贡献指南 (如果适用)。
+          required: false
+        - label: 我确认提供的信息是准确、完整且不包含敏感数据的。
+          required: true

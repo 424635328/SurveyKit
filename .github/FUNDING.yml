@@ -1,3 +1,5 @@
+# .github/FUNDING.yml
+
 # These are examples of funding links. See https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/displaying-a-sponsor-button
 #
 # 这是一些赞助链接的示例。请参阅 GitHub 官方文档了解更多信息。
@@ -5,9 +7,11 @@
 #
 # 请根据你的实际情况替换以下占位符和信息。移除你不需要的行。
 
-# GitHub Sponsors - 填入你的 GitHub 用户名或组织名 (可以是列表)
-# 对于此仓库 (424635328/Git-Helper)，所有者是 424635328
-github: [424635328]
+# GitHub Sponsors - 填入你的 GitHub 用户名或组织名
+# 如果只有一个赞助者，直接写成字符串。
+# 如果有多个，则使用列表格式。
+github: 
+  - 424635328
 
 # 其他可选的赞助方式 (请移除不需要的行，并替换占位符)
 #
