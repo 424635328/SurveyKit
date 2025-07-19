@@ -1,7 +1,5 @@
 # .github/workflows/auto-dependabot.yml
 # “天文台”模式终极工作流，用于全自动处理 Dependabot PR。
-# 现在完全依赖于上游 Universal Diagnostic CI 创建的 GitHub Check Runs
-# 以及分支保护规则中对这些 Check Runs 的要求。
 
 name: Dependabot Observatory
 
@@ -20,7 +18,8 @@ jobs:
     permissions:
       pull-requests: write
       contents: write
-      statuses: read # 用于读取Check Runs的状态
+      statuses: read
+      # 读取分支保护规则所需的权限已由 'contents: write' (包含读) 提供。
 
     steps:
       - name: Extract PR Information
@@ -34,15 +33,12 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: "Observatory: Check against Branch Protection Rules (using Check Runs)"
+      - name: "Observatory: Check against Branch Protection Rules"
         id: observatory
         run: |
           echo "Observing PR #${{ steps.pr-info.outputs.pr_number }} for branch '${{ steps.pr-info.outputs.base_branch }}'..."
           
-          # 获取分支保护规则中所有必需的状态检查名称
-          # 【重要】确保你的分支保护规则中包含了Universal Diagnostic CI创建的Check Runs
           REQUIRED_CHECKS=$(gh api "repos/${{ github.repository }}/branches/${{ steps.pr-info.outputs.base_branch }}/protection" --jq '.required_status_checks.contexts[]' | jq -r 'select(. != null)')
-          
           if [ -z "$REQUIRED_CHECKS" ]; then
             echo "✅ No required status checks found in branch protection rules. Gatekeeper passes by default."
             echo "observatory_passed=true" >> $GITHUB_OUTPUT
@@ -51,7 +47,6 @@ jobs:
           echo "Required checks according to branch protection rules:"
           echo "$REQUIRED_CHECKS"
 
-          # 获取与PR头提交关联的所有Check Runs的名称和结论
           ALL_CHECKS_JSON=$(gh api "repos/${{ github.repository }}/commits/${{ steps.pr-info.outputs.pr_head_sha }}/check-runs" --jq '.check_runs[] | {name: .name, conclusion: .conclusion}')
           echo "Actual checks found on commit:"
           echo "$ALL_CHECKS_JSON"
@@ -77,7 +72,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
       - name: Get Dependabot metadata
-        # 仅当所有必需的Check Runs都通过时才获取元数据
+        id: dependabot-metadata
         if: steps.observatory.outputs.observatory_passed == 'true'
         uses: dependabot/fetch-metadata@v2.2.0
         with:
@@ -88,7 +83,7 @@ jobs:
           steps.observatory.outputs.observatory_passed == 'true' &&
           steps.dependabot-metadata.outputs.update-type != 'version-update:semver-major'
         run: |
-          echo "Observatory reports all required checks passed for a non-major update. Enabling auto-merge."
+          echo "Observatory reports all checks passed for a non-major update. Enabling auto-merge."
           gh pr merge ${{ steps.pr-info.outputs.pr_number }} --auto --squash
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -98,13 +93,12 @@ jobs:
           steps.observatory.outputs.observatory_passed == 'true' &&
           steps.dependabot-metadata.outputs.update-type == 'version-update:semver-major'
         run: |
-          echo "Observatory reports all required checks passed for a major update. Manual review is required."
+          echo "Observatory reports all checks passed for a major update. Manual review is required."
           gh pr comment ${{ steps.pr-info.outputs.pr_number }} --body "✅ The Observatory confirms all required branch protection checks have passed, but this is a **major** version update. It requires manual review and approval."
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Handle failed checks
-        # 如果有任何必需的Check Run失败，则关闭PR
         if: steps.observatory.outputs.observatory_passed == 'false'
         run: |
           echo "Observatory reports one or more required checks failed or are pending. Closing the PR."
