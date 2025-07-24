@@ -16,17 +16,17 @@
     "url": "git+https://github.com/424635328/SurveyKit.git"
   },
   "dependencies": {
-    "@upstash/ratelimit": "^2.0.5",
+    "@upstash/ratelimit": "^2.0.6",
     "@vercel/kv": "^3.0.0",
     "bcryptjs": "^3.0.2",
     "docx": "^9.5.1",
     "html2canvas": "^1.4.1",
-    "jose": "^6.0.11",
+    "jose": "^6.0.12",
     "jsonwebtoken": "^9.0.2",
-    "openai": "^5.8.2",
-    "resend": "^4.6.0",
-    "tencentcloud-sdk-nodejs": "^4.1.67",
-    "vercel": "^44.2.11",
+    "openai": "^5.10.2",
+    "resend": "^4.7.0",
+    "tencentcloud-sdk-nodejs": "^4.1.84",
+    "vercel": "^44.5.5",
     "zod": "^3.25.71"
   },
   "keywords": [],
