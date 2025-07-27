@@ -34,15 +34,13 @@ const RequestSchema = z.object({
 });
 
 /**
- * 创建用于找回链接的邮件模板 (HTML 和纯文本) - SurveyKit 品牌化版本
+ * 创建用于找回链接的邮件模板 (HTML 和纯文本) - 优化版
  * @param {string} recoveryLink - 生成的专属找回链接
  * @param {string} surveyId - 对应的问卷ID
  * @returns {{emailHtml: string, emailText: string}}
  */
 function createEmailTemplate(recoveryLink, surveyId) {
-    const preheaderText = "您的 SurveyKit 问卷结果已准备就绪。";
-    const projectUrl = "https://survey-kit.vercel.app"; // 项目主页URL
-    const logoUrl = "https://survey-kit.vercel.app/favicon.ico"; // 项目Logo URL
+    const preheaderText = "点击这里，安全访问您的专属问卷结果。";
     const currentYear = new Date().getFullYear();
 
     const emailHtml = `
@@ -51,55 +49,54 @@ function createEmailTemplate(recoveryLink, surveyId) {
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>您的 SurveyKit 问卷结果</title>
+        <title>SurveyKit 问卷找回</title>
         <style>
             /* --- 全局样式 --- */
             body { 
                 font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji", 'Microsoft Yahei';
                 margin: 0; 
                 padding: 0; 
-                width: 100% !important;
-                background-color: #111827; /* 深色背景，匹配项目风格 */
+                background-color: #f7f8fa; 
                 color: #374151;
             }
             .container { 
-                max-width: 520px; 
-                margin: 40px auto; 
+                max-width: 600px; 
+                margin: 30px auto; 
                 background-color: #ffffff; 
                 border-radius: 12px; 
-                overflow: hidden;
+                overflow: hidden; 
+                box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+                border: 1px solid #e5e7eb;
             }
             p {
-                line-height: 1.7;
+                line-height: 1.6;
                 font-size: 16px;
-                margin: 0 0 18px;
-                color: #374151;
+                margin: 0 0 16px;
             }
             a {
                 color: #4f46e5;
                 text-decoration: none;
-                font-weight: 500;
-            }
-            strong {
-                color: #1f2937;
             }
 
             /* --- 模块样式 --- */
             .header {
-                padding: 32px 0;
+                background-image: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+                padding: 32px;
                 text-align: center;
             }
-            .header img {
-                width: 72px;
-                height: 72px;
+            .header h1 {
+                margin: 0;
+                color: #ffffff;
+                font-size: 28px;
+                font-weight: 700;
             }
             .content {
-                padding: 10px 40px 30px;
+                padding: 40px;
             }
             .content .greeting {
-                font-size: 22px;
-                font-weight: 700;
-                color: #111827;
+                font-size: 18px;
+                font-weight: 600;
+                color: #1f2937;
                 margin-bottom: 24px;
             }
             .button-wrapper {
@@ -111,51 +108,55 @@ function createEmailTemplate(recoveryLink, surveyId) {
                 background-color: #4f46e5;
                 color: #ffffff !important; /* 强制覆盖 a 标签颜色 */
                 text-decoration: none;
-                padding: 16px 38px;
+                padding: 15px 35px;
                 border-radius: 8px;
                 font-size: 16px;
                 font-weight: 600;
-                transition: background-color 0.3s ease;
-                /* 柔和的阴影，类似 Tailwind */
-                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+                transition: all 0.3s ease;
+                box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
             }
             .button:hover {
                 background-color: #4338ca;
+                transform: translateY(-2px);
+                box-shadow: 0 6px 16px rgba(79, 70, 229, 0.3);
             }
             .fallback-info {
-                background-color: #f9fafb;
-                border: 1px solid #f3f4f6;
+                background-color: #f8fafc;
+                border: 1px solid #eef2ff;
                 border-radius: 8px;
-                padding: 16px;
-                text-align: left;
-                font-size: 13px;
+                padding: 20px;
+                text-align: center;
+                font-size: 14px;
                 color: #6b7280;
                 margin-top: 24px;
             }
             .fallback-info code {
                 display: block;
-                background-color: #f3f4f6;
+                background-color: #eef2ff;
                 padding: 10px;
                 border-radius: 6px;
                 font-family: 'Courier New', Courier, monospace;
-                color: #4f46e5;
+                color: #4338ca;
                 word-break: break-all;
-                margin-top: 10px;
-                font-size: 14px;
+                margin-top: 12px;
             }
             .security-note {
                 margin-top: 32px;
-                padding-top: 24px;
-                border-top: 1px solid #e5e7eb;
+                padding: 16px;
+                background-color: #fff1f2;
+                border-left: 4px solid #f43f5e;
                 font-size: 14px;
-                color: #6b7280;
+                color: #9f1239;
+            }
+            .security-note strong {
+                color: #be123c;
             }
             .footer {
-                padding: 32px 40px;
+                padding: 24px 40px;
                 text-align: center;
                 font-size: 12px;
                 color: #9ca3af;
-                background-color: #f9fafb;
+                background-color: #f7f8fa;
             }
             .preheader { display: none; max-height: 0; max-width: 0; opacity: 0; overflow: hidden; mso-hide: all; visibility: hidden; }
         </style>
@@ -164,62 +165,60 @@ function createEmailTemplate(recoveryLink, surveyId) {
         <span class="preheader">${preheaderText}</span>
         <div class="container">
             <div class="header">
-                <a href="${projectUrl}" target="_blank" rel="noopener">
-                    <img src="${logoUrl}" alt="SurveyKit Logo">
-                </a>
+                <h1>SurveyKit 问卷找回</h1>
             </div>
             <div class="content">
-                <p class="greeting">您的问卷结果已准备就绪</p>
-                <p>您好！您请求了访问 SurveyKit 问卷 (ID: <strong>${surveyId}</strong>) 的结果。 </p>
-                <p>这是您的专属安全链接，请点击下方按钮访问：</p>
+                <p class="greeting">您好！</p>
+                <p>我们收到了一个为您的问卷 (ID: <strong>${surveyId}</strong>) 找回结果的请求。请点击下方的按钮，即可安全地访问您的专属问卷结果页。</p>
                 
                 <div class="button-wrapper">
-                    <a href="${recoveryLink}" class="button" target="_blank" rel="noopener">查看我的问卷结果</a>
+                    <a href="${recoveryLink}" class="button" target="_blank" rel="noopener">安全访问问卷结果</a>
                 </div>
 
                 <div class="fallback-info">
-                    <p style="margin: 0; font-weight: 500;">如果按钮无法点击：</p>
-                    <p style="margin: 10px 0 0;">请手动复制下方的完整链接并在浏览器的新标签页中打开。</p>
+                    <p style="margin: 0;">如果按钮无法点击，请手动复制下方的链接并在浏览器中打开：</p>
                     <code>${recoveryLink}</code>
                 </div>
 
                 <div class="security-note">
-                    <p style="margin: 0;"><strong>重要提示：</strong>为保护您的隐私，此链接是访问该问卷结果的唯一凭证，请勿与他人分享。如果您并未请求此邮件，请直接忽略，您的账户和数据都是安全的。</p>
+                    <p style="margin: 0;">为了您的信息安全，<strong>请不要将此链接分享给他人</strong>。此链接是访问您问卷结果的唯一凭证，将在一段时间后失效。</p>
                 </div>
+                
+                <p style="margin-top: 24px; font-size: 14px; color: #6b7280;">如果您没有请求找回问卷，请直接忽略此邮件，您的信息是安全的。</p>
             </div>
             <div class="footer">
-                <p>由 <a href="https://github.com/424635328" target="_blank">424635328</a> 的 <a href="${projectUrl}" target="_blank">SurveyKit</a> 倾心打造</p>
-                <p>© ${currentYear} SurveyKit. All Rights Reserved.</p>
+                <p>此邮件由 SurveyKit 系统自动发送，请勿直接回复。</p>
+                <p>© ${currentYear} SurveyKit. All rights reserved.</p>
             </div>
         </div>
     </body>
     </html>`;
 
+    // 优化后的纯文本版本
     const emailText = `
-您的 SurveyKit 问卷结果已准备就绪
+SurveyKit 问卷找回
 ${preheaderText}
 
 ====================================
 
 您好！
 
-您请求了访问 SurveyKit 问卷 (ID: ${surveyId}) 的结果。
-请访问下方的专属安全链接，即可查看。
+我们收到了一个为您的问卷 (ID: ${surveyId}) 找回结果的请求。
+请访问下方的链接，安全地查看您的专属问卷结果。
 
-↓↓↓ 访问链接 ↓↓↓
+↓↓↓ 点击或复制此链接 ↓↓↓
 ${recoveryLink}
 
 ====================================
 
-重要安全提示：
-为保护您的隐私，请不要将此链接分享给他人。它是访问您问卷结果的唯一凭证。
+**重要提示**
+为了您的信息安全，请不要将此链接分享给他人。此链接是访问您问卷结果的唯一凭证。
 
-如果您没有进行此操作，请放心，您的数据是安全的，直接忽略此邮件即可。
+如果您没有请求找回问卷，请直接忽略此邮件。
 
 ---
 此邮件由 SurveyKit 自动发送。
-由 424635328 倾心打造。
-© ${currentYear} SurveyKit. All Rights Reserved.
+© ${currentYear} SurveyKit.
     `;
     
     return { emailHtml, emailText };
