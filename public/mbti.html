@@ -1,4 +1,5 @@
 <!-- public/mbti.html -->
+ 
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -14,7 +15,7 @@
 </head>
 <body class="page-background">
 
-  <div class="mbti-container">
+  <div id="main-app-container" class="mbti-container">
     <div class="page-header">
         <i class="fa fa-magic page-icon"></i>
         <h1>AI 人格分析报告</h1>
@@ -80,6 +81,25 @@
     </div>
 
   </div>
+  
+  <div id="privacy-modal-overlay" class="modal-overlay" style="display: none;">
+    <div id="privacy-modal" class="privacy-modal">
+        <h2 class="modal-title">用户隐私与数据使用协议</h2>
+        <p class="modal-text">
+            欢迎使用AI人格分析功能！为了给您生成分析报告，我们需要将您提供的问卷答案（匿名化处理后）发送给AI进行分析。
+        </p>
+        <p class="modal-text">
+            我们承诺不会存储您的个人数据。请阅读并同意我们的
+            <a href="privacy-policy.html" target="_blank">《AI分析功能隐私协议》</a>
+            以继续。
+        </p>
+        <div class="modal-actions">
+            <button id="disagreeBtn" class="action-button secondary">我不同意</button>
+            <button id="agreeBtn" class="action-button">同意并继续</button>
+        </div>
+    </div>
+  </div>
+
   <script src="mbti.js" type="module"></script>
   <script>
       window.questionMap = {}; 

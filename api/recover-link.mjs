@@ -34,13 +34,16 @@ const RequestSchema = z.object({
 });
 
 /**
- * 创建用于找回链接的邮件模板 (HTML 和纯文本)
+ * 创建用于找回链接的邮件模板 (HTML 和纯文本) - SurveyKit 品牌化版本
  * @param {string} recoveryLink - 生成的专属找回链接
  * @param {string} surveyId - 对应的问卷ID
  * @returns {{emailHtml: string, emailText: string}}
  */
 function createEmailTemplate(recoveryLink, surveyId) {
-    const preheaderText = "点击这里，安全访问您的专属问卷结果。";
+    const preheaderText = "您的 SurveyKit 问卷结果已准备就绪。";
+    const projectUrl = "https://survey-kit.vercel.app"; // 项目主页URL
+    const logoUrl = "https://survey-kit.vercel.app/favicon.ico"; // 项目Logo URL
+    const currentYear = new Date().getFullYear();
 
     const emailHtml = `
     <!DOCTYPE html>
@@ -48,20 +51,112 @@ function createEmailTemplate(recoveryLink, surveyId) {
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>您的 SurveyKit 问卷结果</title>
         <style>
-            body { font-family: 'Helvetica Neue', Helvetica, Arial, 'Microsoft Yahei', sans-serif; margin: 0; padding: 0; background-color: #f8fafc; color: #334155; }
-            .container { max-width: 600px; margin: 40px auto; background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; }
-            .header { background-color: #4f46e5; padding: 24px; text-align: center; }
-            .header h1 { margin: 0; color: #ffffff; font-size: 24px; font-weight: 600; }
-            .content { padding: 32px; }
-            .content p { line-height: 1.7; margin: 0 0 16px; font-size: 16px; }
-            .content .highlight { color: #1e293b; font-weight: 500; }
-            .button-wrapper { text-align: center; margin: 32px 0; }
-            .button { display: inline-block; background-color: #6366f1; color: #ffffff; text-decoration: none; padding: 14px 28px; border-radius: 8px; font-size: 16px; font-weight: 500; transition: background-color 0.3s; }
-            .button:hover { background-color: #4f46e5; }
-            .copy-info { text-align: center; font-size: 14px; color: #64748b; margin-top: 24px; }
-            .footer { background-color: #f8fafc; padding: 24px; text-align: center; font-size: 12px; color: #64748b; }
-            .footer p { margin: 0 0 8px; }
+            /* --- 全局样式 --- */
+            body { 
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji", 'Microsoft Yahei';
+                margin: 0; 
+                padding: 0; 
+                width: 100% !important;
+                background-color: #111827; /* 深色背景，匹配项目风格 */
+                color: #374151;
+            }
+            .container { 
+                max-width: 520px; 
+                margin: 40px auto; 
+                background-color: #ffffff; 
+                border-radius: 12px; 
+                overflow: hidden;
+            }
+            p {
+                line-height: 1.7;
+                font-size: 16px;
+                margin: 0 0 18px;
+                color: #374151;
+            }
+            a {
+                color: #4f46e5;
+                text-decoration: none;
+                font-weight: 500;
+            }
+            strong {
+                color: #1f2937;
+            }
+
+            /* --- 模块样式 --- */
+            .header {
+                padding: 32px 0;
+                text-align: center;
+            }
+            .header img {
+                width: 72px;
+                height: 72px;
+            }
+            .content {
+                padding: 10px 40px 30px;
+            }
+            .content .greeting {
+                font-size: 22px;
+                font-weight: 700;
+                color: #111827;
+                margin-bottom: 24px;
+            }
+            .button-wrapper {
+                text-align: center;
+                margin: 32px 0;
+            }
+            .button {
+                display: inline-block;
+                background-color: #4f46e5;
+                color: #ffffff !important; /* 强制覆盖 a 标签颜色 */
+                text-decoration: none;
+                padding: 16px 38px;
+                border-radius: 8px;
+                font-size: 16px;
+                font-weight: 600;
+                transition: background-color 0.3s ease;
+                /* 柔和的阴影，类似 Tailwind */
+                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+            }
+            .button:hover {
+                background-color: #4338ca;
+            }
+            .fallback-info {
+                background-color: #f9fafb;
+                border: 1px solid #f3f4f6;
+                border-radius: 8px;
+                padding: 16px;
+                text-align: left;
+                font-size: 13px;
+                color: #6b7280;
+                margin-top: 24px;
+            }
+            .fallback-info code {
+                display: block;
+                background-color: #f3f4f6;
+                padding: 10px;
+                border-radius: 6px;
+                font-family: 'Courier New', Courier, monospace;
+                color: #4f46e5;
+                word-break: break-all;
+                margin-top: 10px;
+                font-size: 14px;
+            }
+            .security-note {
+                margin-top: 32px;
+                padding-top: 24px;
+                border-top: 1px solid #e5e7eb;
+                font-size: 14px;
+                color: #6b7280;
+            }
+            .footer {
+                padding: 32px 40px;
+                text-align: center;
+                font-size: 12px;
+                color: #9ca3af;
+                background-color: #f9fafb;
+            }
             .preheader { display: none; max-height: 0; max-width: 0; opacity: 0; overflow: hidden; mso-hide: all; visibility: hidden; }
         </style>
     </head>
@@ -69,39 +164,62 @@ function createEmailTemplate(recoveryLink, surveyId) {
         <span class="preheader">${preheaderText}</span>
         <div class="container">
             <div class="header">
-                <h1>SurveyKit 问卷找回</h1>
+                <a href="${projectUrl}" target="_blank" rel="noopener">
+                    <img src="${logoUrl}" alt="SurveyKit Logo">
+                </a>
             </div>
             <div class="content">
-                <p class="highlight">您好！</p>
-                <p>我们收到了一个找回您 SurveyKit 问卷结果的请求。请点击下方的按钮，即可安全地访问您的专属问卷结果页。</p>
+                <p class="greeting">您的问卷结果已准备就绪</p>
+                <p>您好！您请求了访问 SurveyKit 问卷 (ID: <strong>${surveyId}</strong>) 的结果。 </p>
+                <p>这是您的专属安全链接，请点击下方按钮访问：</p>
+                
                 <div class="button-wrapper">
-                    <a href="${recoveryLink}" class="button">查看我的问卷结果</a>
+                    <a href="${recoveryLink}" class="button" target="_blank" rel="noopener">查看我的问卷结果</a>
                 </div>
-                <p class="copy-info">
-                    如果按钮无法点击，您可以返回问卷结果页，使用“复制链接”功能进行分享。<br>您的问卷ID是: <strong>${surveyId}</strong>
-                </p>
-                <p style="margin-top: 24px;">为了您的信息安全，<strong style="color: #be123c;">请不要将此链接分享给他人</strong>。此链接是访问您问卷结果的唯一凭证。</p>
-                <p>如果您没有请求找回问卷，请忽略此邮件，您的账户是安全的。</p>
+
+                <div class="fallback-info">
+                    <p style="margin: 0; font-weight: 500;">如果按钮无法点击：</p>
+                    <p style="margin: 10px 0 0;">请手动复制下方的完整链接并在浏览器的新标签页中打开。</p>
+                    <code>${recoveryLink}</code>
+                </div>
+
+                <div class="security-note">
+                    <p style="margin: 0;"><strong>重要提示：</strong>为保护您的隐私，此链接是访问该问卷结果的唯一凭证，请勿与他人分享。如果您并未请求此邮件，请直接忽略，您的账户和数据都是安全的。</p>
+                </div>
             </div>
             <div class="footer">
-                <p>此邮件由 SurveyKit 自动发送，请勿直接回复。</p>
-                <p>© ${new Date().getFullYear()} SurveyKit. All rights reserved.</p>
+                <p>由 <a href="https://github.com/424635328" target="_blank">424635328</a> 的 <a href="${projectUrl}" target="_blank">SurveyKit</a> 倾心打造</p>
+                <p>© ${currentYear} SurveyKit. All Rights Reserved.</p>
             </div>
         </div>
     </body>
     </html>`;
 
     const emailText = `
-    ${preheaderText}
+您的 SurveyKit 问卷结果已准备就绪
+${preheaderText}
 
-    您好！
-    我们收到了一个找回您 SurveyKit 问卷结果的请求。请访问下方的链接查看您的专属问卷结果。
-    访问链接: ${recoveryLink}
-    为了您的信息安全，请不要将此链接分享给他人。
-    如果您没有请求找回问卷，请忽略此邮件。
-    ---
-    此邮件由 SurveyKit 自动发送。
-    © ${new Date().getFullYear()} SurveyKit.
+====================================
+
+您好！
+
+您请求了访问 SurveyKit 问卷 (ID: ${surveyId}) 的结果。
+请访问下方的专属安全链接，即可查看。
+
+↓↓↓ 访问链接 ↓↓↓
+${recoveryLink}
+
+====================================
+
+重要安全提示：
+为保护您的隐私，请不要将此链接分享给他人。它是访问您问卷结果的唯一凭证。
+
+如果您没有进行此操作，请放心，您的数据是安全的，直接忽略此邮件即可。
+
+---
+此邮件由 SurveyKit 自动发送。
+由 424635328 倾心打造。
+© ${currentYear} SurveyKit. All Rights Reserved.
     `;
     
     return { emailHtml, emailText };

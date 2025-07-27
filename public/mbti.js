@@ -1,41 +1,44 @@
-// public/mbti.js
-
-/* global XLSX */ 
+/* global XLSX */
 
 document.addEventListener("DOMContentLoaded", () => {
+  const mainAppContainer = document.getElementById("main-app-container");
+  const privacyModalOverlay = document.getElementById("privacy-modal-overlay");
+  const agreeBtn = document.getElementById("agreeBtn");
+  const disagreeBtn = document.getElementById("disagreeBtn");
+
   const dropZone = document.getElementById("drop-zone");
   const uploadBtn = document.getElementById("uploadBtn");
   const fileUploadInput = document.getElementById("file-upload-input");
   const surveyIdInput = document.getElementById("surveyIdInput");
   const analyzeByIdBtn = document.getElementById("analyzeByIdBtn");
 
-  const resultSection = document.getElementById("result-section"); 
+  const resultSection = document.getElementById("result-section");
   const loadingSpinner = document.getElementById("loading-spinner");
   const loadingTextEl = document.getElementById("loading-text");
 
   const statusMessageEl = document.getElementById("status-message");
   const reportContent = document.getElementById("report-content");
 
-  const mbtiTypeEl = document.getElementById("mbti-type");             
-  const mbtiTypeNameEl = document.getElementById("mbti-type-name");  
-  const mbtiTaglineEl = document.getElementById("mbti-tagline");   
+  const mbtiTypeEl = document.getElementById("mbti-type");
+  const mbtiTypeNameEl = document.getElementById("mbti-type-name");
+  const mbtiTaglineEl = document.getElementById("mbti-tagline");
   const mbtiReportEl = document.getElementById("mbti-analysis-report");
 
   const criticalElements = [
-      dropZone, uploadBtn, fileUploadInput, surveyIdInput, analyzeByIdBtn,
-      resultSection, loadingSpinner, loadingTextEl, statusMessageEl, reportContent,
-      mbtiTypeEl, mbtiTypeNameEl, mbtiTaglineEl, mbtiReportEl
+    mainAppContainer, privacyModalOverlay, agreeBtn, disagreeBtn,
+    dropZone, uploadBtn, fileUploadInput, surveyIdInput, analyzeByIdBtn,
+    resultSection, loadingSpinner, loadingTextEl, statusMessageEl, reportContent,
+    mbtiTypeEl, mbtiTypeNameEl, mbtiTaglineEl, mbtiReportEl
   ];
   if (criticalElements.some(el => el === null)) {
-      console.error("Error: One or more critical DOM elements were not found. Script cannot initialize.");
-      return; 
+    console.error("Error: One or more critical DOM elements were not found. Script cannot initialize.");
+    if (privacyModalOverlay) privacyModalOverlay.style.display = 'none';
+    return;
   }
-
 
   const params = new URLSearchParams(window.location.search);
   const initialSurveyId = params.get("id");
   const initialSurveyToken = params.get("token");
-
 
   const uiManager = (() => {
     let currentTypingTimeout = null;
@@ -46,10 +49,10 @@ document.addEventListener("DOMContentLoaded", () => {
       element.textContent = "";
       let i = 0;
       return new Promise((resolve) => {
-        if (text === null || text === undefined) { 
-             element.textContent = "";
-             resolve();
-             return;
+        if (text === null || text === undefined) {
+          element.textContent = "";
+          resolve();
+          return;
         }
         const type = () => {
           if (i < text.length) {
@@ -71,7 +74,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (isLoading) {
         loadingSpinner.style.display = "block";
         reportContent.style.display = "none";
-        statusMessageEl.style.display = "none"; 
+        statusMessageEl.style.display = "none";
 
         analyzeByIdBtn.disabled = true;
         uploadBtn.disabled = true;
@@ -88,14 +91,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const displayReport = async (result) => {
       if (!mbtiTypeEl || !mbtiTypeNameEl || !mbtiTaglineEl || !mbtiReportEl) {
-          console.error("displayReport: Report elements not found.");
-          return;
+        console.error("displayReport: Report elements not found.");
+        return;
       }
 
       setLoading(false);
 
-      mbtiTypeEl.textContent = result.mbti_type || "N/A"; 
-      mbtiTypeNameEl.textContent = result.type_name || "未知类型"; 
+      mbtiTypeEl.textContent = result.mbti_type || "N/A";
+      mbtiTypeNameEl.textContent = result.type_name || "未知类型";
       mbtiTaglineEl.textContent = result.tagline || "一份独特的分析报告。";
 
       reportContent.style.display = "block";
@@ -109,18 +112,18 @@ document.addEventListener("DOMContentLoaded", () => {
           await typeText(p, paragraphText);
         }
       } else {
-           console.warn("Analysis report data is not in expected array format or is missing.");
-           const p = document.createElement("p");
-           mbtiReportEl.appendChild(p);
-           await typeText(p, result.analysis_report || "未能生成详细的分析报告。"); 
+        console.warn("Analysis report data is not in expected array format or is missing.");
+        const p = document.createElement("p");
+        mbtiReportEl.appendChild(p);
+        await typeText(p, result.analysis_report || "未能生成详细的分析报告。");
       }
     };
 
     const displayMessage = (message, type = 'info') => {
       if (currentTypingTimeout) clearTimeout(currentTypingTimeout);
       if (!statusMessageEl || !resultSection || !loadingSpinner || !reportContent) {
-           console.error("displayMessage: Message or related elements not found.");
-           return;
+        console.error("displayMessage: Message or related elements not found.");
+        return;
       }
 
       setLoading(false);
@@ -138,12 +141,11 @@ document.addEventListener("DOMContentLoaded", () => {
       } else {
         statusMessageEl.classList.add('message-info');
       }
-      statusMessageEl.style.display = "block"; 
+      statusMessageEl.style.display = "block";
     };
 
     return { setLoading, displayReport, displayMessage, typeText };
   })();
-
 
   const fileProcessor = (() => {
 
@@ -154,16 +156,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const prefixToIdMap = new Map();
       for (const id in questionMap) {
-          if (Object.hasOwn(questionMap, id)) { 
-              const qText = String(questionMap[id] || "").trim();
-              if (qText.length > 0) {
-                  const prefix = qText.substring(0, Math.min(qText.length, 40));
-                  prefixToIdMap.set(prefix, id);
-              }
+        if (Object.hasOwn(questionMap, id)) {
+          const qText = String(questionMap[id] || "").trim();
+          if (qText.length > 0) {
+            const prefix = qText.substring(0, Math.min(qText.length, 40));
+            prefixToIdMap.set(prefix, id);
           }
+        }
       }
-      console.log("TXT Parser: Prefix to ID Map:", prefixToIdMap);
-
 
       for (let i = 0; i < lines.length; i++) {
         const trimmedLine = lines[i].trim();
@@ -171,26 +171,25 @@ document.addEventListener("DOMContentLoaded", () => {
 
         let matchedId = null;
         for (const [prefix, id] of prefixToIdMap.entries()) {
-             if (trimmedLine.startsWith(prefix)) {
-                  matchedId = id;
-                  break;
-             }
+          if (trimmedLine.startsWith(prefix)) {
+            matchedId = id;
+            break;
+          }
         }
 
         if (matchedId) {
-            currentQuestionId = matchedId;
-             if (i + 1 < lines.length) {
-                const nextLine = lines[i + 1].trim();
-                if (nextLine.startsWith("->")) {
-                  const answer = nextLine.substring(2).trim();
-                  if (currentQuestionId && answer !== "") {
-                    parsedAnswers[currentQuestionId] = answer;
-                  }
-                }
-             }
-         }
+          currentQuestionId = matchedId;
+          if (i + 1 < lines.length) {
+            const nextLine = lines[i + 1].trim();
+            if (nextLine.startsWith("->")) {
+              const answer = nextLine.substring(2).trim();
+              if (currentQuestionId && answer !== "") {
+                parsedAnswers[currentQuestionId] = answer;
+              }
+            }
+          }
+        }
       }
-      console.log("TXT Parser: Parsed Answers:", parsedAnswers);
       return parsedAnswers;
     };
 
@@ -209,170 +208,149 @@ document.addEventListener("DOMContentLoaded", () => {
           }
         });
       } else if (typeof data === 'object' && data !== null) {
-          let finalData = data;
-          if (typeof data.data === 'string') {
-              try {
-                  finalData = JSON.parse(data.data);
-              } catch (e) {
-                  console.error("JSON Parser: Failed to parse nested 'data' string:", e);
-              }
+        let finalData = data;
+        if (typeof data.data === 'string') {
+          try {
+            finalData = JSON.parse(data.data);
+          } catch (e) {
+            console.error("JSON Parser: Failed to parse nested 'data' string:", e);
           }
+        }
 
-          for (const key in finalData) {
-              if (Object.hasOwn(finalData, key)) {
-                  if (key.startsWith('q') || (window.questionMap && Object.hasOwn(window.questionMap, key))) {
-                       answers[key] = finalData[key];
-                   }
-              }
+        for (const key in finalData) {
+          if (Object.hasOwn(finalData, key)) {
+            if (key.startsWith('q') || (window.questionMap && Object.hasOwn(window.questionMap, key))) {
+              answers[key] = finalData[key];
+            }
           }
+        }
       } else {
-          throw new Error("JSON 文件格式不正确。");
+        throw new Error("JSON 文件格式不正确。");
       }
-      console.log("JSON Parser: Parsed Answers:", answers);
       return answers;
     };
 
     const parseSheet = (data) => {
       const workbook = XLSX.read(data, { type: "array" });
-      const sheetName = workbook.SheetNames[0]; 
+      const sheetName = workbook.SheetNames[0];
       const worksheet = workbook.Sheets[sheetName];
 
       const jsonFromSheet = XLSX.utils.sheet_to_json(worksheet);
-      console.log("SheetJS: sheet_to_json output:", jsonFromSheet);
-
       const answers = {};
+
       if (Array.isArray(jsonFromSheet)) {
-           let idKey = null; 
-           let answerKey = null;
+        let idKey = null;
+        let answerKey = null;
 
-           if (jsonFromSheet.length > 0) {
-               const firstRowKeys = Object.keys(jsonFromSheet[0]);
-               idKey = firstRowKeys.find(key => String(key).trim().toLowerCase() === 'id' || String(key).trim().toLowerCase().includes('qid'));
-               answerKey = firstRowKeys.find(key => String(key).trim().toLowerCase() === 'answer' || String(key).trim().toLowerCase().includes('回答') || String(key).trim().toLowerCase().includes('答案') || String(key).trim().toLowerCase().includes('value'));
-           }
+        if (jsonFromSheet.length > 0) {
+          const firstRowKeys = Object.keys(jsonFromSheet[0]);
+          idKey = firstRowKeys.find(key => String(key).trim().toLowerCase() === 'id' || String(key).trim().toLowerCase().includes('qid'));
+          answerKey = firstRowKeys.find(key => String(key).trim().toLowerCase() === 'answer' || String(key).trim().toLowerCase().includes('回答') || String(key).trim().toLowerCase().includes('答案') || String(key).trim().toLowerCase().includes('value'));
+        }
 
+        if (idKey && answerKey) {
+          jsonFromSheet.forEach(row => {
+            const id = Object.hasOwn(row, idKey) ? row[idKey] : undefined;
+            const answer = Object.hasOwn(row, answerKey) ? row[answerKey] : undefined;
 
-           if (idKey && answerKey) {
-                jsonFromSheet.forEach(row => {
-                    const id = Object.hasOwn(row, idKey) ? row[idKey] : undefined;
-                    const answer = Object.hasOwn(row, answerKey) ? row[answerKey] : undefined;
-
-                    if (id && answer !== undefined && answer !== null) {
-                        answers[String(id).trim()] = answer;
-                    }
-                });
-           } else {
-               console.warn("SheetJS: Standard 'ID' and 'Answer' columns not found. Attempting array-of-arrays parse.");
-                const rawData = XLSX.utils.sheet_to_json(worksheet, { header: 1 }); 
-                if (Array.isArray(rawData) && rawData.length > 1) {
-                    for (let i = 1; i < rawData.length; i++) { 
-                        const row = rawData[i];
-                        if (Array.isArray(row) && row.length >= 2 && row[0] && row[1] !== undefined && row[1] !== null) {
-                             answers[String(row[0]).trim()] = row[1];
-                        }
-                    }
-                } else {
-                     console.error("SheetJS: Raw data not in expected [ [headers], [id, answer], ... ] format or is empty.");
-                     throw new Error("无法识别的电子表格/CSV文件格式或内容为空。");
-                }
-           }
+            if (id && answer !== undefined && answer !== null) {
+              answers[String(id).trim()] = answer;
+            }
+          });
+        } else {
+          const rawData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+          if (Array.isArray(rawData) && rawData.length > 1) {
+            for (let i = 1; i < rawData.length; i++) {
+              const row = rawData[i];
+              if (Array.isArray(row) && row.length >= 2 && row[0] && row[1] !== undefined && row[1] !== null) {
+                answers[String(row[0]).trim()] = row[1];
+              }
+            }
+          } else {
+            throw new Error("无法识别的电子表格/CSV文件格式或内容为空。");
+          }
+        }
 
       } else {
-          console.error("SheetJS: sheet_to_json did not return an array.");
-          throw new Error("无法解析电子表格/CSV文件内容。");
+        throw new Error("无法解析电子表格/CSV文件内容。");
       }
-
-      console.log("SheetJS Parser: Parsed Answers:", answers);
       return answers;
     };
 
-
     const formatAnswers = (answers, questionMap) => {
       if (typeof answers !== 'object' || answers === null) {
-           console.error("formatAnswers: Invalid input 'answers'. Expected object, got:", answers);
-           return "无法格式化问卷答案。";
+        return "无法格式化问卷答案。";
       }
       if (typeof questionMap !== 'object' || questionMap === null) {
-          console.warn("formatAnswers: questionMap is not available or invalid. Formatting using only found answers.");
-           return Object.entries(answers)
-             .map(([qId, answer]) => `- ${qId}: ${answer}`)
-             .join("\n");
+        return Object.entries(answers)
+          .map(([qId, answer]) => `- ${qId}: ${answer}`)
+          .join("\n");
       }
 
       const formattedLines = [];
       for (const qId in questionMap) {
-          if (Object.hasOwn(questionMap, qId)) {
-              const qText = questionMap[qId];
-              const answer = Object.hasOwn(answers, qId) && answers[qId] !== undefined && answers[qId] !== null ? answers[qId] : "未回答";
-              formattedLines.push(`- ${qText}: ${answer}`);
-          }
+        if (Object.hasOwn(questionMap, qId)) {
+          const qText = questionMap[qId];
+          const answer = Object.hasOwn(answers, qId) && answers[qId] !== undefined && answers[qId] !== null ? answers[qId] : "未回答";
+          formattedLines.push(`- ${qText}: ${answer}`);
+        }
       }
 
       return formattedLines.join("\n");
     };
-
 
     const processFile = async (file, questionMap) => {
       const extension = file.name.split(".").pop().toLowerCase();
       let answers;
 
       const fileContent = await new Promise((resolve, reject) => {
-          const reader = new FileReader();
-          reader.onload = (event) => resolve(event.target.result);
-          reader.onerror = (error) => {
-              console.error("FileReader error:", error);
-              reject(new Error(`文件读取失败: ${error.message}`));
-          };
+        const reader = new FileReader();
+        reader.onload = (event) => resolve(event.target.result);
+        reader.onerror = (error) => {
+          reject(new Error(`文件读取失败: ${error.message}`));
+        };
 
-          if (["xlsx", "xls", "csv"].includes(extension)) {
-              reader.readAsArrayBuffer(file);
-          } else { // json, txt, etc.
-              reader.readAsText(file);
-          }
+        if (["xlsx", "xls", "csv"].includes(extension)) {
+          reader.readAsArrayBuffer(file);
+        } else {
+          reader.readAsText(file);
+        }
       });
 
-
       try {
-          if (extension === "txt") {
-              if (Object.keys(questionMap).length === 0) {
-                   throw new Error("无法解析 .txt 文件：未加载问卷配置。");
-              }
-            answers = parseTxt(fileContent, questionMap);
-          } else if (extension === "json") {
-            answers = parseJson(fileContent);
-          } else if (["xlsx", "xls", "csv"].includes(extension)) {
-            answers = parseSheet(fileContent);
-          } else {
-            throw new Error(`不支持的文件类型: .${extension}`);
+        if (extension === "txt") {
+          if (Object.keys(questionMap).length === 0) {
+            throw new Error("无法解析 .txt 文件：未加载问卷配置。");
           }
+          answers = parseTxt(fileContent, questionMap);
+        } else if (extension === "json") {
+          answers = parseJson(fileContent);
+        } else if (["xlsx", "xls", "csv"].includes(extension)) {
+          answers = parseSheet(fileContent);
+        } else {
+          throw new Error(`不支持的文件类型: .${extension}`);
+        }
       } catch (error) {
-          console.error("Error parsing file content:", error);
-          throw new Error(`解析文件内容失败: ${error.message}`);
+        throw new Error(`解析文件内容失败: ${error.message}`);
       }
 
-
       const formattedText = formatAnswers(answers, questionMap);
-
-       const answerLines = formattedText.split('\n').filter(line => line.includes(':') && !line.endsWith(': 未回答'));
-       if (answerLines.length < 1) { 
-            console.warn(`Fewer than 1 answer line found or formatted. Count: ${answerLines.length}`);
-            const totalQuestions = Object.keys(questionMap).length;
-            const answersFound = Object.keys(answers).length;
-
-            if (answersFound === 0 && totalQuestions > 0) {
-                 throw new Error("未能从文件中提取到任何答案，请检查文件内容和格式。");
-            } else if (answersFound > 0 && answerLines.length === 0) {
-                 throw new Error("已读取文件，但未提取到有效答案数据（所有答案均为空或 '未回答'）。");
-            }
-       }
-
+      const answerLines = formattedText.split('\n').filter(line => line.includes(':') && !line.endsWith(': 未回答'));
+      if (answerLines.length < 1) {
+        const totalQuestions = Object.keys(questionMap).length;
+        const answersFound = Object.keys(answers).length;
+        if (answersFound === 0 && totalQuestions > 0) {
+          throw new Error("未能从文件中提取到任何答案，请检查文件内容和格式。");
+        } else if (answersFound > 0 && answerLines.length === 0) {
+          throw new Error("已读取文件，但未提取到有效答案数据（所有答案均为空或 '未回答'）。");
+        }
+      }
 
       return formattedText;
     };
 
     return { processFile };
   })();
-
 
   const app = (() => {
     let currentLoadingInterval = null;
@@ -408,12 +386,12 @@ document.addEventListener("DOMContentLoaded", () => {
         const result = await response.json();
 
         if (!response.ok) {
-           throw new Error(result.message || `分析请求失败，状态码: ${response.status}`);
+          throw new Error(result.message || `分析请求失败，状态码: ${response.status}`);
         }
 
         if (!result || typeof result !== 'object' || !result.mbti_type || !Array.isArray(result.analysis_report)) {
-            console.error("API returned unexpected data format:", result);
-            throw new Error("AI 返回的数据格式不正确，请联系管理员。");
+          console.error("API returned unexpected data format:", result);
+          throw new Error("AI 返回的数据格式不正确，请联系管理员。");
         }
 
         clearInterval(currentLoadingInterval);
@@ -426,7 +404,7 @@ document.addEventListener("DOMContentLoaded", () => {
       } catch (error) {
         console.error("Analysis process failed:", error);
         if (currentLoadingInterval) clearInterval(currentLoadingInterval);
-         currentLoadingInterval = null;
+        currentLoadingInterval = null;
         uiManager.displayMessage(error.message || "分析过程中发生未知错误。", 'error');
       }
     };
@@ -438,13 +416,13 @@ document.addEventListener("DOMContentLoaded", () => {
       await uiManager.typeText(loadingTextEl, `正在读取并解析文件: ${file.name}...`);
 
       try {
-         if (Object.keys(window.questionMap).length === 0) {
-              console.warn("Question map not loaded before file processing.");
-         }
+        if (Object.keys(window.questionMap).length === 0) {
+          console.warn("Question map not loaded before file processing.");
+        }
 
         const answersText = await fileProcessor.processFile(
           file,
-          window.questionMap 
+          window.questionMap
         );
 
         await analyze({ answersText: answersText });
@@ -469,16 +447,16 @@ document.addEventListener("DOMContentLoaded", () => {
       let payload = {};
 
       if (idValue.startsWith('sub_')) {
-          payload = { submissionId: idValue };
+        payload = { submissionId: idValue };
       } else if (idValue.startsWith('survey_')) {
-          payload = { surveyId: idValue };
+        payload = { surveyId: idValue };
       } else {
-          uiManager.displayMessage("ID格式无效。请输入以 'sub_' 或 'survey_' 开头的ID。", 'error');
-          return;
+        uiManager.displayMessage("ID格式无效。请输入以 'sub_' 或 'survey_' 开头的ID。", 'error');
+        return;
       }
 
       if (initialSurveyToken) {
-          payload.token = initialSurveyToken;
+        payload.token = initialSurveyToken;
       }
 
       analyze(payload);
@@ -500,7 +478,7 @@ document.addEventListener("DOMContentLoaded", () => {
           e.preventDefault();
           dropZone.classList.remove("is-active");
           if (e.dataTransfer.files.length > 0) {
-             handleFile(e.dataTransfer.files[0]);
+            handleFile(e.dataTransfer.files[0]);
           }
         });
       }
@@ -509,63 +487,61 @@ document.addEventListener("DOMContentLoaded", () => {
       if (surveyIdInput) {
         surveyIdInput.addEventListener("keyup", (e) => {
           if (e.key === "Enter") {
-              e.preventDefault(); 
-              handleIdInput();
+            e.preventDefault();
+            handleIdInput();
           }
         });
       }
 
-       console.log("Event listeners set up.");
+      console.log("Event listeners set up.");
     };
 
     const init = async () => {
       try {
         uiManager.displayMessage("正在加载问卷配置...", 'info');
         const res = await fetch("/questions.json");
-         if (!res.ok) {
-             throw new Error(`无法加载问卷配置: ${res.status}`);
-         }
+        if (!res.ok) {
+          throw new Error(`无法加载问卷配置: ${res.status}`);
+        }
         const sections = await res.json();
 
         window.questionMap = {};
         if (Array.isArray(sections)) {
-             sections
-               .flatMap((s) => s.questions || [])
-               .forEach((q) => {
-                   if (q && q.id && q.text) {
-                        window.questionMap[q.id] = q.text;
-                   } else {
-                        console.warn("Skipping invalid question object:", q);
-                   }
-               });
+          sections
+            .flatMap((s) => s.questions || [])
+            .forEach((q) => {
+              if (q && q.id && q.text) {
+                window.questionMap[q.id] = q.text;
+              } else {
+                console.warn("Skipping invalid question object:", q);
+              }
+            });
         } else {
-            console.error("questions.json did not return an array of sections.");
-             uiManager.displayMessage("警告: 问卷配置格式不正确，某些功能可能受限。", 'warning');
+          console.error("questions.json did not return an array of sections.");
+          uiManager.displayMessage("警告: 问卷配置格式不正确，某些功能可能受限。", 'warning');
         }
 
-         if (Object.keys(window.questionMap).length === 0) {
-              console.error("Question map is empty after processing questions.json.");
-               uiManager.displayMessage("警告: 未加载到任何问卷问题配置，文件上传解析可能不准确。", 'warning');
-         }
-
+        if (Object.keys(window.questionMap).length === 0) {
+          console.error("Question map is empty after processing questions.json.");
+          uiManager.displayMessage("警告: 未加载到任何问卷问题配置，文件上传解析可能不准确。", 'warning');
+        }
 
         setupEventListeners();
 
         if (initialSurveyId) {
-             surveyIdInput.value = initialSurveyId;
-             if (initialSurveyToken) {
-               uiManager.displayMessage("检测到问卷ID和密钥，正在自动分析...", 'info');
-               await new Promise(r => setTimeout(r, 1500));
-               analyze({ surveyId: initialSurveyId, token: initialSurveyToken }); 
-             } else {
-               uiManager.displayMessage(
-                 `问卷ID "${initialSurveyId}" 已自动填充，请点击按钮或输入密钥开始分析。`, 'info'
-               );
-             }
+          surveyIdInput.value = initialSurveyId;
+          if (initialSurveyToken) {
+            uiManager.displayMessage("检测到问卷ID和密钥，正在自动分析...", 'info');
+            await new Promise(r => setTimeout(r, 1500));
+            analyze({ surveyId: initialSurveyId, token: initialSurveyToken });
+          } else {
+            uiManager.displayMessage(
+              `问卷ID "${initialSurveyId}" 已自动填充，请点击按钮或输入密钥开始分析。`, 'info'
+            );
+          }
         } else {
-            uiManager.displayMessage("请上传问卷文件或输入问卷ID开始分析。", 'info');
+          uiManager.displayMessage("请上传问卷文件或输入问卷ID开始分析。", 'info');
         }
-
 
       } catch (e) {
         console.error("Initialization failed:", e);
@@ -575,8 +551,45 @@ document.addEventListener("DOMContentLoaded", () => {
 
     return { init };
   })();
+  
+  // ==================== 修改后的 privacyManager 模块 ====================
+  const privacyManager = (() => {
+    const requestConsent = () => {
+      mainAppContainer.classList.add('content-disabled');
+      privacyModalOverlay.style.display = 'flex';
+    };
 
-  app.init();
+    const grantConsent = () => {
+      // 不再写入 localStorage
+      privacyModalOverlay.style.display = 'none';
+      mainAppContainer.classList.remove('content-disabled');
+      app.init(); // 同意后，才初始化主应用
+    };
 
-  console.log("MBTI analysis script loaded.");
+    const denyConsent = () => {
+      // 不再写入 localStorage
+      privacyModalOverlay.style.display = 'none'; // 隐藏弹窗
+      mainAppContainer.classList.add('content-disabled'); // 保持内容禁用
+      // 显示更明确的提示信息
+      uiManager.displayMessage(
+        '您必须同意隐私协议才能使用此功能。请刷新页面以重新进行选择。',
+        'error'
+      );
+    };
+
+    agreeBtn.addEventListener('click', grantConsent);
+    disagreeBtn.addEventListener('click', denyConsent);
+
+    // 只需暴露这一个方法
+    return { requestConsent };
+  })();
+
+  const start = () => {
+    // 每次加载都直接请求用户同意，不再检查之前的状态
+    privacyManager.requestConsent();
+  };
+
+  start(); // 启动应用
+
+  console.log("MBTI analysis script loaded and initialized.");
 });

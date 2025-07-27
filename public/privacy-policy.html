@@ -1,0 +1,138 @@
+<!-- public/privacy-policy.html -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 人格分析功能隐私协议 - SurveyKit</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="mbti.css"> <!-- 假设 mbti.css 包含基础样式 -->
+    <style>
+        /* 为协议页面添加特定样式 */
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.8;
+        }
+        .policy-container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 30px 40px;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+        h1, h2 {
+            color: #1a2b48;
+            border-bottom: 2px solid #e0e5ec;
+            padding-bottom: 10px;
+            margin-top: 2em;
+        }
+        h1 {
+            text-align: center;
+            border-bottom: none;
+            margin-top: 0;
+            margin-bottom: 1.5em;
+            font-size: 2em;
+        }
+        p, li {
+            font-size: 1.05em;
+            color: #495057;
+        }
+        ul {
+            padding-left: 25px;
+            margin-bottom: 1.5em;
+        }
+        li {
+            margin-bottom: 0.8em;
+        }
+        strong, b {
+            color: #0d3d7c;
+        }
+        .highlight {
+            background-color: #e9f5ff;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+        .footer-actions {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 40px;
+        }
+        .action-link {
+            display: inline-block;
+            text-align: center;
+            padding: 10px 25px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: background-color 0.3s, transform 0.2s;
+            font-weight: 500;
+        }
+        .action-link:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+        }
+        .action-link.secondary {
+            background-color: #6c757d;
+        }
+        .action-link.secondary:hover {
+            background-color: #5a6268;
+        }
+    </style>
+</head>
+<body>
+
+<div class="policy-container">
+    <h1>SurveyKit AI 赋能隐私协议</h1>
+    <p><strong>最后更新日期：</strong>2025年5月21日</p>
+    <p>欢迎使用 <strong>SurveyKit</strong>！我们致力于在为您提供强大功能的同时，以最高标准保护您的隐私。本协议旨在清晰地向您说明，当您使用我们的“AI 人格分析”功能时，我们如何处理您的数据。</p>
+
+    <h2>一、我们处理哪些信息？</h2>
+    <p>为了生成您的专属人格报告，本功能需要处理您提交的问卷数据。具体包括：</p>
+    <ul>
+        <li><b>问卷答案数据：</b>您在问卷中提供的所有回答。这是 AI 模型进行分析的核心依据。</li>
+        <li><b>问卷结构信息：</b>当您通过文件上传时，文件内包含的问题文本将被一并用于构建更具可读性的分析请求。</li>
+    </ul>
+    <p><b>重要声明：</b>我们设计的系统<b>不会</b>主动收集或关联任何可直接识别您个人身份的信息（PII），例如姓名、邮箱或电话号码。我们强烈建议您<b>不要</b>在问卷答案中包含任何个人敏感信息。</p>
+
+    <h2>二、我们如何使用您的信息？</h2>
+    <p>您的问卷数据将严格用于以下目的：</p>
+    <ul>
+        <li><b>生成 AI 分析报告：</b>您的问卷答案将被格式化并安全地提交给 <span class="highlight">火山方舟大模型 (Volcano Ark)</span> 进行分析。AI 模型会根据这些答案，生成一份关于您的人格特质（如 MBTI 风格）的深度报告。</li>
+        <li><b>匿名化改进服务：</b>为了持续优化我们的 AI 模型和分析服务的质量，我们可能会使用您提供的<b>经过彻底匿名化和聚合处理后</b>的数据。这些数据将无法追溯到任何个人，仅用于宏观的统计与模型训练。</li>
+    </ul>
+
+    <h2>三、数据安全是我们的生命线</h2>
+    <p>正如我们项目所承诺的，SurveyKit 采取了多层安全措施来保护您的数据：</p>
+    <ul>
+        <li><b>临时处理与无痕化：</b>您的原始问卷数据仅在分析期间于服务器内存中进行临时处理，<b>我们绝不会将您的原始提交数据永久存储</b>在我们的服务器或数据库中。</li>
+        <li><b>加密传输：</b>您的数据与火山方舟 AI 模型之间的所有通信均采用行业标准的 TLS 加密，确保数据在传输过程中的机密性和完整性。</li>
+        <li><b>严格的访问控制：</b>我们的后端服务遵循严格的授权机制，确保数据处理流程的安全性。</li>
+    </ul>
+
+    <h2>四、您的权利与选择</h2>
+    <p>您始终是自己数据的主人：</p>
+    <ul>
+        <li><b>知情同意权：</b>在每次使用 AI 分析功能前，我们都会请求您的明确同意。您可以自由选择同意或不同意本协议。</li>
+        <li><b>选择的自由：</b>如果您选择不同意，您将无法使用 AI 人格分析功能，但这<b>完全不影响</b>您使用 SurveyKit 的多用户问卷系统、可视化编辑器等所有其他核心功能。</li>
+        <li><b>无数据残留：</b>由于我们不存储您的分析数据，因此不存在数据访问、更正或删除的需求。每一次分析都是一次性、无痕的会话。</li>
+    </ul>
+
+    <h2>五、协议的更新</h2>
+    <p>随着 SurveyKit 的发展，我们可能会适时修订本协议。当协议发生重大变更时，我们将在新版本生效前通过页面提示等方式通知您。我们鼓励您定期查阅，以便了解最新的隐私实践。</p>
+
+    <div class="footer-actions">
+        <a href="javascript:window.close();" class="action-link secondary">关闭页面</a>
+        <a href="/" class="action-link">返回首页</a>
+    </div>
+</div>
+
+</body>
+</html>
