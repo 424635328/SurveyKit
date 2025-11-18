@@ -60,7 +60,7 @@ jobs:
         
       - name: Set up Java (JDK) Environment
         if: steps.detect.outputs.is_java_maven == 'true'
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: 'temurin'
           java-version: '17'
