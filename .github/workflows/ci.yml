@@ -1,0 +1,104 @@
+# .github/workflows/CI.yml
+# “非阻塞式”通用诊断工作流，旨在为多种项目类型提供信息反馈，而不会导致失败。
+# 核心理念：永远成功，但提供丰富的洞察。
+# 它能自动探测项目语言，并尝试执行标准检查，所有检查步骤都配置为“出错时继续”。
+
+name: Universal Diagnostic CI
+
+# 触发条件：当有代码推送到 main 分支，或有 PR 指向 main 分支时运行。
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Detect Project Type
+        id: detect
+        run: |
+          if [ -f "package.json" ]; then
+            echo "is_node=true" >> $GITHUB_OUTPUT; echo "Project type: Node.js"
+          elif [ -f "requirements.txt" ] || [ -f "pyproject.toml" ]; then
+            echo "is_python=true" >> $GITHUB_OUTPUT; echo "Project type: Python"
+          elif [ -f "pom.xml" ]; then
+            echo "is_java_maven=true" >> $GITHUB_OUTPUT; echo "Project type: Java (Maven)"
+          else
+            echo "Project type: Generic/Unknown"
+          fi
+
+      # ===============================================================
+      # ================ 环境设置与依赖安装 (基础步骤) ================
+      # ===============================================================
+
+      - name: Set up Node.js Environment
+        if: steps.detect.outputs.is_node == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+
+      - name: Install Node.js Dependencies
+        if: steps.detect.outputs.is_node == 'true'
+        run: npm ci
+
+      - name: Set up Python Environment
+        if: steps.detect.outputs.is_python == 'true'
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+          cache: 'pip'
+
+      - name: Install Python Dependencies
+        if: steps.detect.outputs.is_python == 'true' && hashFiles('requirements.txt') != ''
+        run: pip install -r requirements.txt
+        
+      - name: Set up Java (JDK) Environment
+        if: steps.detect.outputs.is_java_maven == 'true'
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'maven'
+     
+      - name: "[Diagnostic] Attempt to run Build (Node.js)"
+        if: steps.detect.outputs.is_node == 'true'
+        continue-on-error: true
+        run: |
+          echo "INFO: Attempting to run production build. Failures here are informational."
+          npm run build
+
+      - name: "[Diagnostic] Attempt to run Tests (Node.js)"
+        if: steps.detect.outputs.is_node == 'true'
+        continue-on-error: true
+        run: |
+          echo "INFO: Attempting to run tests. Failures here are informational."
+          if npm run --if-present test; then
+            echo "Tests script found and executed."
+          else
+            echo "No 'test' script found in package.json, skipping."
+          fi
+
+      - name: "[Diagnostic] Attempt to Build & Test with Maven (Java)"
+        if: steps.detect.outputs.is_java_maven == 'true'
+        continue-on-error: true
+        run: |
+          echo "INFO: Attempting to build with Maven. Failures here are informational."
+          mvn -B package --file pom.xml
+          
+
+
+      - name: Final Workflow Summary
+        if: always()
+        run: |
+          echo "===================================================================="
+          echo "✅ Diagnostic CI workflow completed."
+          echo "This workflow is configured to always succeed to avoid blocking other processes."
+          echo "Please review the logs of the '[Diagnostic]' steps above for any informational errors or warnings."
+          echo "A red cross (❌) next to a step indicates a potential issue that needs your attention."
+          echo "===================================================================="

@@ -1,0 +1,68 @@
+# .github/workflows/create-sync-pr.yml
+# 终极优化版：创建从 test 到 main 的同步 PR
+# 修正点：
+# - 增加了获取当前日期的步骤，用于 PR 标题
+# - 修改了 checkout 逻辑，以适应 create-pull-request@v6 的新用法
+# - 移除了在新版本中已废弃的 'head' 和 'update' 参数
+
+name: 'Sync: Create or Update Release PR'
+
+on:
+  schedule:
+    # 北京时间每周一上午 9 点（UTC 时间凌晨 1 点）运行
+    - cron: '0 1 * * 1'
+  workflow_dispatch: # 允许手动触发
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  create_pull_request:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      # 👇 修复点 1 & 2: 不再检出默认分支，而是直接检出作为源分支的 'test'
+      - name: Checkout 'test' branch
+        uses: actions/checkout@v4
+        with:
+          ref: 'test'
+
+      # 👇 修复点 1: 新增步骤，获取当前日期
+      - name: Get current date
+        id: date
+        run: echo "date=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
+
+      - name: Create or Update Pull Request from test to main
+        id: cpr
+        uses: peter-evans/create-pull-request@v7
+        with:
+          # 无需手动指定 token
+          commit-message: "chore(release): sync test branch to main"
+          # 使用上一步生成的日期
+          title: "🚀 Release: Sync `test` to `main` for ${{ steps.date.outputs.date }}"
+          body: |
+            This is an automated weekly PR to sync changes from the `test` branch to `main`.
+            
+            Please review the changes carefully before merging. All automated checks must pass.
+            
+            * **Source Branch:** `test`
+            * **Target Branch:** `main`
+            
+            > **Note:** This PR will be updated automatically if new commits are pushed to the `test` branch.
+          # 👇 修复点 2: 'base' 参数仍然需要，用来指定目标分支
+          base: main
+          # 👇 修复点 2 & 3: 移除已废弃的 'head' 和 'update' 参数
+          labels: "release, automated-pr"
+          assignees: "424635328"
+          reviewers: "424635328"
+          draft: false
+
+      - name: Output PR Information
+        if: steps.cpr.outputs.pull-request-number
+        run: |
+          echo "Pull Request Number: ${{ steps.cpr.outputs.pull-request-number }}"
+          echo "Pull Request URL: ${{ steps.cpr.outputs.pull-request-url }}"

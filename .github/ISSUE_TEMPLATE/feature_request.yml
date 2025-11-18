@@ -1,0 +1,169 @@
+# .github/ISSUE_TEMPLATE/feature_request.yml
+
+name: 💡 功能请求 (Feature Request)
+description: 提出新功能建议、现有功能改进或用户体验优化。
+
+labels:
+  - feature-request
+  - enhancement
+  - needs-triage
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        感谢您花时间为我们的项目贡献宝贵的建议！
+
+        为了帮助我们更好地理解和实现您的想法，请尽可能详细地填写以下字段。一个清晰、结构化的功能请求将大大提高我们采纳和实现它的可能性。
+
+  - type: textarea
+    id: feature-summary
+    attributes:
+      label: 🌟 功能概述 (Feature Summary)
+      description: 请用一两句话概括您希望添加或改进的功能。
+      placeholder: 例如：在用户个人资料页面添加一个“导出所有数据”的按钮。
+      render: markdown
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem-statement
+    attributes:
+      label: 😫 当前痛点与问题 (Problem Statement)
+      description:
+        您建议的功能旨在解决什么具体问题？
+        当前的用户体验或工作流程存在哪些不足？
+        请描述这个问题的背景和影响。
+      placeholder: |
+        例如：
+        1.  **用户痛点：** 用户无法方便地备份或迁移其在平台上的所有个人数据，如设置、历史记录、文件等。
+        2.  **现有不足：** 目前没有任何导出功能，用户必须手动复制或截图，效率低下且易出错。
+        3.  **影响：** 这降低了用户的控制感和数据安全感，在用户希望迁移到其他服务或进行数据备份时造成很大不便。
+      render: markdown
+    validations:
+      required: true
+
+  - type: textarea
+    id: user-value-and-impact
+    attributes:
+      label: 🚀 用户价值与业务影响 (User Value & Business Impact)
+      description:
+        这个新功能将为用户带来什么好处？
+        它对业务、产品或社区会产生哪些积极影响（例如：提升用户满意度、提高效率、降低支持成本、增加安全性、促进社区活跃等）？
+      placeholder: |
+        例如：
+        1.  **用户价值：** 用户可以轻松、安全地备份其数据，增加对平台的信任；方便迁移数据，提高用户留存率。
+        2.  **业务影响：** 提升用户满意度和忠诚度，减少因数据迁移问题引起的用户投诉；可能作为一项增值服务（如果适用）。
+      render: markdown
+    validations:
+      required: true
+
+  - type: textarea
+    id: user-story-scenario
+    attributes:
+      label: 👥 用户故事/场景 (User Story / Scenario)
+      description:
+        请以“作为一名 [用户角色]，我想要 [完成某个动作]，以便 [达到某个目标/获得某个好处]”的格式描述。
+        可以提供一个或多个典型的使用场景。
+      placeholder: |
+        作为一名 [平台注册用户]，
+        我想要 [在个人资料页找到并点击“导出数据”按钮]，
+        以便 [安全地下载我所有账户数据的备份文件]。
+
+        **场景示例：**
+        用户A计划更换到一个新的服务，需要将她在本平台上的配置和数据迁移过去，她希望能够方便地导出所有相关信息。
+      render: markdown
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed-solution-overview
+    attributes:
+      label: 💡 建议的解决方案概述 (Proposed Solution Overview)
+      description:
+        您对如何实现这个功能有什么想法？
+        可以是从用户界面 (UI) / 用户体验 (UX) 到后端逻辑的高层级描述。
+      placeholder: |
+        例如：
+        1.  在用户个人资料页面的侧边栏或头部区域添加一个醒目的“导出数据”按钮。
+        2.  点击按钮后，弹出确认模态框，提示用户导出过程可能需要一些时间，并确认操作。
+        3.  后端触发数据导出任务，生成一个加密的（或压缩的）数据文件（如 JSON、CSV 或 ZIP）。
+        4.  文件准备完成后，通过下载链接提供给用户，并可以考虑通过邮件发送通知。
+      render: markdown
+    validations:
+      required: true
+
+  - type: textarea
+    id: technical-design-details
+    attributes:
+      label: ⚙️ 技术与设计细节 (可选) (Technical & Design Details - Optional)
+      description:
+        如果您有更具体的技术实现想法，如 API 设计、数据库结构、UI/UX 草图、关键算法、性能考虑、安全性要求等，请在此提供。
+        如果无法提供，请忽略此项。
+      placeholder: |
+        例如：
+        -   API 端点：`POST /api/v1/users/me/export`
+        -   数据格式：`application/json`
+        -   文件格式：`.tar.gz` 包含 `.json` 文件
+        -   考虑对大数据量导出进行分页或异步处理。
+        -   UI 设计：[链接到 Figma/Miro/Sketch 草图]
+      render: markdown
+
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: ✅ 验收标准 (Acceptance Criteria)
+      description:
+        当此功能被视为“完成”时，应该满足哪些具体的、可测试的标准？
+        这有助于开发和测试团队理解功能是否已正确实现。
+      placeholder: |
+        例如：
+        -   [ ] 用户可以在个人资料页面成功找到并点击“导出数据”按钮。
+        -   [ ] 点击按钮后，系统会生成一个包含用户所有有效数据的 JSON 文件。
+        -   [ ] 导出的 JSON 文件结构正确，并且所有关键数据字段都包含在内。
+        -   [ ] 用户可以成功下载该 JSON 文件。
+        -   [ ] 在导出过程中，界面给出相应的加载提示。
+        -   [ ] 导出功能在不同浏览器（Chrome, Firefox, Safari）上表现一致。
+      render: markdown
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives-considered
+    attributes:
+      label: ⚖️ 考虑过的替代方案 (Alternatives Considered - Optional)
+      description:
+        您是否考虑过其他实现此功能或解决该问题的方式？
+        如果有，请说明您为何认为当前建议的方案是更好的选择。
+      placeholder: |
+        例如：
+        -   **选项1：** 提供单个数据字段的导出（如仅导出用户设置）。
+        -   **原因：** 此方案无法满足用户导出全部数据的需求，且多此一举。
+        -   **选项2：** 提供API给用户自行开发导出工具。
+        -   **原因：** 对非技术用户门槛过高，不利于普遍使用。
+      render: markdown
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: ℹ️ 其他上下文信息 (Additional Context - Optional)
+      description:
+        任何其他有助于我们理解您建议的信息，例如：
+        -   与此功能相关的其他 Issue 或 PR 链接。
+        -   相关的项目文档链接。
+        -   相关的截图、录屏或设计稿。
+        -   使用该功能的特定用户群体。
+      render: markdown
+
+  - type: checkboxes
+    id: confirmation
+    attributes:
+      label: 📋 确认事项 (Confirmation)
+      description: 请在提交前确认您已完成以下操作：
+      options:
+        - label: 我已仔细阅读并理解了此功能请求的各个部分，并提供了尽可能详尽的信息。
+          required: true
+        - label: 我已在现有的 Issues 中搜索，没有发现重复的功能请求。
+          required: true
+        - label: 我已阅读并理解了项目的贡献指南 (CONTRIBUTING.md)。
+          required: false # 如果项目没有此文件，可设为 false，否则建议为 true
