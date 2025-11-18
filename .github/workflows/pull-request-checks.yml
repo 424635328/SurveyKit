@@ -50,7 +50,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: '20' # lint 通常用一个版本即可
           cache: 'npm'
@@ -75,7 +75,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
       - name: Setup Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
@@ -101,7 +101,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: '20' # 构建通常用目标生产环境的版本
           cache: 'npm'
