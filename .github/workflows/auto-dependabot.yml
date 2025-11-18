@@ -171,7 +171,7 @@ jobs:
         # 仅在所有检查通过时才需要获取更新类型。
         if: steps.observatory.outputs.observatory_passed == 'true'
         id: dependabot-metadata
-        uses: dependabot/fetch-metadata@v2.2.0
+        uses: dependabot/fetch-metadata@v2.4.0
         with:
           github-token: "${{ secrets.GITHUB_TOKEN }}"
 
