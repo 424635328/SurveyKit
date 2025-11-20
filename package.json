@@ -23,7 +23,7 @@
     "html2canvas": "^1.4.1",
     "jose": "^6.0.11",
     "jsonwebtoken": "^9.0.2",
-    "openai": "^5.8.2",
+    "openai": "^6.9.1",
     "resend": "^4.6.0",
     "tencentcloud-sdk-nodejs": "^4.1.67",
     "vercel": "^44.2.11",
