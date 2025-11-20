@@ -16,16 +16,16 @@
     "url": "git+https://github.com/424635328/SurveyKit.git"
   },
   "dependencies": {
-    "@upstash/ratelimit": "^2.0.5",
+    "@upstash/ratelimit": "^2.0.7",
     "@vercel/kv": "^3.0.0",
-    "bcryptjs": "^3.0.2",
+    "bcryptjs": "^3.0.3",
     "docx": "^9.5.1",
     "html2canvas": "^1.4.1",
-    "jose": "^6.0.11",
+    "jose": "^6.1.2",
     "jsonwebtoken": "^9.0.2",
     "openai": "^5.8.2",
     "resend": "^4.6.0",
-    "tencentcloud-sdk-nodejs": "^4.1.67",
+    "tencentcloud-sdk-nodejs": "^4.1.147",
     "vercel": "^44.2.11",
     "zod": "^3.25.71"
   },
@@ -38,11 +38,11 @@
   },
   "homepage": "https://github.com/424635328/SurveyKit#readme",
   "devDependencies": {
-    "@eslint/js": "^9.31.0",
-    "eslint": "^9.31.0",
+    "@eslint/js": "^9.39.1",
+    "eslint": "^9.39.1",
     "eslint-plugin-react": "^7.37.5",
-    "globals": "^16.3.0",
-    "tailwindcss": "^4.1.11",
+    "globals": "^16.5.0",
+    "tailwindcss": "^4.1.17",
     "vitest": "^3.2.4"
   }
 }
