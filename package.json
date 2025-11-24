@@ -27,7 +27,7 @@
     "resend": "^4.6.0",
     "tencentcloud-sdk-nodejs": "^4.1.67",
     "vercel": "^44.2.11",
-    "zod": "^3.25.71"
+    "zod": "^4.1.13"
   },
   "keywords": [],
   "author": "LemmOn YellOw",
