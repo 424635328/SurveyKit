@@ -26,7 +26,7 @@
     "openai": "^5.8.2",
     "resend": "^4.6.0",
     "tencentcloud-sdk-nodejs": "^4.1.67",
-    "vercel": "^44.2.11",
+    "vercel": "^48.11.1",
     "zod": "^3.25.71"
   },
   "keywords": [],
