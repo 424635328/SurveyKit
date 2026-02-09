@@ -38,7 +38,7 @@
   },
   "homepage": "https://github.com/424635328/SurveyKit#readme",
   "devDependencies": {
-    "@eslint/js": "^9.31.0",
+    "@eslint/js": "^10.0.1",
     "eslint": "^9.31.0",
     "eslint-plugin-react": "^7.37.5",
     "globals": "^16.3.0",
