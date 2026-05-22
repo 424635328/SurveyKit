@@ -1,10 +1,9 @@
 // /api/upload-survey.mjs
 import { kv } from '@vercel/kv';
 import { z } from 'zod';
-import jwt from 'jsonwebtoken';
+import { authenticate } from '../utils/auth.js';
 import { customAlphabet } from 'nanoid';
 
-const JWT_SECRET = process.env.JWT_SECRET;
 const nanoid = customAlphabet('0123456789abcdefghijklmnopqrstuvwxyz', 10);
 
 const SurveyUploadSchema = z.object({
@@ -12,18 +11,6 @@ const SurveyUploadSchema = z.object({
   // questions 现在是 JSON 字符串，在解析后验证
   questionsJSON: z.string().min(2, "问卷内容不能为空"),
 });
-
-function authenticate(req) {
-    const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith('Bearer ')) return null;
-    const token = authHeader.split(' ')[1];
-    try {
-        if (!JWT_SECRET) throw new Error('JWT_SECRET not set');
-        return jwt.verify(token, JWT_SECRET);
-    } catch (error) {
-        return null;
-    }
-}
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -50,7 +37,7 @@ export default async function handler(req, res) {
         if (!Array.isArray(questions) || questions.length === 0) {
             throw new Error("JSON 必须是一个非空数组。");
         }
-    } catch (e) {
+    } catch {
         return res.status(400).json({ message: '无效的JSON格式。' });
     }
     

@@ -78,3 +78,5 @@ coverage/
 # Custom Project Files (if they are personal)
 # -------------------------------------------------------------------
 Tips.txt
+.vercel
+.env*.local

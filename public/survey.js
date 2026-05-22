@@ -644,8 +644,12 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     },
   };
-    
-   
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
+        }
+
     const exportManager = {
         getAnsweredSurveyData: (forDisplay = false) => {
             const formData = new FormData(form);
@@ -812,12 +816,12 @@ document.addEventListener("DOMContentLoaded", () => {
             } else {
                 data.forEach(section => {
                     questionsHtml += `<div class="section-block">`;
-                    questionsHtml += `<h2 class="section-legend">${section.legend}</h2>`;
+                    questionsHtml += `<h2 class="section-legend">${escapeHtml(section.legend)}</h2>`;
                     section.questions.forEach(q => {
-                        const safeAnswer = q.answer.replace(/&/g, '&').replace(/</g, '<').replace(/>/g, '>');
+                        const safeAnswer = escapeHtml(String(q.answer ?? ''));
                         questionsHtml += `
                             <div class="question-item">
-                                <p class="question-text">${q.text}</p>
+                                <p class="question-text">${escapeHtml(String(q.text ?? ''))}</p>
                                 <div class="answer-block">
                                     <p class="answer-value">${safeAnswer}</p>
                                 </div>
@@ -828,6 +832,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 });
             }
 
+            const safeTitle = escapeHtml(surveyTitle);
             const htmlContent = `
                 <!DOCTYPE html>
                 <html lang="zh-CN">
@@ -837,7 +842,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     <link rel="preconnect" href="https://fonts.googleapis.com">
                     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
                     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
-                    <title>问卷草稿 - ${surveyTitle}</title>
+                    <title>问卷草稿 - ${safeTitle}</title>
                     <style>
                         * { box-sizing: border-box; margin: 0; padding: 0; }
                         body { font-family: "Noto Sans SC", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; background-color: #f8fafc; color: #1e293b; padding: 40px 20px; font-size: 16px; line-height: 1.6; }
@@ -856,7 +861,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 </head>
                 <body>
                     <div class="report-container">
-                        <h1>${surveyTitle}</h1>
+                        <h1>${safeTitle}</h1>
                         <div class="meta-info">
                             <p>导出时间: ${timestamp}</p>
                             ${emailValue ? `<p>关联邮箱: ${emailValue}</p>` : ''}

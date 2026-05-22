@@ -1,31 +1,7 @@
 // api/get-results.mjs
 import { kv } from '@vercel/kv';
-import jwt from 'jsonwebtoken';
-import { z } from 'zod'; // 导入 Zod 用于验证
-
-// JWT 密钥
-const JWT_SECRET = process.env.JWT_SECRET;
-
-/**
- * 身份验证辅助函数
- * @param {object} req - 请求对象
- * @returns {object | null} - 验证成功返回解码后的用户信息，否则返回 null
- */
-function authenticate(req) {
-    const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith('Bearer ')) return null;
-    const token = authHeader.split(' ')[1];
-    try {
-        if (!JWT_SECRET) {
-            console.error("JWT_SECRET is not set.");
-            throw new Error('JWT_SECRET not set');
-        }
-        return jwt.verify(token, JWT_SECRET);
-    } catch (error) {
-        console.error("Authentication error in get-results:", error.message);
-        return null;
-    }
-}
+import { authenticate } from '../utils/auth.js';
+import { z } from 'zod';
 
 // 定义 Zod Schema 来验证传入的查询参数
 const QuerySchema = z.object({

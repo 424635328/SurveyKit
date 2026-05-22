@@ -1,8 +1,15 @@
 // File: api/auth.mjs
 import { kv } from '@vercel/kv';
+import { Ratelimit } from '@upstash/ratelimit';
 import { z } from 'zod';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+
+const ratelimit = new Ratelimit({
+  redis: kv,
+  limiter: Ratelimit.slidingWindow(10, "10 m"),
+  prefix: "ratelimit:auth",
+});
 
 const UserSchema = z.object({
   username: z.string().min(3, '用户名至少需要3个字符').max(20, '用户名不能超过20个字符'),
@@ -15,8 +22,18 @@ const JWT_SECRET = process.env.JWT_SECRET;
 const SALT_ROUNDS = 10;
 
 async function handlePost(req, res) {
-    const body = req.body; 
-    
+    const body = req.body;
+    const ip = req.ip ?? req.headers['x-forwarded-for'] ?? '127.0.0.1';
+
+    try {
+      const { success } = await ratelimit.limit(ip);
+      if (!success) {
+        return res.status(429).json({ message: '请求过于频繁，请稍后再试。' });
+      }
+    } catch (e) {
+      console.error('Rate limiter error:', e);
+    }
+
     const validation = UserSchema.safeParse(body);
     if (!validation.success) {
       return res.status(400).json({ message: '输入无效', errors: validation.error.errors });

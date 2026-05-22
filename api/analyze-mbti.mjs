@@ -3,9 +3,9 @@ import { kv } from "@vercel/kv";
 import { Ratelimit } from "@upstash/ratelimit";
 import { z } from "zod";
 
-const ARK_API_KEY = process.env.ARK_API_KEY;
-const MODEL_ID = "doubao-seed-1-6-thinking-250615";
-const API_URL = "https://ark.cn-beijing.volces.com/api/v3/chat/completions";
+const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY;
+const MODEL_ID = "deepseek-chat";
+const API_URL = "https://api.deepseek.com/v1/chat/completions";
 
 const ratelimit = new Ratelimit({
   redis: kv,

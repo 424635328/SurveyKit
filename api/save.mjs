@@ -12,18 +12,15 @@ const ratelimit = new Ratelimit({
   prefix: "ratelimit:survey",
 });
 
-// [安全修复] 增强了Zod校验规则
-// 之前使用 .catchall(z.any()) 过于宽松，无法防止恶意或错误格式的数据。
-// 现在使用 .catchall(z.string(...)) 确保所有提交的答案都必须是字符串，
-// 并增加了最大长度限制，防止数据污染和潜在的注入风险。
 const SurveySchema = z
   .object({
     q_email: z.string().email({ message: "邮箱格式不正确" }).optional(),
   })
   .catchall(
     z
-      .string({ invalid_type_error: "答案必须是文本格式" })
-      .max(5000, { message: "答案内容过长" }) // 限制单个答案长度为5000字符
+      .union([z.string(), z.number(), z.boolean()])
+      .transform((v) => String(v))
+      .pipe(z.string().max(5000, { message: "答案内容过长" }))
       .optional()
   );
 

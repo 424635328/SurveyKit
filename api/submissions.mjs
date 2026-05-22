@@ -1,13 +1,17 @@
-// api/submissions.mjs (示例代码 - 您需要根据您的KV存储逻辑来实现)
+// api/submissions.mjs
 import { kv } from '@vercel/kv';
+import { Ratelimit } from '@upstash/ratelimit';
 import { z } from 'zod';
-// import jwt from 'jsonwebtoken'; // 提交问卷通常不需要用户认证
 
-// 定义提交数据的Zod Schema
+const ratelimit = new Ratelimit({
+  redis: kv,
+  limiter: Ratelimit.slidingWindow(10, "1 m"),
+  prefix: "ratelimit:submissions",
+});
+
 const SubmissionSchema = z.object({
   surveyId: z.string().startsWith('survey_', { message: "无效的问卷ID格式" }),
-  // answers 是一个对象，键是问题ID，值是用户回答
-  answers: z.record(z.string(), z.union([z.string(), z.number(), z.boolean()])), // 答案可以是多种类型
+  answers: z.record(z.string(), z.union([z.string(), z.number(), z.boolean()])),
 });
 
 export default async function handler(req, res) {
@@ -16,8 +20,15 @@ export default async function handler(req, res) {
     return res.status(405).json({ message: '方法不支持' });
   }
 
-  // 问卷提交通常不需要身份验证，因为任何人都可以填写问卷。
-  // 如果需要，可以在此处添加认证逻辑。
+  try {
+    const ip = req.ip ?? req.headers['x-forwarded-for'] ?? '127.0.0.1';
+    const { success } = await ratelimit.limit(ip);
+    if (!success) {
+      return res.status(429).json({ message: '请求过于频繁，请稍后再试。' });
+    }
+  } catch (e) {
+    console.error('Rate limiter error:', e);
+  }
 
   try {
     const body = req.body;
@@ -29,32 +40,24 @@ export default async function handler(req, res) {
     }
 
     const { surveyId, answers } = validation.data;
-    const submissionId = `sub_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`; // 简单的唯一ID
+    const submissionId = `sub_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
 
     const submissionData = {
       id: submissionId,
       surveyId: surveyId,
       submittedAt: new Date().toISOString(),
       answers: answers,
-      // 可以添加 IP 地址、User-Agent 等信息用于防刷或统计
     };
 
     const pipeline = kv.pipeline();
-    // 将提交数据保存到 KV，例如键为 `submission:${submissionId}`
     pipeline.set(`submission:${submissionId}`, submissionData);
-    // 同时，将这个提交ID添加到对应问卷的提交列表Set中
-    // 这样在查看问卷结果时，可以方便地获取所有提交
     pipeline.sadd(`survey:${surveyId}:submissions`, submissionId);
 
-    // 更新问卷的提交计数 (假设问卷数据中有一个 submissionCount 字段)
-    // 首先获取当前问卷数据
     const survey = await kv.get(surveyId);
     if (survey) {
-        // Increment submissionCount (ensure it's a number)
         survey.submissionCount = (survey.submissionCount || 0) + 1;
-        pipeline.set(surveyId, survey); // Update the survey object in KV
+        pipeline.set(surveyId, survey);
     } else {
-        // This scenario means a submission was made for a non-existent survey, which is odd.
         console.warn(`Submission received for non-existent survey ID: ${surveyId}`);
     }
 

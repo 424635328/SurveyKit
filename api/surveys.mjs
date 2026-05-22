@@ -1,25 +1,6 @@
 // File: api/surveys.mjs
 import { kv } from '@vercel/kv';
-import jwt from 'jsonwebtoken';
-
-const JWT_SECRET = process.env.JWT_SECRET;
-
-function authenticate(req) {
-    const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-        return null;
-    }
-    const token = authHeader.split(' ')[1];
-    try {
-        if (!JWT_SECRET) {
-            throw new Error('JWT_SECRET is not set on the server.');
-        }
-        return jwt.verify(token, JWT_SECRET);
-    } catch (error) {
-        console.error("Token verification failed:", error.message);
-        return null;
-    }
-}
+import { authenticate } from '../utils/auth.js';
 
 async function getSurveys(username) {
     const surveyIds = await kv.smembers(`user:${username}:surveys`);

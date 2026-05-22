@@ -52,7 +52,15 @@ export default async function handler(request, response) {
     const isAdmin = adminToken && userToken === adminToken;
 
     if (isOwner || isAdmin) {
-      return response.status(200).json(storedRecord.data);
+      let data = storedRecord.data;
+      if (typeof data === 'string') {
+        try {
+          data = JSON.parse(data);
+        } catch {
+          return response.status(500).json({ message: "问卷数据格式错误，无法解析。" });
+        }
+      }
+      return response.status(200).json(data);
     }
 
     if (!userToken) {
