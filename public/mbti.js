@@ -1,5 +1,12 @@
 /* global XLSX */
 
+// Safe localStorage wrapper (handles Tracking Prevention blocks)
+const safeStorage = {
+  get(key) { try { return localStorage.getItem(key); } catch { return null; } },
+  set(key, val) { try { localStorage.setItem(key, val); } catch { /* blocked */ } },
+  remove(key) { try { localStorage.removeItem(key); } catch { /* blocked */ } },
+};
+
 document.addEventListener("DOMContentLoaded", () => {
   const mainAppContainer = document.getElementById("main-app-container");
   const privacyModalOverlay = document.getElementById("privacy-modal-overlay");
@@ -29,7 +36,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const apiKeyHint = document.getElementById('apiKeyHint');
 
   // Check if a key was previously saved (do NOT auto-populate the input)
-  const SAVED_KEY = localStorage.getItem('deepseek_api_key');
+  const SAVED_KEY = safeStorage.get('deepseek_api_key');
   if (SAVED_KEY && apiKeyHint) {
     apiKeyHint.innerHTML = '检测到已保存的 Key — <button id="loadSavedKeyBtn" style="background:none;border:none;color:#6366f1;cursor:pointer;text-decoration:underline;font-size:inherit;padding:0;">点击加载</button> 或 <button id="clearSavedKeyBtn" style="background:none;border:none;color:#ef4444;cursor:pointer;text-decoration:underline;font-size:inherit;padding:0;">清除</button>';
     apiKeyHint.style.color = '#64748b';
@@ -43,7 +50,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Clear saved key on click
     document.getElementById('clearSavedKeyBtn').addEventListener('click', () => {
-      localStorage.removeItem('deepseek_api_key');
+      safeStorage.remove('deepseek_api_key');
       apiKeyInput.value = '';
       apiKeyHint.textContent = '已清除保存的 Key。';
       apiKeyHint.style.color = '#f59e0b';
@@ -64,7 +71,7 @@ document.addEventListener("DOMContentLoaded", () => {
         apiKeyHint.style.color = '#ef4444';
         return;
       }
-      localStorage.setItem('deepseek_api_key', key);
+      safeStorage.set('deepseek_api_key', key);
       apiKeyHint.textContent = 'Key 已安全保存 ✓（仅存储于本设备）';
       apiKeyHint.style.color = '#10b981';
     });
@@ -459,7 +466,7 @@ document.addEventListener("DOMContentLoaded", () => {
       currentLoadingInterval = setInterval(updateLoadingText, 5000);
 
       try {
-        const response = await fetch("/api/analyze-mbti", {
+        const response = await fetch("/api/analyze-mbti.mjs", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),

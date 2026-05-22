@@ -245,7 +245,7 @@ document.addEventListener("DOMContentLoaded", () => {
       try {
         const [questionsRes, surveyRes] = await Promise.all([
           fetch("./questions.json"),
-          fetch(`./api/get-survey?id=${surveyId}${surveyToken ? `&token=${surveyToken}` : ''}`),
+          fetch(`./api/get-survey.mjs?id=${surveyId}${surveyToken ? `&token=${surveyToken}` : ''}`),
         ]);
         if (!questionsRes.ok) throw new Error("无法加载问卷结构 (questions.json)。");
         sections = await questionsRes.json();

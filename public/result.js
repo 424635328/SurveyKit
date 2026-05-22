@@ -235,7 +235,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     fetchedData = JSON.parse(storedData);
                     sessionStorage.removeItem('lastSurveyData');
                 } else {
-                    const response = await fetch(`/api/get-survey?id=${surveyId}${surveyToken ? `&token=${surveyToken}` : ''}`);
+                    const response = await fetch(`/api/get-survey.mjs?id=${surveyId}${surveyToken ? `&token=${surveyToken}` : ''}`);
                     if (!response.ok) throw new Error("无法获取刚提交的数据");
                     fetchedData = await response.json();
                 }

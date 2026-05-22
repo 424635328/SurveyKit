@@ -221,8 +221,8 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const [questionsRes, survey1Res, survey2Res] = await Promise.all([
                 fetch('/questions.json'),
-                fetch(`/api/get-survey?id=${id1}${token1 ? `&token=${token1}` : ''}`),
-                fetch(`/api/get-survey?id=${id2}${token2 ? `&token=${token2}` : ''}`)
+                fetch(`/api/get-survey.mjs?id=${id1}${token1 ? `&token=${token1}` : ''}`),
+                fetch(`/api/get-survey.mjs?id=${id2}${token2 ? `&token=${token2}` : ''}`)
             ]);
 
             if (!questionsRes.ok) throw new Error('无法加载问卷结构文件 (questions.json)。');
