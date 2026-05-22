@@ -109,12 +109,35 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    function spawnConfetti() {
+        const shapes = ['■','●','▲','★','♦'];
+        const colors = ['#6366f1','#8b5cf6','#ec4899','#f59e0b','#10b981','#f472b6'];
+        for (let i = 0; i < 60; i++) {
+          setTimeout(() => {
+            const p = document.createElement('div');
+            Object.assign(p.style, {
+              position:'fixed', zIndex:'9999', pointerEvents:'none',
+              fontSize: (12 + Math.random()*16) + 'px',
+              color: colors[Math.floor(Math.random()*colors.length)],
+              left: Math.random()*100+'%', top: '-5%',
+              transition: 'all '+(1.5+Math.random()*2)+'s ease-out',
+              transform: 'rotate('+Math.random()*720+'deg)',
+            });
+            p.textContent = shapes[Math.floor(Math.random()*shapes.length)];
+            document.body.appendChild(p);
+            requestAnimationFrame(() => { p.style.top='105%'; p.style.opacity='0'; });
+            setTimeout(() => p.remove(), 3500);
+          }, i * 30);
+        }
+    }
+
     function renderPage() {
         if (status === 'success') {
             statusIcon.innerHTML = `<i class="fa fa-check-circle text-green-400"></i>`;
             statusTitle.textContent = '提交成功！';
             statusMessage.textContent = '感谢您的参与，您的回答已成功记录。';
-            
+            setTimeout(spawnConfetti, 400);
+
             if (surveyId && submissionId) {
                 aiAnalyzeBtn.classList.remove('hidden');
                 exportButtonsContainer.classList.remove('hidden');

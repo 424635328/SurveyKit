@@ -1,0 +1,6 @@
+# 安装工具（只需运行一次）
+npm install -g netlify-cli
+# 登录授权（只需运行一次）
+netlify login
+# 部署打包后的目录（将 dist 替换为你本地打包生成的文件夹名称）
+netlify deploy --prod --dir=dist

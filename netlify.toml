@@ -1,0 +1,12 @@
+[build]
+  command = "echo 'Netlify static site — serverless functions in netlify/functions/'"
+  publish = "public"
+  functions = "netlify/functions"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200

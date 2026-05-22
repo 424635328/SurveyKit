@@ -3,7 +3,6 @@ import { kv } from "@vercel/kv";
 import { Ratelimit } from "@upstash/ratelimit";
 import { z } from "zod";
 
-const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY;
 const MODEL_ID = "deepseek-chat";
 const API_URL = "https://api.deepseek.com/v1/chat/completions";
 
@@ -18,6 +17,7 @@ const AnalyzeSchema = z.object({
     surveyId: z.string().startsWith('survey_', { message: "无效的问卷ID格式" }).optional(),
     answersText: z.string().optional(),
     token: z.string().optional(),
+    apiKey: z.string().min(1, { message: "请提供你的 DeepSeek API Key" }),
 }).refine(data => data.submissionId || data.surveyId || data.answersText, {
     message: "请求体中必须包含 'submissionId'、'surveyId' 或 'answersText' 中的任意一个。",
 });
@@ -25,11 +25,6 @@ const AnalyzeSchema = z.object({
 export default async function handler(request, response) {
   if (request.method !== "POST") {
     return response.status(405).json({ message: "仅允许 POST 请求" });
-  }
-
-  if (!ARK_API_KEY) {
-    console.error("Server Error: ARK_API_KEY is not configured.");
-    return response.status(500).json({ message: "服务器端API密钥未配置。" });
   }
 
   try {
@@ -56,7 +51,7 @@ export default async function handler(request, response) {
     return response.status(400).json({ message: `请求参数不合法: ${firstError.message}` });
   }
 
-  const { submissionId, surveyId, answersText } = validationResult.data;
+  const { submissionId, surveyId, answersText, apiKey: userApiKey } = validationResult.data;
   let finalAnswersText = "";
 
   try {
@@ -167,7 +162,7 @@ export default async function handler(request, response) {
     const apiResponse = await fetch(API_URL, {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${ARK_API_KEY}`,
+        Authorization: `Bearer ${userApiKey}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify(payload),
@@ -175,8 +170,8 @@ export default async function handler(request, response) {
 
     if (!apiResponse.ok) {
       const errorBody = await apiResponse.json();
-      console.error("火山方舟API返回错误:", apiResponse.status, errorBody);
       const errorMessage = errorBody.error?.message || `AI服务请求失败，状态码: ${apiResponse.status}`;
+      console.error("DeepSeek API返回错误:", apiResponse.status, errorMessage);
       const httpError = new Error(`AI服务请求失败 [状态码: ${apiResponse.status}]: ${errorMessage}`);
       httpError.status = apiResponse.status;
       throw httpError;

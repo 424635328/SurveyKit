@@ -24,6 +24,69 @@ document.addEventListener("DOMContentLoaded", () => {
   const mbtiTaglineEl = document.getElementById("mbti-tagline");
   const mbtiReportEl = document.getElementById("mbti-analysis-report");
 
+  const apiKeyInput = document.getElementById('apiKeyInput');
+  const saveApiKeyBtn = document.getElementById('saveApiKeyBtn');
+  const apiKeyHint = document.getElementById('apiKeyHint');
+
+  // Check if a key was previously saved (do NOT auto-populate the input)
+  const SAVED_KEY = localStorage.getItem('deepseek_api_key');
+  if (SAVED_KEY && apiKeyHint) {
+    apiKeyHint.innerHTML = '检测到已保存的 Key — <button id="loadSavedKeyBtn" style="background:none;border:none;color:#6366f1;cursor:pointer;text-decoration:underline;font-size:inherit;padding:0;">点击加载</button> 或 <button id="clearSavedKeyBtn" style="background:none;border:none;color:#ef4444;cursor:pointer;text-decoration:underline;font-size:inherit;padding:0;">清除</button>';
+    apiKeyHint.style.color = '#64748b';
+
+    // Load saved key on click
+    document.getElementById('loadSavedKeyBtn').addEventListener('click', () => {
+      apiKeyInput.value = SAVED_KEY;
+      apiKeyHint.textContent = 'Key 已加载，点击分析按钮即可使用。';
+      apiKeyHint.style.color = '#10b981';
+    });
+
+    // Clear saved key on click
+    document.getElementById('clearSavedKeyBtn').addEventListener('click', () => {
+      localStorage.removeItem('deepseek_api_key');
+      apiKeyInput.value = '';
+      apiKeyHint.textContent = '已清除保存的 Key。';
+      apiKeyHint.style.color = '#f59e0b';
+      // Remove buttons after 2 seconds
+      setTimeout(() => {
+        apiKeyHint.textContent = '你的 Key 仅保存在本地浏览器，不会上传至服务器存储，也不会出现在日志中。';
+        apiKeyHint.style.color = '#64748b';
+      }, 2000);
+    });
+  }
+
+  // Save button — explicit user action required
+  if (saveApiKeyBtn && apiKeyInput && apiKeyHint) {
+    saveApiKeyBtn.addEventListener('click', () => {
+      const key = apiKeyInput.value.trim();
+      if (!key || !key.startsWith('sk-')) {
+        apiKeyHint.textContent = 'Key 格式无效，必须以 sk- 开头。';
+        apiKeyHint.style.color = '#ef4444';
+        return;
+      }
+      localStorage.setItem('deepseek_api_key', key);
+      apiKeyHint.textContent = 'Key 已安全保存 ✓（仅存储于本设备）';
+      apiKeyHint.style.color = '#10b981';
+    });
+  }
+
+  // Prevent copy/cut/paste-expose on the key field
+  if (apiKeyInput) {
+    apiKeyInput.addEventListener('copy', (e) => e.preventDefault());
+    apiKeyInput.addEventListener('cut', (e) => e.preventDefault());
+    // Allow paste for convenience but clear after analysis
+  }
+
+  function getAndValidateApiKey() {
+    const key = apiKeyInput ? apiKeyInput.value.trim() : '';
+    if (!key || !key.startsWith('sk-')) {
+      apiKeyHint.textContent = '请输入有效的 DeepSeek API Key（以 sk- 开头），然后点击"确认保存"。';
+      apiKeyHint.style.color = '#ef4444';
+      return null;
+    }
+    return key;
+  }
+
   const criticalElements = [
     mainAppContainer, privacyModalOverlay, agreeBtn, disagreeBtn,
     dropZone, uploadBtn, fileUploadInput, surveyIdInput, analyzeByIdBtn,
@@ -97,7 +160,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
       setLoading(false);
 
-      mbtiTypeEl.textContent = result.mbti_type || "N/A";
+      // Letter-by-letter typewriter reveal for MBTI type
+      const mbtiLetters = (result.mbti_type || "N/A").split('');
+      mbtiTypeEl.textContent = '';
+      mbtiTypeEl.style.letterSpacing = '0.3em';
+      for (let i = 0; i < mbtiLetters.length; i++) {
+        setTimeout(() => {
+          mbtiTypeEl.textContent += mbtiLetters[i];
+          if (i === mbtiLetters.length - 1) {
+            mbtiTypeEl.style.transition = 'letter-spacing 0.5s ease';
+            mbtiTypeEl.style.letterSpacing = '0.1em';
+          }
+        }, 300 + i * 400);
+      }
       mbtiTypeNameEl.textContent = result.type_name || "未知类型";
       mbtiTaglineEl.textContent = result.tagline || "一份独特的分析报告。";
 
@@ -356,6 +431,13 @@ document.addEventListener("DOMContentLoaded", () => {
     let currentLoadingInterval = null;
 
     const analyze = async (payload) => {
+      const apiKey = getAndValidateApiKey();
+      if (!apiKey) {
+        uiManager.displayMessage('请先输入你的 DeepSeek API Key。', 'error');
+        return;
+      }
+      payload.apiKey = apiKey;
+
       uiManager.setLoading(true);
       if (currentLoadingInterval) clearInterval(currentLoadingInterval);
 
@@ -531,12 +613,12 @@ document.addEventListener("DOMContentLoaded", () => {
         if (initialSurveyId) {
           surveyIdInput.value = initialSurveyId;
           if (initialSurveyToken) {
-            uiManager.displayMessage("检测到问卷ID和密钥，正在自动分析...", 'info');
-            await new Promise(r => setTimeout(r, 1500));
-            analyze({ surveyId: initialSurveyId, token: initialSurveyToken });
+            uiManager.displayMessage(
+              `问卷ID已自动填充，请输入你的 DeepSeek API Key 后点击分析按钮。`, 'info'
+            );
           } else {
             uiManager.displayMessage(
-              `问卷ID "${initialSurveyId}" 已自动填充，请点击按钮或输入密钥开始分析。`, 'info'
+              `问卷ID "${initialSurveyId}" 已自动填充，请输入 API Key 后点击分析按钮。`, 'info'
             );
           }
         } else {

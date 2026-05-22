@@ -161,6 +161,26 @@ document.addEventListener("DOMContentLoaded", () => {
           resultMessage.classList.add("message-success");
           icon = "fa-check-circle";
           canCopy = true;
+          // Emoji celebration
+          const emojis = ['🎉','✨','🎊','🌟','💯'];
+          for (let i = 0; i < 8; i++) {
+            setTimeout(() => {
+              const emoji = document.createElement('span');
+              emoji.textContent = emojis[i % emojis.length];
+              Object.assign(emoji.style, {
+                position:'fixed', zIndex:'9999', pointerEvents:'none',
+                fontSize:'28px', left: (20 + Math.random()*60) + '%',
+                top: (30 + Math.random()*30) + '%',
+                transition: 'all 2s ease-out', opacity: '1',
+              });
+              document.body.appendChild(emoji);
+              requestAnimationFrame(() => {
+                emoji.style.transform = 'translateY(-120px) scale(1.5)';
+                emoji.style.opacity = '0';
+              });
+              setTimeout(() => emoji.remove(), 2200);
+            }, i * 100);
+          }
           break;
         case "warning":
           resultMessage.classList.add("message-warning");

@@ -80,3 +80,6 @@ coverage/
 Tips.txt
 .vercel
 .env*.local
+
+# Local Netlify folder
+.netlify

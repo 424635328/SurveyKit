@@ -366,4 +366,39 @@ document.addEventListener("DOMContentLoaded", () => {
   initTypewriterEffect();
   initPageAnimations();
   initSearch();
+
+  // Konami code easter egg
+  (function initKonami() {
+    const sequence = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+    let pos = 0;
+    document.addEventListener('keydown', (e) => {
+      if (e.key === sequence[pos]) {
+        pos++;
+        if (pos === sequence.length) {
+          pos = 0;
+          const count = 80;
+          const colors = ['#6366f1', '#8b5cf6', '#a78bfa', '#c4b5fd', '#ec4899', '#f472b6'];
+          for (let i = 0; i < count; i++) {
+            const particle = document.createElement('div');
+            Object.assign(particle.style, {
+              position: 'fixed', zIndex: '9999', pointerEvents: 'none',
+              width: '10px', height: '10px', borderRadius: '50%',
+              background: colors[Math.floor(Math.random() * colors.length)],
+              left: Math.random() * 100 + '%', top: '-5%',
+              transition: `all ${1.5 + Math.random() * 2}s cubic-bezier(0.25, 0.46, 0.45, 0.94)`,
+            });
+            document.body.appendChild(particle);
+            requestAnimationFrame(() => {
+              particle.style.top = '105%';
+              particle.style.left = `${parseFloat(particle.style.left) + (Math.random() - 0.5) * 30}%`;
+              particle.style.opacity = '0';
+            });
+            setTimeout(() => particle.remove(), 3500);
+          }
+        }
+      } else {
+        pos = 0;
+      }
+    });
+  })();
 });

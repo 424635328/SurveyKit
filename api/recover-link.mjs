@@ -232,9 +232,6 @@ ${recoveryLink}
  * @returns {Promise<{success: boolean, errorCodes: string[]}>} - 返回包含成功状态和错误码的对象
  */
 async function verifyTurnstile(token, ip) {
-    const secretKeyPreview = `${TURNSTILE_SECRET_KEY?.substring(0, 4)}...${TURNSTILE_SECRET_KEY?.slice(-4)}`;
-    console.log(`[DEBUG] verifyTurnstile: Verifying with secret key preview: ${secretKeyPreview}`);
-    
     const verificationUrl = 'https://challenges.cloudflare.com/turnstile/v0/siteverify';
     
     const formData = new FormData();
@@ -290,9 +287,6 @@ export default async function handler(request, response) {
 
   if (!RESEND_API_KEY || !SENDER_EMAIL || !TURNSTILE_SECRET_KEY) {
     console.error("[FATAL] Critical environment variables are not configured.");
-    console.error(`[DEBUG] RESEND_API_KEY exists: ${!!RESEND_API_KEY}`);
-    console.error(`[DEBUG] SENDER_EMAIL exists: ${!!SENDER_EMAIL}`);
-    console.error(`[DEBUG] TURNSTILE_SECRET_KEY exists: ${!!TURNSTILE_SECRET_KEY}`);
     return response.status(500).json({ message: "服务未正确配置。" });
   }
 

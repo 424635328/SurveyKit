@@ -1,12 +1,34 @@
 // public/hub/hub.js
 document.addEventListener('DOMContentLoaded', () => {
 
+  function initThoughtOfDay() {
+    const el = document.getElementById('thought-of-day');
+    if (!el) return;
+    const quotes = [
+      { text: '提出好问题，比给出好答案更重要。', author: '法郎士' },
+      { text: '认识你自己。', author: '苏格拉底' },
+      { text: '我们听到的一切都是一个观点，不是事实。我们看到的一切都是一个视角，不是真相。', author: '马可·奥勒留' },
+      { text: '思考是灵魂与自己的对话。', author: '柏拉图' },
+      { text: '生命的全部意义在于探索未知。', author: '左拉' },
+      { text: '答案就在你心中，问题只是帮你找到它。', author: '鲁米' },
+      { text: '好奇心是学习永恒的火焰。', author: '爱默生' },
+      { text: '有时候，问题比答案本身更复杂，但这正是乐趣所在。', author: '道格拉斯·亚当斯' },
+      { text: '每一个人都是一个月亮，都有一个不愿示人的黑暗面。', author: '马克·吐温' },
+      { text: '你最大的敌人，往往是你最不了解的自己。', author: '荣格' },
+    ];
+    const idx = new Date().getDate() % quotes.length;
+    const q = quotes[idx];
+    el.innerHTML = `<p class="text-sm text-indigo-400 italic">"${q.text}"</p><p class="text-xs text-slate-400 mt-1">— ${q.author}</p>`;
+    requestAnimationFrame(() => { el.classList.remove('opacity-0'); });
+  }
+
   function initApp() {
     document.body.classList.add('aurora-background');
     initMobileMenu();
     initHeaderScrollEffect();
     initScrollAnimations();
     initScrollToTopButton();
+    initThoughtOfDay();
     updateFooterYear();
   }
 

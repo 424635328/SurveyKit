@@ -151,7 +151,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         passwordStrengthBar.style.width = `${barWidth}%`;
-        passwordStrengthText.textContent = `强度：${strength}`;
+        const emojis = { '弱': '😰', '中': '😐', '强': '🛡️' };
+        const emoji = emojis[strength] || '';
+        passwordStrengthText.textContent = `${emoji} 强度：${strength}`;
         
         if (strength === '强') {
             passwordSuggestionsText.textContent = '密码强度极佳！';

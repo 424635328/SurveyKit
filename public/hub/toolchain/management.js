@@ -87,7 +87,13 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!surveys || surveys.length === 0) {
         noSurveysMessage.classList.remove("hidden");
         listContainer.innerHTML = "";
-        listContainer.appendChild(noSurveysMessage);
+        const emptyDiv = document.createElement('div');
+        emptyDiv.className = 'text-center py-12';
+        emptyDiv.innerHTML = `<div style="font-size:60px;animation:bounce-empty 1.5s ease-in-out infinite;">📋</div><p class="text-slate-400 mt-4">还没有问卷，快来创建第一个吧！</p>`;
+        listContainer.appendChild(emptyDiv);
+        const style = document.createElement('style');
+        style.textContent = '@keyframes bounce-empty{0%,100%{transform:translateY(0)}50%{transform:translateY(-15px)}}';
+        document.head.appendChild(style);
         return;
       }
       noSurveysMessage.classList.add("hidden");
