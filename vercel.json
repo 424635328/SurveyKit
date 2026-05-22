@@ -1,0 +1,29 @@
+{
+  "rewrites": [
+    { "source": "/mbti", "destination": "/mbti.html" },
+    { "source": "/survey", "destination": "/survey.html" },
+    { "source": "/result", "destination": "/result.html" },
+    { "source": "/compare", "destination": "/compare.html" },
+    { "source": "/viewer", "destination": "/viewer.html" },
+    { "source": "/recover", "destination": "/recover.html" },
+    { "source": "/search", "destination": "/search.html" },
+    { "source": "/privacy-policy", "destination": "/privacy-policy.html" },
+    { "source": "/hub", "destination": "/hub/hub.html" },
+    { "source": "/hub/login", "destination": "/hub/login.html" },
+    { "source": "/hub/answer", "destination": "/hub/answer/answer.html" },
+    { "source": "/hub/answer/submission-result", "destination": "/hub/answer/submission-result.html" },
+    { "source": "/hub/custom-questions", "destination": "/hub/custom-questions/custom-questions.html" },
+    { "source": "/hub/toolchain/management", "destination": "/hub/toolchain/management.html" },
+    { "source": "/hub/toolchain/results", "destination": "/hub/toolchain/results.html" },
+    { "source": "/hub/toolchain/share", "destination": "/hub/toolchain/share.html" },
+    { "source": "/hub/toolchain/customizer", "destination": "/hub/toolchain/customizer.html" },
+    { "source": "/hub/toolchain/validator", "destination": "/hub/toolchain/validator.html" },
+    { "source": "/contact", "destination": "/contact/contact.html" },
+    { "source": "/docs/help", "destination": "/docs/help.html" },
+    { "source": "/docs/roadmap", "destination": "/docs/roadmap.html" },
+    { "source": "/docs/security", "destination": "/docs/security.html" },
+    { "source": "/status", "destination": "/status/status.html" },
+    { "source": "/status/:path", "destination": "/status/:path.html" },
+    { "source": "/others", "destination": "/others/index.html" }
+  ]
+}

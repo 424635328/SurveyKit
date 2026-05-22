@@ -3,11 +3,7 @@ name: Build and Deploy to Netlify
 on:
   # 每周一凌晨 3:00 UTC 自动发布
   schedule:
-    - cron: '0 3 * * 1'
-  # push 到 main 分支时也触发部署
-  push:
-    branches:
-      - main
+    - cron: '0 0 1 * *' 
   # 允许手动触发
   workflow_dispatch:
 

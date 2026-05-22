@@ -1,111 +1,114 @@
-<!-- file: public/result.html -->
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>提交结果 - SurveyKit</title>
+    <title>你的灵魂画像 - SurveyKit</title>
     <link rel="icon" href="favicon.ico" type="image/x-icon">
-    <link rel="stylesheet" href="result.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="result.css">
 </head>
 <body>
-
-    <div class="background-container">
-        <div class="aurora"></div>
+    <div class="bg-layer">
+        <div class="aurora aurora-1"></div>
+        <div class="aurora aurora-2"></div>
+        <div class="aurora aurora-3"></div>
         <canvas id="star-canvas"></canvas>
     </div>
 
-    <header class="navbar">
-        <a href="index.html" class="navbar-brand">
-            <img src="favicon.ico" alt="SurveyKit Logo" class="logo-glow">
-            <span class="text-glow">SurveyKit</span>
+    <header class="nav">
+        <a href="index.html" class="nav-brand">
+            <svg class="nav-logo" viewBox="0 0 32 32"><circle cx="16" cy="16" r="14" fill="none" stroke="currentColor" stroke-width="2"/><path d="M10 16l4 4 8-8" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
+            <span>SurveyKit</span>
         </a>
-        <div id="status-display" class="status-display">
-            <p class="loading">
-                <i class="fas fa-spinner fa-spin"></i> 正在校验你的时空坐标...
-            </p>
+        <div id="status-bar" class="status-bar">
+            <i class="fas fa-spinner fa-spin"></i>
+            <span>正在解析你的灵魂信号...</span>
         </div>
     </header>
 
-    <main class="main-content">
-        <div class="result-container">
+    <main class="main">
+        <!-- HERO: SVG Character + Personality Tag -->
+        <section id="hero-section" class="hero reveal" style="display:none;">
+            <div class="hero-glow"></div>
+            <div id="character-stage" class="character-stage">
+                <svg id="character-svg" viewBox="0 0 300 320" width="280" height="300"></svg>
+                <div class="character-shadow"></div>
+            </div>
+            <div class="hero-text">
+                <div class="personality-badge" id="personality-badge"></div>
+                <h1 class="personality-title" id="personality-title"></h1>
+                <p class="personality-subtitle" id="personality-subtitle"></p>
+                <div class="personality-traits" id="personality-traits"></div>
+            </div>
+        </section>
 
-            <div id="personality-card" class="section-card" style="display: none;">
-                <div class="card-header">
-                    <span class="card-icon text-glow"><i class="fa-solid fa-user-astronaut"></i></span>
-                    <h3 class="text-glow">你的专属人格画像</h3>
+        <!-- RADAR CHART -->
+        <section id="radar-section" class="radar-section reveal" style="display:none;">
+            <div class="card glass-card">
+                <div class="card-head">
+                    <i class="fas fa-chart-pie card-icon"></i>
+                    <h3>人格维度雷达图</h3>
                 </div>
-                <div class="card-body">
-                    <p id="personality-tag" class="personality-tag"></p>
-                    <p id="personality-desc" class="personality-desc"></p>
-                    <p id="secondary-personality" class="secondary-personality" style="display: none;"></p>
+                <div class="radar-container">
+                    <canvas id="radar-canvas" width="400" height="400"></canvas>
+                    <div class="radar-legend" id="radar-legend"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- EGG / EASTER EGG -->
+        <section id="egg-section" class="egg-section reveal" style="display:none;">
+            <div class="card glass-card egg-card">
+                <div class="egg-icon">🥚</div>
+                <p id="egg-text" class="egg-text"></p>
+                <button id="reroll-egg-btn" class="btn-ghost">
+                    <i class="fas fa-dice-d6"></i> 再开一个彩蛋
+                </button>
+            </div>
+        </section>
+
+        <!-- ACTIONS -->
+        <section id="actions-section" class="actions-section reveal" style="display:none;">
+            <div class="card glass-card">
+                <div class="card-head">
+                    <i class="fas fa-file-signature card-icon"></i>
+                    <h3>你的问卷档案</h3>
+                </div>
+                <div class="link-box">
+                    <div class="link-label"><i class="fas fa-key"></i> 专属时空信标</div>
+                    <div class="link-row">
+                        <code id="exclusive-survey-link"></code>
+                        <button id="copy-exclusive-link-btn" class="btn-icon" title="复制链接"><i class="fas fa-copy"></i></button>
+                    </div>
+                    <p class="link-hint">此信标包含密钥，是你返回此地的唯一凭证，请妥善保管。</p>
+                </div>
+                <div class="btn-group">
+                    <button id="viewMySubmissionBtn" class="btn btn-primary"><i class="fas fa-eye"></i> 查看完整提交</button>
+                    <button id="goToMbtiAnalysisBtn" class="btn btn-accent"><i class="fas fa-brain"></i> 启动深度人格分析</button>
                 </div>
             </div>
 
-            <div id="egg-container" class="section-card" style="display: none;">
-                <div class="card-header">
-                    <span class="card-icon text-glow"><i class="fa-solid fa-meteor"></i></span>
-                    <h3 class="text-glow">来自数据流的彩蛋</h3>
+            <div class="card glass-card">
+                <div class="card-head">
+                    <i class="fas fa-handshake card-icon"></i>
+                    <h3>默契度大挑战</h3>
                 </div>
-                <div class="card-body">
-                    <p id="egg-text" class="egg-text"></p>
-                    <button id="reroll-egg-btn" class="btn-secondary reroll-btn">
-                        <i class="fa-solid fa-dice"></i>
-                        <span>换一个看看</span>
-                    </button>
+                <p class="card-desc">输入另一位时空旅人的信标，看看你们的灵魂契合度！</p>
+                <div class="compare-form">
+                    <input type="text" id="compareLinkInput" placeholder="在此粘贴对方的信标链接...">
+                    <button id="startCompareBtn" class="btn btn-primary btn-sm">开始同步</button>
                 </div>
+                <button id="generateCompareLinkBtn" class="btn-ghost"><i class="fas fa-link"></i> 生成我的对比信标</button>
             </div>
+        </section>
 
-            <div id="actions-container" class="actions-container" style="display: none;">
-                <div class="action-card section-card">
-                    <div class="card-header">
-                        <span class="card-icon text-glow"><i class="fa-solid fa-file-invoice"></i></span>
-                        <h3 class="text-glow">你的问卷档案</h3>
-                    </div>
-                    <div class="card-body">
-                        <p>回顾你刚刚穿越数据星河留下的所有印记。</p>
-                        <div class="my-link-section">
-                            <p class="link-title"><i class="fa-solid fa-key"></i> 你的专属时空信标</p>
-                            <div class="link-wrapper">
-                                <span id="exclusive-survey-link"></span>
-                                <button id="copy-exclusive-link-btn" aria-label="复制专属链接">
-                                    <i class="fa fa-copy"></i>
-                                </button>
-                            </div>
-                            <p class="link-desc">此信标包含密钥，请妥善保管，它是你返回此地的唯一凭证。</p>
-                        </div>
-                        <button id="viewMySubmissionBtn" class="btn-primary"><i class="fa-solid fa-eye"></i>查看我的完整提交</button>
-                        <button id="goToMbtiAnalysisBtn" class="btn-primary mbti-btn"><i class="fa-solid fa-brain"></i>启动深度人格分析</button>
-                    </div>
-                </div>
-
-                <div class="action-card section-card">
-                    <div class="card-header">
-                        <span class="card-icon text-glow"><i class="fa-solid fa-people-arrows"></i></span>
-                        <h3 class="text-glow">默契度大挑战</h3>
-                    </div>
-                    <div class="card-body">
-                        <p>输入另一位时空旅人的信标，或生成你的信标链接发给TA！</p>
-                        <div class="compare-form">
-                            <input type="text" id="compareLinkInput" placeholder="在此粘贴对方的信标链接">
-                            <button id="startCompareBtn" class="btn-primary">开始同步</button>
-                        </div>
-                        <button id="generateCompareLinkBtn" class="btn-secondary"><i class="fa-solid fa-link"></i>生成我的对比信标</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="back-action" style="display: none;">
-                <a href="index.html" class="back-link">
-                    <i class="fa-solid fa-chevron-left"></i>
-                    <span>返回母舰，再进行一次探索</span>
-                </a>
-            </div>
-        </div>
+        <a href="index.html" class="back-link reveal" style="display:none;" id="back-link">
+            <i class="fas fa-chevron-left"></i> 返回母舰，开启新的探索
+        </a>
     </main>
 
     <script src="result.js"></script>
