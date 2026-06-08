@@ -32,7 +32,7 @@ jobs:
         run: npm run test:unit
 
       - name: Deploy to Netlify
-        uses: nwtgck/actions-netlify@v3
+        uses: nwtgck/actions-netlify@v4
         with:
           publish-dir: 'public'
           functions-dir: 'netlify/functions'
