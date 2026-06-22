@@ -27,7 +27,7 @@ jobs:
     steps:
       # 👇 修复点 1 & 2: 不再检出默认分支，而是直接检出作为源分支的 'test'
       - name: Checkout 'test' branch
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           ref: 'test'
 
